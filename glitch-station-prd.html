@@ -1,0 +1,461 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glitch Station · Product Requirements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0B0D1A; --track:#171B36; --lane:#3A4170;
+  --cyan:#FF5E7A; --pink:#3DE0FF; --amber:#FFB23D; --mint:#4DFFB0;
+  --paper:#EEF0FA; --surface:#FFFFFF; --ink:#151834; --muted:#4A5078; --rule:#D3D7EE; --tag:#E2E6FA;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#10132A; --surface:#171B36; --ink:#EEF0FF; --muted:#A9B0DD; --rule:#2C3260; --tag:#232953; color-scheme: dark; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+a{color:inherit}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;line-height:1.15;margin:0}
+.hero{background:var(--night);color:#F2F4FF;position:relative;overflow:hidden;padding:56px 24px 48px}
+.hero::before{content:"";position:absolute;inset:0;background:
+  linear-gradient(transparent 0 0),
+  repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),rgba(58,65,112,.45) calc(20% - 1px) 20%);
+  mask-image:linear-gradient(to bottom,transparent,#000 60%);pointer-events:none}
+.hero-head{position:relative;max-width:1200px;margin:0 auto 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.hero h1{font-size:clamp(48px,9vw,112px);letter-spacing:-.03em;line-height:.92}
+.hero h1 .row2{display:block;color:var(--cyan)}
+.hero p{max-width:60ch;margin:0;color:#C9CEF5;font-size:18px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;color:#9EA6DA;font-size:14px}
+.screens{position:relative;max-width:1260px;margin:0 auto;display:flex;gap:28px;overflow-x:auto;padding:4px 4px 16px;scroll-snap-type:x mandatory}
+.screen{margin:0;flex:0 0 auto;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px;width:292px}
+.phone{width:292px;height:633px;border-radius:28px;overflow:hidden;border:3px solid #2A2F55;background:var(--night);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.phone-inner{width:390px;height:844px;transform:scale(.7487);transform-origin:top left}
+.phone-inner button{cursor:default}
+.screen figcaption{display:flex;flex-direction:column;gap:2px;font-size:14px;color:#C9CEF5}
+.screen figcaption strong{color:#F2F4FF;font-family:"Space Grotesk",sans-serif;font-size:16px}
+.layout{max-width:1200px;margin:0 auto;padding:56px 24px 96px;display:flex;flex-wrap:wrap;gap:48px}
+nav.toc{flex:1 1 200px;max-width:240px}
+nav.toc ol{list-style:none;margin:0;padding:0;position:sticky;top:24px;display:flex;flex-direction:column;gap:6px;font-size:14px;counter-reset:s}
+nav.toc li{counter-increment:s}
+nav.toc a{text-decoration:none;color:var(--muted);display:block;padding:4px 0 4px 12px;border-left:2px solid var(--rule)}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--ink);border-left-color:var(--pink);outline:none}
+main{flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:56px}
+section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:24px}
+section h2{font-size:30px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:14px}
+section h2 .n{font-size:15px;color:var(--pink);font-weight:700;min-width:24px}
+section h3{font-size:18px;margin-top:8px}
+.lead{font-size:19px;line-height:1.5;margin:0;max-width:62ch}
+p{margin:0;max-width:68ch}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font-weight:700;background:var(--tag);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+ol.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;max-width:68ch}
+.formula{font-family:"Space Grotesk",sans-serif;font-size:18px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px 18px;overflow-x:auto}
+.decide{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.decide div{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--cyan);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.decide strong{font-family:"Space Grotesk",sans-serif;font-size:17px}
+.decide span{color:var(--muted);font-size:14.5px}
+footer{max-width:1200px;margin:0 auto;padding:0 24px 48px;color:var(--muted);font-size:14px}
+.diff{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:13px}
+.easy{background:#C9F7E3;color:#0D4A31}.med{background:#FFE7BF;color:#5A3A00}.hard{background:#FFD3E6;color:#6B0F38}
+.phase{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.phase h3{margin:0;font-size:20px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.phase h3 small{font-family:Inter,sans-serif;font-weight:600;font-size:13px;color:var(--muted)}
+.phase ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;max-width:70ch}
+.phase .label{font-weight:700;font-size:14px}
+pre.prompt{margin:0;white-space:pre-wrap;background:var(--night);color:#DDE2FF;border-radius:10px;padding:14px 16px;font:13.5px/1.55 "Space Grotesk",Inter,sans-serif;overflow-x:auto}
+.cost{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;background:var(--tag);border-radius:10px;padding:10px 14px;font-size:14.5px}
+.cost b{color:#0D6B45;white-space:nowrap}
+@media (prefers-color-scheme: dark){.cost b{color:#4DFFB0}}
+.cost span{color:var(--muted);flex:1 1 300px}
+@media (prefers-reduced-motion:no-preference){.screens{scroll-behavior:smooth}}
+@media print{.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+<div class="hero-head">
+<h1>Glitch Station<span class="row2">Social Deduction</span></h1>
+<p>Product requirements for an original multiplayer social deduction game: 5 to 10 players keep a neon data station running while one or two hidden Glitches sabotage it from inside. Talk, accuse, vote, survive.</p>
+<div class="meta"><span>Product requirements document</span><span>Working title</span><span>Updated 19 November 2026</span><span>Owner: Akshat</span></div>
+</div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Sections">
+<ol>
+<li><a href="#overview">Overview and vision</a></li>
+<li><a href="#goals">Goals and success metrics</a></li>
+<li><a href="#loop">Core gameplay loop</a></li>
+<li><a href="#roles">Roles and win conditions</a></li>
+<li><a href="#map">Map, movement and vision</a></li>
+<li><a href="#tasks">Tasks</a></li>
+<li><a href="#sabotage">Eliminations and sabotage</a></li>
+<li><a href="#meetings">Meetings, chat and voting</a></li>
+<li><a href="#lobby">Lobby, rooms and settings</a></li>
+<li><a href="#net">Networking architecture</a></li>
+<li><a href="#safety">Anti cheat and player safety</a></li>
+<li><a href="#web3">Web3 and identity</a></li>
+<li><a href="#ui">UI, art and audio</a></li>
+<li><a href="#tech">Technical requirements</a></li>
+<li><a href="#effort">Build effort</a></li>
+<li><a href="#plan">Agent implementation plan</a></li>
+<li><a href="#cost">Cost plan</a></li>
+<li><a href="#risks">Risks and open questions</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="overview">
+<h2><span class="n">1</span>Overview and vision</h2>
+<p class="lead">Glitch Station is a browser first social deduction game for friend groups: share a 4 letter room code, play an 8 to 12 minute match on your phones, and argue about who the Glitch is.</p>
+<div class="tbl"><table>
+<tr><th>Attribute</th><th>Decision</th></tr>
+<tr><td>Genre</td><td>Online social deduction (hidden roles, tasks, meetings, voting)</td></tr>
+<tr><td>View</td><td>Top down 2D, portrait on mobile, landscape on desktop</td></tr>
+<tr><td>Players</td><td>5 to 10 per room; 1 Glitch for 5 to 7 players, 2 for 8 to 10</td></tr>
+<tr><td>Platform</td><td>Web first, no install; join by link or room code</td></tr>
+<tr><td>Match length</td><td>8 to 12 minutes</td></tr>
+<tr><td>Audience</td><td>Friend groups, classmates, streamers and Discord communities aged 13 and up</td></tr>
+<tr><td>Monetization (later)</td><td>Cosmetic NFT skins and accessories; no pay to win, no ads in matches</td></tr>
+</table></div>
+<p>Originality rule: the genre is open, but no names, characters, maps, art, sounds or signature task designs from Among Us or other existing games. Everything in this document is original to Glitch Station.</p>
+</section>
+
+<section id="goals">
+<h2><span class="n">2</span>Goals and success metrics</h2>
+<p class="lead">The MVP succeeds if a friend group that plays one match plays at least three more in the same sitting.</p>
+<div class="tbl"><table>
+<tr><th>Metric</th><th>Target for MVP</th></tr>
+<tr><td>Matches per room session</td><td>4 or more</td></tr>
+<tr><td>Rooms that start a match after creation</td><td>70% or higher</td></tr>
+<tr><td>Matches finished without a disconnect breaking them</td><td>95% or higher</td></tr>
+<tr><td>Movement lag felt by players</td><td>Under 150 ms round trip on 4G</td></tr>
+<tr><td>Week 1 return rate of room hosts</td><td>30% or higher</td></tr>
+<tr><td>Win rate balance</td><td>Crew wins 45% to 55% of matches</td></tr>
+</table></div>
+<p>Non goals for v1: voice chat, public matchmaking with strangers, ranked play, more than one map, native apps and real money purchases.</p>
+</section>
+
+<section id="loop">
+<h2><span class="n">3</span>Core gameplay loop</h2>
+<p class="lead">Each match alternates between a free roam phase, where the crew does tasks and Glitches strike, and meetings, where everyone talks and votes.</p>
+<ol class="steps">
+<li>Players join a room with a code; the host picks settings and starts.</li>
+<li>Roles are revealed privately: Crew or Glitch. Glitches see each other.</li>
+<li>Free roam: Crew completes tasks around the station; Glitches fake tasks, sabotage systems and eliminate crew when nobody is watching.</li>
+<li>A meeting starts when someone reports a body or presses the emergency button.</li>
+<li>Discussion, then voting. The player with the most votes is ejected; ties and skips eject nobody.</li>
+<li>Free roam resumes until a win condition is met, then everyone sees the reveal and can rematch with one tap.</li>
+</ol>
+</section>
+
+<section id="roles">
+<h2><span class="n">4</span>Roles and win conditions</h2>
+<p class="lead">V1 ships with two roles only, so the core deduction is tuned before special roles add complexity.</p>
+<div class="tbl"><table>
+<tr><th>Role</th><th>Abilities</th><th>Wins when</th></tr>
+<tr><td>Crew</td><td>Do tasks, fix sabotage, report bodies, call one emergency meeting, vote</td><td>All tasks are complete, or every Glitch is ejected</td></tr>
+<tr><td>Glitch</td><td>Eliminate (cooldown), travel through conduits, sabotage systems, fake tasks, vote</td><td>Glitches equal or outnumber the crew, or a critical sabotage timer runs out</td></tr>
+<tr><td>Ghost (after elimination)</td><td>Crew ghosts keep doing tasks; Glitch ghosts can still sabotage; ghosts chat only with ghosts</td><td>Their living team wins</td></tr>
+</table></div>
+<p>Later roles (v2, behind a host toggle): Tracer (sees footprints for 5 seconds), Mender (one shield per round on another player), Jammer (a Glitch who can hide a body for one meeting).</p>
+</section>
+
+<section id="map">
+<h2><span class="n">5</span>Map, movement and vision</h2>
+<p class="lead">One hand built map, the Neon Relay, with 9 rooms connected by corridors, sized so a full lap takes about 40 seconds at walking speed.</p>
+<div class="tbl"><table>
+<tr><th>Room</th><th>Purpose</th></tr>
+<tr><td>Hub</td><td>Spawn point and emergency button</td></tr>
+<tr><td>Core Reactor</td><td>Meltdown sabotage fix point (needs two players)</td></tr>
+<tr><td>Signal Tower</td><td>Signal alignment task, comms sabotage fix</td></tr>
+<tr><td>Server Vault</td><td>Data tasks; the only room with cameras later</td></tr>
+<tr><td>Power Grid</td><td>Blackout fix point</td></tr>
+<tr><td>Cooling Bay</td><td>Fan and coolant tasks</td></tr>
+<tr><td>Dock</td><td>Cargo tasks, long dead end (risky)</td></tr>
+<tr><td>Lab</td><td>Sample tasks</td></tr>
+<tr><td>Lounge</td><td>Quiet room, few tasks, good alibi spot</td></tr>
+</table></div>
+<p>Movement: virtual joystick on mobile (left thumb anywhere), WASD or arrows on desktop. Walking speed 4.5 tiles per second. Use, report and eliminate buttons sit on the right side.</p>
+<p>Vision: each player sees a circle of light around them; walls block sight. Crew radius is 6 tiles, Glitch radius 8. During a blackout crew vision drops to 2 tiles. The server only sends positions of players inside a client’s vision, so nobody can cheat by reading network data.</p>
+<p>Conduits: 6 conduit openings linked in 3 pairs. Only Glitches can use them; entering and leaving plays a short visible animation, so a sharp crewmate can catch it.</p>
+</section>
+
+<section id="tasks">
+<h2><span class="n">6</span>Tasks</h2>
+<p class="lead">Tasks are 3 to 10 second touch friendly minigames; each crew member gets 2 common, 3 short and 1 long task, and a shared task bar fills as the whole crew progresses.</p>
+<div class="tbl"><table>
+<tr><th>Task</th><th>Room</th><th>Type</th><th>What the player does</th></tr>
+<tr><td>Reroute Circuit</td><td>Power Grid</td><td>Short</td><td>Drag 4 glowing wires to matching ports</td></tr>
+<tr><td>Align Signal</td><td>Signal Tower</td><td>Short</td><td>Rotate a dial until two waveforms overlap</td></tr>
+<tr><td>Defrag Blocks</td><td>Server Vault</td><td>Short</td><td>Slide coloured blocks into sorted columns</td></tr>
+<tr><td>Purge Coolant</td><td>Cooling Bay</td><td>Short</td><td>Hold a valve until the gauge hits the green band</td></tr>
+<tr><td>Sort Packets</td><td>Dock</td><td>Common</td><td>Flick incoming packets left or right by colour</td></tr>
+<tr><td>Patch Firewall</td><td>Hub</td><td>Common</td><td>Tap breaches in a grid before they spread</td></tr>
+<tr><td>Calibrate Core</td><td>Core Reactor</td><td>Short</td><td>Stop three spinning rings at the right moment</td></tr>
+<tr><td>Upload Backup</td><td>Lab, then Server Vault</td><td>Long</td><td>Start a download in one room, finish the upload in another (two stages, 8 seconds each)</td></tr>
+</table></div>
+<p>Some tasks show a visible effect on the map (a light turning green), so crew can prove innocence by being seen doing them. Glitches see a fake task list and can stand at tasks, but their task bar never moves.</p>
+</section>
+
+<section id="sabotage">
+<h2><span class="n">7</span>Eliminations and sabotage</h2>
+<p class="lead">Glitches win by picking moments carefully: eliminations have a cooldown and a short range, and sabotage splits the crew or forces them into rooms.</p>
+<div class="tbl"><table>
+<tr><th>Action</th><th>Rule</th></tr>
+<tr><td>Eliminate</td><td>Range 1.2 tiles, cooldown 25 seconds (host setting 15 to 45), leaves a body that stays until a meeting</td></tr>
+<tr><td>Blackout</td><td>Crew vision drops to 2 tiles until someone flips 5 switches in Power Grid</td></tr>
+<tr><td>Core Meltdown</td><td>Critical: two players must hold the two panels in Core Reactor at the same time within 40 seconds, or Glitches win</td></tr>
+<tr><td>Jam Comms</td><td>Task lists and the task bar are hidden until someone realigns the dish in Signal Tower</td></tr>
+<tr><td>Lock Doors</td><td>Closes one room’s doors for 10 seconds</td></tr>
+</table></div>
+<p>Only one sabotage runs at a time, with a 30 second shared cooldown. Emergency meetings cannot be called during a critical sabotage.</p>
+</section>
+
+<section id="meetings">
+<h2><span class="n">8</span>Meetings, chat and voting</h2>
+<p class="lead">Meetings are where the game is won, so chat has to be fast on a phone and safe for a 13 and up audience.</p>
+<div class="tbl"><table>
+<tr><th>Element</th><th>Rule</th></tr>
+<tr><td>Triggers</td><td>Report a body, or press the Hub button (1 per player per match, 20 second cooldown after a meeting)</td></tr>
+<tr><td>Discussion</td><td>45 seconds (host setting), voting locked</td></tr>
+<tr><td>Voting</td><td>60 seconds; vote a player or skip; votes reveal at the end</td></tr>
+<tr><td>Result</td><td>Most votes is ejected; ties or majority skip ejects nobody; host decides whether the ejected role is revealed</td></tr>
+<tr><td>Quick chat</td><td>Tap built sentences: “I was in [room]”, “I saw [player] at [room]”, “[player] is sus”, “Skip”, “I did [task]”</td></tr>
+<tr><td>Free text chat</td><td>Private rooms only, 80 characters per message, profanity filter, mute and report on every player</td></tr>
+<tr><td>Voice</td><td>Not in v1; friend groups already use Discord or a call</td></tr>
+</table></div>
+</section>
+
+<section id="lobby">
+<h2><span class="n">9</span>Lobby, rooms and settings</h2>
+<p class="lead">V1 is private rooms only: a host creates a room, shares a 4 letter code or link, and friends join in seconds with just a nickname.</p>
+<div class="tbl"><table>
+<tr><th>Setting</th><th>Default</th><th>Range</th></tr>
+<tr><td>Players</td><td>Up to 10</td><td>5 to 10</td></tr>
+<tr><td>Glitches</td><td>Auto (1 or 2)</td><td>1 to 3</td></tr>
+<tr><td>Elimination cooldown</td><td>25 s</td><td>15 to 45 s</td></tr>
+<tr><td>Discussion / voting time</td><td>45 s / 60 s</td><td>15 to 120 s each</td></tr>
+<tr><td>Crew vision</td><td>6 tiles</td><td>3 to 9</td></tr>
+<tr><td>Tasks per player</td><td>2 common, 3 short, 1 long</td><td>Adjustable</td></tr>
+<tr><td>Reveal ejected role</td><td>On</td><td>On or off</td></tr>
+<tr><td>Free text chat</td><td>On</td><td>On or off</td></tr>
+</table></div>
+<p>Lobby features: colour and accessory picker, ready toggle, host can kick, rooms close after 10 minutes empty, and a player who drops can rejoin the same match within 60 seconds with their role intact.</p>
+<p>Later: public lobbies with quick chat only, and a practice mode with simple bots so a single player can learn the map.</p>
+</section>
+
+<section id="net">
+<h2><span class="n">10</span>Networking architecture</h2>
+<p class="lead">Every room is one authoritative server object that owns the truth (positions, roles, cooldowns, votes); clients only send inputs and draw what the server tells them.</p>
+<div class="tbl"><table>
+<tr><th>Piece</th><th>Choice</th></tr>
+<tr><td>Room server</td><td>One Cloudflare Durable Object per room, holding all match state in memory, with WebSockets to each player</td></tr>
+<tr><td>Tick rate</td><td>Server simulates at 20 ticks per second and sends each client a snapshot of what that client can see</td></tr>
+<tr><td>Client movement</td><td>Client prediction for your own character, interpolation (100 ms behind) for others, server correction if they drift</td></tr>
+<tr><td>Messages</td><td>Small JSON (MessagePack later): input, use, eliminate, report, sabotage, chat, vote; server events: snapshot, role, meeting, result</td></tr>
+<tr><td>Room codes</td><td>4 letters from an alphabet without lookalike letters; the code maps to the Durable Object by name</td></tr>
+<tr><td>Reconnect</td><td>Session token in local storage; rejoin within 60 seconds restores the player</td></tr>
+<tr><td>Persistence</td><td>None needed for v1; match results and profiles come later</td></tr>
+</table></div>
+<p>Cloudflare made <a href="https://developers.cloudflare.com/durable-objects/release-notes/">Durable Objects available on the Workers Free plan</a> in 2025, built for real time apps like chat and multiplayer games, which keeps the whole backend free during testing. Alternative if Cloudflare does not fit: a self hosted Colyseus server.</p>
+</section>
+
+<section id="safety">
+<h2><span class="n">11</span>Anti cheat and player safety</h2>
+<p class="lead">In a hidden role game, one leaked role ruins the match, so the server never sends a client anything it should not know.</p>
+<div class="tbl"><table>
+<tr><th>Threat</th><th>Protection</th></tr>
+<tr><td>Reading roles from network data</td><td>Each client only receives its own role; Glitch teammates are sent only to Glitches</td></tr>
+<tr><td>Seeing through walls</td><td>Server culls positions outside each player’s vision before sending</td></tr>
+<tr><td>Fake eliminations or speed hacks</td><td>Server checks range, cooldown, role and maximum movement speed on every input</td></tr>
+<tr><td>Spam and flooding</td><td>Rate limits per connection on chat, inputs and room creation</td></tr>
+<tr><td>Abusive chat</td><td>Profanity filter, mute, report, host kick, quick chat only in any future public lobby</td></tr>
+<tr><td>Young players</td><td>No personal data collected in v1 (nickname only), no direct messages, no free text with strangers</td></tr>
+</table></div>
+</section>
+
+<section id="web3">
+<h2><span class="n">12</span>Web3 and identity</h2>
+<p class="lead">Web3 stays optional and cosmetic: the game is fully playable as a guest, and it reuses the identity layer and NFT work from Lane Siege instead of rebuilding it.</p>
+<div class="tbl"><table>
+<tr><th>Feature</th><th>Plan</th></tr>
+<tr><td>Player names</td><td>Same resolveIdentity layer as Lane Siege Phase 8: Basename, then ENS, then nickname; Endless domain first once its SDK ships</td></tr>
+<tr><td>Cosmetics as NFTs</td><td>Suit colours, visors and accessories as ERC721 tokens, cosmetic only</td></tr>
+<tr><td>Cross game items</td><td>Owning a Lane Siege hero unlocks a matching suit in Glitch Station</td></tr>
+<tr><td>Badges</td><td>Soulbound badges for milestones like “Won 10 matches as Glitch”</td></tr>
+<tr><td>Chain</td><td>Same chain decision as Lane Siege; testnet only until the spend gate in section 17</td></tr>
+</table></div>
+</section>
+
+<section id="ui">
+<h2><span class="n">13</span>UI, art and audio</h2>
+<p class="lead">Same neon synthwave family as Lane Siege so the two games feel like one world, but with a readable, high contrast top down view.</p>
+<div class="tbl"><table>
+<tr><th>Screen</th><th>Contents</th></tr>
+<tr><td>Home</td><td>Create room, join with code, nickname, colour picker</td></tr>
+<tr><td>Lobby</td><td>Player list with colours, room code and share button, host settings, ready state</td></tr>
+<tr><td>Role reveal</td><td>Full screen card: Crew in cyan, Glitch in red with teammates shown</td></tr>
+<tr><td>Free roam HUD</td><td>Task bar at top, task list (collapsible), mini map button, joystick bottom left, Use / Report / Eliminate / Sabotage buttons bottom right</td></tr>
+<tr><td>Meeting</td><td>Grid of player cards with vote buttons, timer, chat panel, quick chat sheet</td></tr>
+<tr><td>Results</td><td>Winning team, roles revealed, match stats, rematch</td></tr>
+</table></div>
+<p>Characters are simple rounded suits with a visor and one accessory slot, in 12 colours chosen to stay distinguishable for colour blind players (each colour also has a pattern). Audio: ambient station hum, distinct sounds for task done, body report, meeting start, eject and win.</p>
+</section>
+
+<section id="tech">
+<h2><span class="n">14</span>Technical requirements</h2>
+<p class="lead">A TypeScript monorepo with a Phaser client and a Cloudflare Workers server, sharing one package of message types and game rules.</p>
+<div class="tbl"><table>
+<tr><th>Area</th><th>Choice</th></tr>
+<tr><td>Client</td><td>Vite, TypeScript, Phaser 3 for rendering, input and tilemaps; HTML overlay for menus and chat</td></tr>
+<tr><td>Map</td><td>Built in Tiled (free) and exported as JSON with collision and room layers</td></tr>
+<tr><td>Server</td><td>Cloudflare Workers with one Durable Object class per room, WebSocket Hibernation API</td></tr>
+<tr><td>Shared code</td><td>packages/shared: message types, constants, validation and pure game rules used by both sides</td></tr>
+<tr><td>Hosting</td><td>Cloudflare Pages for the client (free tier allows commercial use)</td></tr>
+<tr><td>Testing</td><td>Vitest for rules; a headless bot script that fills a room with 9 fake players to load test</td></tr>
+<tr><td>Performance</td><td>60 fps on a 2021 midrange phone; under 2 KB per snapshot per player</td></tr>
+<tr><td>Analytics</td><td>Events for room created, match started, match finished, disconnects, winner</td></tr>
+</table></div>
+</section>
+
+<section id="effort">
+<h2><span class="n">15</span>Build effort</h2>
+<p class="lead">This is roughly two to three times the work of Lane Siege, about 8 to 10 weeks solo with an agent, because multiplayer sync and hidden information are hard to get right.</p>
+<div class="tbl"><table>
+<tr><th>Part</th><th>Difficulty</th><th>Time with an agent</th><th>Notes</th></tr>
+<tr><td>Rooms, lobby, join codes</td><td><span class="diff easy">Easy</span></td><td>3 to 4 days</td><td>Durable Objects make one room equal one object</td></tr>
+<tr><td>Movement sync</td><td><span class="diff hard">Hard</span></td><td>1 to 1.5 weeks</td><td>Prediction and interpolation need real phone testing on 4G</td></tr>
+<tr><td>Roles, tasks, win logic</td><td><span class="diff med">Medium</span></td><td>1.5 weeks</td><td>Eight minigames are the bulk of the work</td></tr>
+<tr><td>Glitch kit and vision culling</td><td><span class="diff med">Medium</span></td><td>1 week</td><td>Vision culling is what keeps the game cheat resistant</td></tr>
+<tr><td>Meetings, chat, voting</td><td><span class="diff med">Medium</span></td><td>1 week</td><td>Chat safety adds work</td></tr>
+<tr><td>Polish, art, audio</td><td><span class="diff med">Medium</span></td><td>1.5 weeks</td><td>Feel and readability need group playtests</td></tr>
+<tr><td>Deploy</td><td><span class="diff easy">Easy</span></td><td>Under 1 hour</td><td>Wrangler deploys server and client</td></tr>
+</table></div>
+</section>
+
+<section id="plan">
+<h2><span class="n">16</span>Agent implementation plan</h2>
+<p class="lead">Give the agent this file and run one phase per session; every phase ends with something you can play with friends on real phones.</p>
+<h3>Rules to paste at the start of every session</h3>
+<pre class="prompt">You are building Glitch Station from the attached PRD. Work on ONE phase at a time and stop when its "Done when" checks pass.
+Use TypeScript strictly in a monorepo: apps/client (Vite + Phaser 3), apps/server (Cloudflare Workers + Durable Objects), packages/shared (types, constants, rules).
+The server is authoritative: clients send inputs only. Never send a client another player's role or any position outside that client's vision.
+Keep every tunable number (speeds, cooldowns, timers, vision) in packages/shared/config.ts.
+Do not use names, art, sounds or task designs from Among Us or any other existing game.
+Do not add any paid service, paid plan or paid API. Use only free tiers unless I say otherwise.
+Never commit secrets; use environment variables.
+After each phase: run lint and tests, update README with how to run locally and deploy, and list anything you could not finish.</pre>
+
+<article class="phase"><h3>Phase 0: Monorepo and first deploy <small>1 day</small> <span class="diff easy">Easy</span></h3>
+<p>An empty client and server deployed and talking to each other.</p>
+<div class="cost"><b>Cost: $0</b><span>GitHub free, Cloudflare Pages and Workers Free plan.</span></div>
+<div class="label">Tasks</div><ul><li>Scaffold the monorepo with apps/client, apps/server and packages/shared.</li><li>Phaser scene showing a placeholder map; Worker with one Durable Object class.</li><li>A WebSocket ping that shows round trip time on screen.</li><li>Deploy both with Wrangler.</li></ul>
+<div class="label">Done when</div><ul><li>Two phones open the deployed URL and both see a live ping under 200 ms.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 0 of the Glitch Station PRD: the monorepo, a Phaser placeholder scene, a Cloudflare Worker with a SQLite backed Durable Object class, and a WebSocket ping display. Give me the exact commands to run locally and deploy on the Cloudflare free plan.</pre></article>
+
+<article class="phase"><h3>Phase 1: Rooms and lobby <small>3 to 4 days</small> <span class="diff easy">Easy</span></h3>
+<p>Friends can create and join rooms by code.</p>
+<div class="cost"><b>Cost: $0</b><span>One Durable Object per room on the free plan.</span></div>
+<div class="label">Tasks</div><ul><li>Create room returns a 4 letter code; join by code or link.</li><li>Lobby with nicknames, colours, ready toggle, host settings and kick.</li><li>Session tokens and 60 second reconnect.</li><li>Empty rooms close after 10 minutes.</li></ul>
+<div class="label">Done when</div><ul><li>Six phones join one room, change colours, and a phone that loses signal rejoins in its slot.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 1: room creation with 4 letter codes mapped to Durable Objects by name, the lobby screen, host settings from section 9, ready state, kick, session tokens with 60 second reconnect, and auto close of empty rooms. Add a headless script that joins 9 fake players to a room.</pre></article>
+
+<article class="phase"><h3>Phase 2: Map and movement sync <small>1 to 1.5 weeks</small> <span class="diff hard">Hard</span></h3>
+<p>Everyone walks around the Neon Relay together, smoothly.</p>
+<div class="cost"><b>Cost: $0</b><span>Tiled is free; map art from simple shapes or CC0 tiles.</span></div>
+<div class="label">Tasks</div><ul><li>Build the 9 room map in Tiled with collision and room layers.</li><li>Joystick and keyboard input sent to the server at 20 per second.</li><li>Server movement with collision and speed limits; snapshots at 20 ticks.</li><li>Client prediction for self, interpolation for others, server correction.</li><li>Vision circle with wall occlusion; server side culling of hidden players.</li></ul>
+<div class="label">Done when</div><ul><li>Ten players move on real phones over 4G with no visible teleporting; players behind walls never appear in network data.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 2: the Neon Relay tilemap from section 5, server authoritative movement at 20 ticks, client prediction and 100 ms interpolation, wall occluded vision, and per client culling of players outside vision. Add a debug overlay showing ping, tick and prediction error.</pre></article>
+
+<article class="phase"><h3>Phase 3: Roles, tasks and crew win <small>1.5 weeks</small> <span class="diff med">Medium</span></h3>
+<p>A match can start, assign roles and be won by finishing tasks.</p>
+<div class="cost"><b>Cost: $0</b><span>Code only.</span></div>
+<div class="label">Tasks</div><ul><li>Server side role assignment and private role reveal screen.</li><li>The 8 task minigames from section 6, touch friendly.</li><li>Task assignment, shared task bar, visible task effects.</li><li>Fake task list for Glitches; crew task win.</li></ul>
+<div class="label">Done when</div><ul><li>A full match ends in a crew task win; inspecting network traffic never reveals another player’s role.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 3: role assignment on the server, the role reveal screen, all 8 tasks from section 6 as touch friendly minigames, the shared task bar, and the crew task win. Add a test that checks no snapshot sent to a crew client contains role data.</pre></article>
+
+<article class="phase"><h3>Phase 4: Glitch kit <small>1 week</small> <span class="diff med">Medium</span></h3>
+<p>Glitches can eliminate, travel through conduits and sabotage.</p>
+<div class="cost"><b>Cost: $0</b><span>Code only.</span></div>
+<div class="label">Tasks</div><ul><li>Eliminate with server checked range and cooldown; bodies.</li><li>Conduits for Glitches with visible enter and exit.</li><li>Blackout, Core Meltdown, Jam Comms and Lock Doors with fix points.</li><li>Glitch win conditions.</li></ul>
+<div class="label">Done when</div><ul><li>Glitches can win by numbers and by meltdown; a modified client cannot eliminate from out of range.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 4: eliminations, bodies, conduits, the four sabotages from section 7 with their fixes, and Glitch win conditions. Validate every Glitch action on the server and add tests for out of range and cooldown abuse.</pre></article>
+
+<article class="phase"><h3>Phase 5: Meetings, chat and voting <small>1 week</small> <span class="diff med">Medium</span></h3>
+<p>The social core: reports, emergency meetings, discussion and votes.</p>
+<div class="cost"><b>Cost: $0</b><span>Use a free open source profanity word list; no paid moderation API.</span></div>
+<div class="label">Tasks</div><ul><li>Report and emergency button with the rules in section 8.</li><li>Meeting screen with timers, quick chat and free text chat.</li><li>Voting, skip, ties, eject animation, optional role reveal.</li><li>Ghost mode with ghost only chat; mute and report.</li></ul>
+<div class="label">Done when</div><ul><li>A group of 6 plays three full matches with meetings and can finish a meeting entirely with quick chat on phones.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 5: reporting, emergency meetings, the meeting screen with quick chat and filtered free text chat, voting and ejection, ghosts and ghost chat, mute and report. Rate limit chat on the server.</pre></article>
+
+<article class="phase"><h3>Phase 6: Polish, feel and rematch <small>1.5 weeks</small> <span class="diff med">Medium</span></h3>
+<p>Make it look and sound like a real game.</p>
+<div class="cost"><b>Cost: $0</b><span>Original art from simple shapes in the Lane Siege style, CC0 sounds; paid art waits for the spend gate.</span></div>
+<div class="label">Tasks</div><ul><li>Character suits, walk animation, accessories, colour blind patterns.</li><li>Station art, lighting, door and conduit animations.</li><li>Sounds for every key event; results screen and one tap rematch.</li><li>Analytics events from section 14.</li></ul>
+<div class="label">Done when</div><ul><li>New players understand what to do without explanation, and groups rematch without leaving the room.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 6: visual and audio polish in a neon synthwave style matching Lane Siege, colour blind safe suit colours with patterns, the results screen, rematch, and analytics events. Keep effects behind a quality setting for low end phones.</pre></article>
+
+<article class="phase"><h3>Phase 7: Free soft launch <small>2 weeks of real play</small> <span class="diff easy">Easy</span></h3>
+<p>Real groups play, and the numbers decide what happens next.</p>
+<div class="cost"><b>Cost: $0</b><span>Free pages.dev address, Sentry free tier, Cloudflare free plan. If a busy day hits the free daily request limit, new operations fail until the daily reset instead of billing you, so watch usage in the dashboard.</span></div>
+<div class="label">Tasks</div><ul><li>Share with friend groups, Discord servers and your audience.</li><li>Error tracking, a feedback button and a short in game survey.</li><li>Tune cooldowns, vision and task counts toward a 45% to 55% crew win rate.</li></ul>
+<div class="label">Done when</div><ul><li>The section 2 targets are met, or you have a clear list of what to fix.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Prepare Phase 7: Sentry free tier, a feedback button, a three question end of match survey, and an admin page that shows rooms, matches, win rates and disconnects from the analytics events.</pre></article>
+
+<article class="phase"><h3>Phase 8: Identity and cosmetics <small>1 week</small> <span class="diff med">Medium</span></h3>
+<p>Reuse Lane Siege’s identity layer and add NFT cosmetics on testnet.</p>
+<div class="cost"><b>Cost: $0 on testnet</b><span>Same free RPC and IPFS tiers as Lane Siege. Mainnet gas only after the spend gate.</span></div>
+<div class="label">Tasks</div><ul><li>Import the shared identity package (Basename, ENS, nickname).</li><li>Optional wallet sign in; cosmetic NFTs for suits and accessories on testnet.</li><li>Lane Siege hero owners unlock a matching suit.</li></ul>
+<div class="label">Done when</div><ul><li>A wallet with a Basename shows it in lobby and meetings, and an owned test NFT suit appears in the colour picker.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 8: reuse the identity layer from Lane Siege as a shared package, add optional wallet sign in, testnet cosmetic NFTs for suits and accessories, and the cross game suit unlock for Lane Siege hero owners. The game must stay fully playable without a wallet.</pre></article>
+
+<p>Phase 9, after the spend gate: public lobbies with quick chat only, practice bots, more roles, a second map, and the Endless Domains provider as the first entry in the identity order.</p>
+</section>
+
+<section id="cost">
+<h2><span class="n">17</span>Cost plan: no spend until real users test it</h2>
+<p class="lead">Phases 0 to 8 cost 0 USD; the free tiers are enough for private rooms of friends, and nothing is paid for until real groups prove they keep playing.</p>
+<div class="tbl"><table>
+<tr><th>Service</th><th>Free tier used for</th><th>First possible spend, and its trigger</th></tr>
+<tr><td>Cloudflare Workers and Durable Objects</td><td>All room servers; free plan includes Durable Objects with daily request limits</td><td>Workers Paid plan (about 5 USD a month) if real traffic regularly hits the free daily limits</td></tr>
+<tr><td>Cloudflare Pages</td><td>Hosting the client; commercial use allowed</td><td>None expected</td></tr>
+<tr><td>Sentry</td><td>Error tracking</td><td>Only at much larger scale</td></tr>
+<tr><td>Blockchain testnet, RPC, IPFS</td><td>Cosmetic NFT testing</td><td>Mainnet gas and a contract review, same as Lane Siege, after the go decision</td></tr>
+<tr><td>Domain</td><td>Free pages.dev address</td><td>Optional custom domain, a small yearly fee</td></tr>
+</table></div>
+<h3>The spend gate</h3>
+<p>Spend money only after the Phase 7 soft launch shows at least 50 different rooms playing over two weeks with 4 or more matches per room session. If not, fix the game on the free stack first. Your AI agent subscription is outside this plan, and free tier limits change, so check each provider’s pricing page before relying on it. Checked in November 2026.</p>
+</section>
+
+<section id="risks">
+<h2><span class="n">18</span>Risks and open questions</h2>
+<p class="lead">The biggest risk is not code but people: the game needs 5 or more players at once, so it must win friend groups before it can support strangers.</p>
+<div class="tbl"><table>
+<tr><th>Risk</th><th>Mitigation</th></tr>
+<tr><td>Not enough players in a room</td><td>Private rooms first, easy sharing by link, practice bots later, target Discord communities and streamers</td></tr>
+<tr><td>Looks or plays like a clone</td><td>Original theme, names, map, tasks and art; review against the originality rule before each release</td></tr>
+<tr><td>Lag on mobile networks</td><td>Prediction and interpolation from day one; test on real 4G every phase</td></tr>
+<tr><td>Toxic chat</td><td>Quick chat by default, filtered free text in private rooms only, mute and report</td></tr>
+<tr><td>Free tier limits on a viral day</td><td>Limits fail safely instead of billing; upgrade only once the spend gate is passed</td></tr>
+</table></div>
+<h3>Open questions</h3>
+<ol class="steps">
+<li>Is “Glitch Station” the final name, or should it carry the Endless brand?</li>
+<li>Should Lane Siege and Glitch Station share one account and one coin balance?</li>
+<li>Minimum age: 13 and up with quick chat, or 16 and up with free text everywhere?</li>
+</ol>
+</section>
+
+</main>
+</div>
+<footer>Glitch Station is an original concept. Social deduction is a shared genre; no assets, names or designs from existing games are used.</footer>
+</body>
+</html>
