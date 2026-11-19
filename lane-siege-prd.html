@@ -70,6 +70,10 @@ footer{max-width:1200px;margin:0 auto;padding:0 24px 48px;color:var(--muted);fon
 .phase ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;max-width:70ch}
 .phase .label{font-weight:700;font-size:14px}
 pre.prompt{margin:0;white-space:pre-wrap;background:var(--night);color:#DDE2FF;border-radius:10px;padding:14px 16px;font:13.5px/1.55 "Space Grotesk",Inter,sans-serif;overflow-x:auto}
+.cost{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline;background:var(--tag);border-radius:10px;padding:10px 14px;font-size:14.5px}
+.cost b{color:#0D6B45;white-space:nowrap}
+@media (prefers-color-scheme: dark){.cost b{color:#4DFFB0}}
+.cost span{color:var(--muted);flex:1 1 300px}
 @media (prefers-reduced-motion:no-preference){.screens{scroll-behavior:smooth}}
 @media print{.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}nav.toc{display:none}}
 </style>
@@ -393,6 +397,7 @@ New best, 22 s longer than last run
 <li><a href="#mvp">MVP scope, milestones and risks</a></li>
 <li><a href="#effort">Build effort and deployment</a></li>
 <li><a href="#plan">Agent implementation plan</a></li>
+<li><a href="#cost">Cost plan</a></li>
 </ol>
 </nav>
 <main>
@@ -485,29 +490,33 @@ New best, 22 s longer than last run
 </section>
 
 <section id="weapons">
-<h2><span class="n">6</span>Weapons and upgrades</h2>
-<p class="lead">The player holds one main weapon at a time and stacks in run upgrades on top of it; weapons swap via crates, upgrades come from gates and level ups.</p>
+<h2><span class="n">6</span>Weapons, levels and upgrades</h2>
+<p class="lead">Weapons unlock by level inside each run: every kill gives XP, and each level up puts a weapon gate pair on the track, one side offering a new or different gun and the other upgrading the current gun’s tier.</p>
+<p>XP per kill: Crawler and Runner 1, Brute 4, Elite +3 extra, boss 20. XP needed for the next level is 5 + 4 × current level, so the Rocket Launcher usually arrives around wave 3 or 4 and the Black Hole Cannon needs a strong run. Weapon gates wait for a clear stretch of track so they never overlap upgrade gates.</p>
 <div class="tbl"><table>
-<tr><th>Weapon</th><th>Role</th><th>Base damage</th><th>Fire rate (shots/s)</th><th>Unlock</th></tr>
-<tr><td>Blaster</td><td>Reliable single target</td><td>10</td><td>4</td><td>Default</td></tr>
-<tr><td>Scatter Gun</td><td>Wide spread, hits 3 lanes</td><td>6 per pellet, 5 pellets</td><td>1.5</td><td>Wave 3 crate</td></tr>
-<tr><td>Laser Beam</td><td>Pierces every monster in a lane</td><td>4 per tick</td><td>10 ticks</td><td>Wave 5 crate</td></tr>
-<tr><td>Rocket Launcher</td><td>Splash damage</td><td>40</td><td>0.8</td><td>Wave 8 crate</td></tr>
-<tr><td>Tesla Coil</td><td>Chains to 4 nearby monsters</td><td>12</td><td>2</td><td>Boss drop</td></tr>
-<tr><td>Plasma Minigun</td><td>Spins up, shreds bosses</td><td>8</td><td>Ramps 3 to 15</td><td>Boss drop</td></tr>
+<tr><th>Unlock level</th><th>Weapon</th><th>Behaviour</th><th>Base damage</th><th>Fire rate</th></tr>
+<tr><td>1</td><td>Blaster</td><td>Homing bolts</td><td>10</td><td>4 per second</td></tr>
+<tr><td>2</td><td>Scatter Gun</td><td>7 pellet spread, +2 pellets per multishot stack</td><td>9 per pellet</td><td>2.4 per second</td></tr>
+<tr><td>3</td><td>Laser Beam</td><td>Continuous beams that pierce everything in their path, one per multishot stack</td><td>4 per tick</td><td>10 ticks per second</td></tr>
+<tr><td>4</td><td>Rocket Launcher</td><td>Homing rockets with a 2.5 unit splash</td><td>34</td><td>1.1 per second</td></tr>
+<tr><td>5</td><td>Tesla Coil</td><td>Lightning that chains to 3 + tier extra enemies, 6% less damage per jump</td><td>18</td><td>2.4 per second</td></tr>
+<tr><td>6</td><td>Saw Disc</td><td>Spinning blade that pierces 3 + tier enemies and ricochets between them</td><td>16</td><td>1.5 per second</td></tr>
+<tr><td>7</td><td>Railgun</td><td>Charges for about a second, then pierces 65 units down the lane</td><td>70</td><td>0.9 charges per second</td></tr>
+<tr><td>8</td><td>Plasma Minigun</td><td>Spins up from 3 to 15 shots per second while it has targets</td><td>6</td><td>3 to 15 per second</td></tr>
+<tr><td>10</td><td>Black Hole Cannon</td><td>Orb becomes a 2.4 second singularity that pulls enemies within 7.5 units, holds them and damages within 3.6</td><td>30 per second</td><td>0.4 per second</td></tr>
 </table></div>
-<p>Each weapon has 5 tiers: Common, Rare, Epic, Legendary and Mythic. Picking up the same weapon again raises its tier, adding roughly 35% damage and a visual change in muzzle flash, projectile colour and sound.</p>
+<p>Each weapon has 5 tiers: Common, Rare, Epic, Legendary and Mythic. Every tier adds roughly 35% damage and changes projectile colour and effects. Multishot applies to every gun: more bolts, pellets, beams, rockets, saws, chain jumps or railgun shots. Weapon crates no longer drop at random; Elites drop one 35% of the time and bosses always do, and a crate upgrades the current gun.</p>
 <div class="tbl"><table>
 <tr><th>Gate upgrade</th><th>Effect per stack</th><th>Max stacks</th></tr>
 <tr><td>Multishot</td><td>+1 projectile</td><td>5</td></tr>
 <tr><td>Fire rate</td><td>+15%</td><td>6</td></tr>
 <tr><td>Damage</td><td>+20%</td><td>8</td></tr>
 <tr><td>Crit chance</td><td>+5% (2x damage)</td><td>6</td></tr>
-<tr><td>Ricochet</td><td>Bullets bounce to 1 more target</td><td>3</td></tr>
-<tr><td>Shield drone</td><td>Absorbs 1 hit, recharges in 12 s</td><td>2</td></tr>
-<tr><td>Magnet</td><td>+40% pickup radius</td><td>3</td></tr>
+<tr><td>Repair</td><td>+30 health</td><td>When below max</td></tr>
+<tr><td>Armor</td><td>+20 max health</td><td>Unlimited</td></tr>
+<tr><td>Gamble (trap)</td><td>+50% damage, −1 projectile</td><td>When multishot is above 1</td></tr>
 </table></div>
-<p>Gates appear in pairs every 15 to 20 seconds. Some are traps, like “−1 projectile, +50% damage”, so the choice always takes a moment of thought.</p>
+<p>Upgrade gates appear in pairs every 17 seconds. The trap gate makes the choice take a moment of thought.</p>
 </section>
 
 <section id="monsters">
@@ -560,6 +569,8 @@ New best, 22 s longer than last run
 <tr><td>Choice gates</td><td>Ownership of the build</td><td>Two upgrades side by side every 15 to 20 seconds</td></tr>
 <tr><td>Escalating spectacle</td><td>Power fantasy</td><td>Higher weapon tiers add bigger particles, screen shake and louder sounds</td></tr>
 <tr><td>Best time ghost</td><td>Beat yourself</td><td>A faint marker shows where you died last run</td></tr>
+<tr><td>Level ups</td><td>Constant power spikes</td><td>XP bar fills from every kill; each level brings a weapon gate and a banner naming the newly unlocked gun</td></tr>
+<tr><td>Combo counter</td><td>Rewards aggression</td><td>Kills within 1.7 seconds chain a combo; every 10 pays 5 coins; taking damage resets it</td></tr>
 <tr><td>Milestone unlocks</td><td>Always a next goal</td><td>Death screen shows progress toward the next mintable hero</td></tr>
 <tr><td>Daily missions</td><td>Reason to return</td><td>3 per day, like “Kill 200 Runners” or “Beat a boss with the Scatter Gun”</td></tr>
 <tr><td>Login streak</td><td>Habit</td><td>Coins and a cosmetic every 7 days</td></tr>
@@ -570,18 +581,23 @@ New best, 22 s longer than last run
 
 <section id="hud">
 <h2><span class="n">10</span>HUD, game feel and audio</h2>
-<p class="lead">The screen stays clean so the lanes are always readable; all HUD sits at the edges and fades during calm moments.</p>
+<p class="lead">The screen stays clean so the lanes are always readable: HUD panels are translucent glass at the edges, and big moments get banners rather than clutter.</p>
 <div class="tbl"><table>
 <tr><th>HUD element</th><th>Position</th><th>Notes</th></tr>
-<tr><td>Health bar</td><td>Top left</td><td>Flashes red below 25%</td></tr>
-<tr><td>Timer and wave number</td><td>Top centre</td><td>Pulses when a new wave starts</td></tr>
-<tr><td>Coins and kills</td><td>Top right</td><td>Counts up with a small bounce</td></tr>
-<tr><td>Current weapon and tier</td><td>Bottom left</td><td>Icon with tier colour ring</td></tr>
-<tr><td>Special ability meter</td><td>Bottom right</td><td>Glows when ready</td></tr>
+<tr><td>Health bar</td><td>Top left</td><td>Segmented; turns red and pulses below 25%</td></tr>
+<tr><td>Timer and wave</td><td>Top centre</td><td>Timer sits inside a ring that fills as the current 30 second wave progresses</td></tr>
+<tr><td>Coins, kills, pause</td><td>Top right</td><td>Coin pill bounces on every pickup</td></tr>
+<tr><td>Combo counter</td><td>Right side</td><td>Appears from 3 chained kills</td></tr>
 <tr><td>Boss health bar</td><td>Below timer</td><td>Only during boss fights</td></tr>
+<tr><td>Level and XP bar</td><td>Bottom left</td><td>Shows the next weapon unlock and its level</td></tr>
+<tr><td>Upgrade chips</td><td>Bottom left</td><td>Shots, fire rate, damage and crit totals</td></tr>
+<tr><td>Weapon card</td><td>Bottom left</td><td>Weapon icon, name, tier name and five tier pips in the tier colour</td></tr>
+<tr><td>Nova button</td><td>Bottom right</td><td>Circular charge meter that glows when ready</td></tr>
 </table></div>
-<p>Game feel essentials: 40 ms hit stop on heavy hits, damage numbers that pop and fade, enemies flash white when struck, and a dissolve with an orb burst on death. Weapon pickups trigger a 0.3 second zoom and a rising sound sting.</p>
-<p>Audio: a driving synthwave track that layers in extra instruments every 5 waves, distinct sounds per weapon tier, and a clear cue 1 second before any lane wide attack so players can react by sound alone.</p>
+<p>Game feel: 40 ms hit stop on heavy hits, floating damage numbers (crits in large gold), white hit flashes, glowing projectiles with muzzle flashes and impact flares, a light trail behind the hero in its accent colour, health bars over Brutes and Elites, and glowing auras on Elites. Wave, level and boss moments get large animated banners.</p>
+<p>World style: synthwave sky gradient with stars and a striped sunset sun, a scrolling neon grid beside the track, mountains outlined in neon, glowing rails and light posts. Speed streaks and a tinted screen edge appear as run speed rises.</p>
+<p>Menus: the main menu shows the chosen hero in 3D facing the camera, a grid of four hero cards, and an armory of nine weapon tiles that show their unlock level and describe the weapon when tapped. Starting a run swoops the camera behind the hero. The death screen counts up kills, coins, best combo and level reached, and animates progress toward the next hero.</p>
+<p>Audio: a driving synthwave track that layers in extra instruments every 5 waves, distinct sounds per weapon, and a clear cue 1 second before any lane wide attack so players can react by sound alone. The prototype uses simple synthesized sounds as placeholders.</p>
 </section>
 
 <section id="web3">
@@ -665,12 +681,12 @@ New best, 22 s longer than last run
 <tr><td>Game core (phases 0 to 5)</td><td><span class="diff med">Medium</span></td><td>4 to 5 weeks</td><td>Agents write the code well; feel and balance need your playtesting</td></tr>
 <tr><td>Basic leaderboard</td><td><span class="diff easy">Easy</span></td><td>1 to 2 days</td><td>A table plus an insert is quick, but anyone could post fake scores</td></tr>
 <tr><td>Cheat resistant leaderboard</td><td><span class="diff med">Medium</span></td><td>4 to 6 days</td><td>Server run tokens and plausibility checks; it stops casual cheaters, not determined ones</td></tr>
-<tr><td>Frontend deploy</td><td><span class="diff easy">Easy</span></td><td>Under 1 hour</td><td>Vercel or Netlify, automatic on every push</td></tr>
+<tr><td>Frontend deploy</td><td><span class="diff easy">Easy</span></td><td>Under 1 hour</td><td>Cloudflare Pages, automatic on every push; its free tier allows commercial use</td></tr>
 <tr><td>Backend deploy</td><td><span class="diff easy">Easy</span></td><td>Under 1 hour</td><td>Supabase hosted; free tier first, about 25 USD a month on Pro at scale</td></tr>
 <tr><td>Onchain identity layer</td><td><span class="diff med">Medium</span></td><td>1 to 1.5 weeks</td><td>Name lookups are simple; SIWE, profile pages and badges add the work</td></tr>
 <tr><td>NFT contracts and claims</td><td><span class="diff hard">Hard</span></td><td>1.5 to 2 weeks</td><td>Real money risk; testnet first and a review before mainnet</td></tr>
 </table></div>
-<p>Recommended stack for the agent: Vite, TypeScript and Three.js for the game, Howler.js for audio, Supabase (Postgres, Auth, Edge Functions, scheduled jobs) for the backend, Vercel for hosting, and OpenZeppelin, Foundry, wagmi and viem for Web3.</p>
+<p>Recommended stack for the agent: Vite, TypeScript and Three.js for the game, Howler.js for audio, Supabase (Postgres, Auth, Edge Functions, scheduled jobs) for the backend, Cloudflare Pages for hosting (free tier, commercial use allowed), and OpenZeppelin, Foundry, wagmi and viem for Web3.</p>
 </section>
 
 <section id="plan">
@@ -682,34 +698,62 @@ Use TypeScript strictly. Keep every balance number in src/data/*.json, never har
 Use object pooling for bullets, monsters, particles and pickups.
 Keep the game playable without a wallet or an account.
 Never commit secrets or private keys; use environment variables.
+Do not add any paid service, paid plan or paid API. Use only free tiers and testnets unless I say otherwise.
 After each phase: run lint and tests, update README with how to run and deploy, and list anything you could not finish.</pre>
 <article class="phase"><h3>Phase 0: Project setup and first deploy <small>1 day</small> <span class="diff easy">Easy</span></h3>
-<p>Get an empty game running at a public URL so every later phase ships continuously.</p><div class="label">Tasks</div><ul><li>Scaffold a Vite project with TypeScript and Three.js.</li><li>Create the folder structure: src/game (scene, entities, systems), src/ui, src/data (all balance numbers as JSON), src/net, src/web3.</li><li>Add ESLint, Prettier and Vitest.</li><li>Connect the GitHub repo to Vercel so every push gets a preview URL.</li></ul><div class="label">Done when</div><ul><li>A dark scene with five lanes renders at a Vercel URL on desktop and on a phone in portrait.</li></ul>
-<div class="label">Prompt for the agent</div><pre class="prompt">Read the attached PRD. Implement Phase 0 only. Scaffold a Vite + TypeScript + Three.js app with the folder structure from the PRD, put every balance value in src/data/*.json, add ESLint, Prettier and Vitest, and render a five lane track at night in portrait. Stop when it builds cleanly and give me the commands to deploy it on Vercel.</pre></article><article class="phase"><h3>Phase 1: Runner core <small>3 to 4 days</small> <span class="diff med">Medium</span></h3>
-<p>Movement, camera, obstacles and death: the game is playable with no combat yet.</p><div class="label">Tasks</div><ul><li>Hero with lane switch (0.15 s eased), jump and slide; swipe and keyboard input.</li><li>Third person camera as specified in section 4, tuned for portrait.</li><li>Obstacle row generator from templates in src/data/obstacles.json, always leaving one lane open.</li><li>AABB collision, health, death, and restart in under 1 second.</li></ul><div class="label">Done when</div><ul><li>60 fps on a midrange phone, a run can be lost and restarted instantly, no row is ever fully blocked (unit test the generator).</li></ul>
+<p>Get an empty game running at a public URL so every later phase ships continuously.</p><div class="cost"><b>Cost: $0</b><span>GitHub (free) and Cloudflare Pages free tier, which unlike Vercel’s free Hobby plan also allows commercial use, so there is no forced upgrade later.</span></div>
+<div class="label">Tasks</div><ul><li>Scaffold a Vite project with TypeScript and Three.js.</li><li>Create the folder structure: src/game (scene, entities, systems), src/ui, src/data (all balance numbers as JSON), src/net, src/web3.</li><li>Add ESLint, Prettier and Vitest.</li><li>Connect the GitHub repo to Cloudflare Pages so every push gets a preview URL.</li></ul><div class="label">Done when</div><ul><li>A dark scene with five lanes renders at a Cloudflare Pages URL on desktop and on a phone in portrait.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Read the attached PRD. Implement Phase 0 only. Scaffold a Vite + TypeScript + Three.js app with the folder structure from the PRD, put every balance value in src/data/*.json, add ESLint, Prettier and Vitest, and render a five lane track at night in portrait. Stop when it builds cleanly and give me the commands to deploy it on Cloudflare Pages.</pre></article><article class="phase"><h3>Phase 1: Runner core <small>3 to 4 days</small> <span class="diff med">Medium</span></h3>
+<p>Movement, camera, obstacles and death: the game is playable with no combat yet.</p><div class="cost"><b>Cost: $0</b><span>Code only. Use the shapes from the prototype or free CC0 asset packs; no paid art.</span></div>
+<div class="label">Tasks</div><ul><li>Hero with lane switch (0.15 s eased), jump and slide; swipe and keyboard input.</li><li>Third person camera as specified in section 4, tuned for portrait.</li><li>Obstacle row generator from templates in src/data/obstacles.json, always leaving one lane open.</li><li>AABB collision, health, death, and restart in under 1 second.</li></ul><div class="label">Done when</div><ul><li>60 fps on a midrange phone, a run can be lost and restarted instantly, no row is ever fully blocked (unit test the generator).</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 1 of the PRD: hero movement, controls, camera, obstacle generator and death/restart. Use object pooling. Write Vitest tests proving every generated row has at least one passable lane. Do not start combat.</pre></article><article class="phase"><h3>Phase 2: Combat and waves <small>4 to 5 days</small> <span class="diff med">Medium</span></h3>
-<p>Auto fire, monsters and the 30 second wave clock.</p><div class="label">Tasks</div><ul><li>Auto aim targeting (current lane first, then adjacent).</li><li>Pooled bullets and monsters: Crawler, Runner, Brute.</li><li>Wave director using the HP and spawn formulas from section 8.</li><li>Coins and XP orbs with magnet pickup.</li></ul><div class="label">Done when</div><ul><li>Wave 6 feels hard for a new player, HP and spawn counts match the formulas in tests, no garbage collection spikes in the profiler.</li></ul>
+<p>Auto fire, monsters and the 30 second wave clock.</p><div class="cost"><b>Cost: $0</b><span>Code only.</span></div>
+<div class="label">Tasks</div><ul><li>Auto aim targeting (current lane first, then adjacent).</li><li>Pooled bullets and monsters: Crawler, Runner, Brute.</li><li>Wave director using the HP and spawn formulas from section 8.</li><li>Coins and XP orbs with magnet pickup.</li></ul><div class="label">Done when</div><ul><li>Wave 6 feels hard for a new player, HP and spawn counts match the formulas in tests, no garbage collection spikes in the profiler.</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 2: auto fire, three monster types, the wave director with the exact formulas from section 8, and pickups. Read all numbers from src/data. Add tests for the scaling formulas.</pre></article><article class="phase"><h3>Phase 3: Weapons, upgrade gates and HUD <small>4 days</small> <span class="diff med">Medium</span></h3>
-<p>The build crafting layer that makes runs feel different.</p><div class="label">Tasks</div><ul><li>Blaster, Scatter Gun and Laser Beam with 5 tiers each.</li><li>Upgrade gates in pairs every 15 to 20 seconds, including trap gates.</li><li>Upgrade stacks with max limits from section 6.</li><li>HUD from section 10 as an HTML overlay above the canvas.</li></ul><div class="label">Done when</div><ul><li>Every upgrade visibly changes play, tiers change colour and sound, HUD matches the concept screens.</li></ul>
+<p>The build crafting layer that makes runs feel different.</p><div class="cost"><b>Cost: $0</b><span>Code only.</span></div>
+<div class="label">Tasks</div><ul><li>Blaster, Scatter Gun and Laser Beam with 5 tiers each.</li><li>Upgrade gates in pairs every 15 to 20 seconds, including trap gates.</li><li>Upgrade stacks with max limits from section 6.</li><li>HUD from section 10 as an HTML overlay above the canvas.</li></ul><div class="label">Done when</div><ul><li>Every upgrade visibly changes play, tiers change colour and sound, HUD matches the concept screens.</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 3: three weapons with tiers, the upgrade gate system with stack limits, and the HUD as an HTML overlay matching the concept screens in the PRD.</pre></article><article class="phase"><h3>Phase 4: Boss, game feel and audio <small>4 to 5 days</small> <span class="diff med">Medium</span></h3>
-<p>The polish that makes it addictive.</p><div class="label">Tasks</div><ul><li>Iron Golem boss at wave 5 with telegraphed slams.</li><li>Hit stop, damage numbers, white flash, death dissolve, near miss slow motion, screen shake.</li><li>Synthwave music layers per 5 waves, weapon sounds, warning cues.</li><li>Dynamic difficulty assist.</li></ul><div class="label">Done when</div><ul><li>Five playtesters each say they wanted another run; frame rate holds during the boss fight.</li></ul>
+<p>The polish that makes it addictive.</p><div class="cost"><b>Cost: $0</b><span>Synthesized sounds as in the prototype, or free CC0 music and effects. Commissioned audio waits until after real user testing.</span></div>
+<div class="label">Tasks</div><ul><li>Iron Golem boss at wave 5 with telegraphed slams.</li><li>Hit stop, damage numbers, white flash, death dissolve, near miss slow motion, screen shake.</li><li>Synthwave music layers per 5 waves, weapon sounds, warning cues.</li><li>Dynamic difficulty assist.</li></ul><div class="label">Done when</div><ul><li>Five playtesters each say they wanted another run; frame rate holds during the boss fight.</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 4: the Iron Golem boss, every game feel effect in section 10, audio with Howler.js, and the dynamic difficulty assist. Keep all effects behind a quality setting for low end phones.</pre></article><article class="phase"><h3>Phase 5: Meta, screens and saves <small>3 to 4 days</small> <span class="diff easy">Easy</span></h3>
-<p>Everything between runs.</p><div class="label">Tasks</div><ul><li>Hero select and death screens matching the concept screens.</li><li>Coins, permanent upgrades, daily missions, login streak.</li><li>Local saves with a versioned schema.</li><li>Analytics events listed in section 12.</li></ul><div class="label">Done when</div><ul><li>A guest player can play 5 runs, close the tab, return and keep all progress.</li></ul>
+<p>Everything between runs.</p><div class="cost"><b>Cost: $0</b><span>Saves stay in the browser and analytics events go to the console or a free analytics tier; no paid tools.</span></div>
+<div class="label">Tasks</div><ul><li>Hero select and death screens matching the concept screens.</li><li>Coins, permanent upgrades, daily missions, login streak.</li><li>Local saves with a versioned schema.</li><li>Analytics events listed in section 12.</li></ul><div class="label">Done when</div><ul><li>A guest player can play 5 runs, close the tab, return and keep all progress.</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 5: hero select, death screen, permanent upgrades, daily missions and versioned local saves. Match the concept screens in the PRD. Add analytics events behind a single track() function.</pre></article><article class="phase"><h3>Phase 6: Backend leaderboard <small>4 to 6 days</small> <span class="diff med">Medium</span></h3>
-<p>A weekly leaderboard that cannot be filled by fake scores.</p><div class="label">Tasks</div><ul><li>Supabase project: tables players, runs, and a weekly_leaderboard view; Row Level Security so clients can only read.</li><li>Anonymous auth for guests, upgraded later by wallet sign in.</li><li>Edge Function start_run issues a signed run token with seed and start time.</li><li>Edge Function submit_run checks the token, real elapsed time, max score per second, max kills per wave, and rate limits per player.</li><li>Scheduled function archives and resets the board every Monday.</li><li>Leaderboard screen with global and friends tabs.</li></ul><div class="label">Done when</div><ul><li>Posting a score directly to the database fails, an impossible score is rejected, the board resets weekly.</li></ul>
+<p>A weekly leaderboard that cannot be filled by fake scores.</p><div class="cost"><b>Cost: $0 while testing</b><span>Supabase Free plan: 500 MB database, 50,000 monthly active users, 2 projects. Free projects pause after 7 days without activity, so add a free scheduled GitHub Action that pings it. First real spend: Supabase Pro at about 25 USD a month, only once real players depend on uptime and backups.</span></div>
+<div class="label">Tasks</div><ul><li>Supabase project: tables players, runs, and a weekly_leaderboard view; Row Level Security so clients can only read.</li><li>Anonymous auth for guests, upgraded later by wallet sign in.</li><li>Edge Function start_run issues a signed run token with seed and start time.</li><li>Edge Function submit_run checks the token, real elapsed time, max score per second, max kills per wave, and rate limits per player.</li><li>Scheduled function archives and resets the board every Monday.</li><li>Leaderboard screen with global and friends tabs.</li></ul><div class="label">Done when</div><ul><li>Posting a score directly to the database fails, an impossible score is rejected, the board resets weekly.</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 6: a Supabase backend with the tables, Row Level Security, start_run and submit_run Edge Functions, plausibility checks, rate limiting and a weekly reset job, plus the leaderboard UI. Clients must never write scores directly. Include SQL migrations and a README with deploy commands.</pre></article><article class="phase"><h3>Phase 7: Web3 heroes on testnet <small>1.5 to 2 weeks</small> <span class="diff hard">Hard</span></h3>
-<p>Wallet connect, NFT heroes and claims, first on a testnet.</p><div class="label">Tasks</div><ul><li>ERC721 hero contract with OpenZeppelin, royalties (ERC2981) and a claim function that accepts a server signed voucher; tests in Foundry.</li><li>Deploy to Base Sepolia; metadata and art on IPFS.</li><li>Wallet connect with wagmi and viem; game fully works without a wallet.</li><li>Edge Function signs claim vouchers only for verified milestone runs.</li><li>Owned heroes load from the chain into the hero select screen.</li></ul><div class="label">Done when</div><ul><li>A guest can connect a wallet, claim the starter hero, reach a milestone and claim a second hero on testnet; contract tests pass with full coverage.</li></ul>
+<p>Wallet connect, NFT heroes and claims, first on a testnet.</p><div class="cost"><b>Cost: $0 on testnet</b><span>Base Sepolia test ETH from a faucet, a free RPC provider tier, a free IPFS pinning tier and Foundry (free). First real spend, only after the go decision: a few dollars or less of gas to deploy on Base mainnet, cents per sponsored starter mint, and a contract review before real money is involved (free community review first; a paid audit can cost thousands, so only if NFT sales justify it).</span></div>
+<div class="label">Tasks</div><ul><li>ERC721 hero contract with OpenZeppelin, royalties (ERC2981) and a claim function that accepts a server signed voucher; tests in Foundry.</li><li>Deploy to Base Sepolia; metadata and art on IPFS.</li><li>Wallet connect with wagmi and viem; game fully works without a wallet.</li><li>Edge Function signs claim vouchers only for verified milestone runs.</li><li>Owned heroes load from the chain into the hero select screen.</li></ul><div class="label">Done when</div><ul><li>A guest can connect a wallet, claim the starter hero, reach a milestone and claim a second hero on testnet; contract tests pass with full coverage.</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 7 on Base Sepolia only: an OpenZeppelin ERC721 with ERC2981 royalties and voucher based claims, Foundry tests, IPFS metadata, wagmi wallet connect, and a Supabase Edge Function that signs vouchers only for runs verified in Phase 6. Never put private keys in the client or the repo.</pre></article><article class="phase"><h3>Phase 8: Onchain identity before Endless <small>1 to 1.5 weeks</small> <span class="diff med">Medium</span></h3>
 <p>Give players the “domain as identity” experience now with Basenames and ENS, through a provider layer that Endless Domains slots into later. Needs Phases 6 and 7.</p>
-<div class="label">Step by step</div><ol class="steps"><li>Add a private RPC provider (for example Alchemy or QuickNode) for Ethereum mainnet and Base, stored in environment variables; public RPCs are too slow for name resolution.</li><li>Create src/identity/types.ts with a PlayerIdentity type: address, displayName, avatarUrl and source (basename, ens or address).</li><li>Write one provider file per name system in src/identity/providers: basenameProvider uses viem getEnsName with the Base coin type, ensProvider uses getEnsName and getEnsAvatar on mainnet, addressProvider returns the short address. Each exposes resolve(address) and returns an identity or null.</li><li>Write resolveIdentity(address) in src/identity/index.ts: it tries providers in the order listed in src/data/identity.json, gives each a 2 second timeout, and caches the result for 24 hours.</li><li>Add Sign In With Ethereum: a siwe_nonce Edge Function issues a one time nonce, the player signs a message, and a siwe_verify Edge Function checks the signature and links the wallet to their Supabase player, merging any guest progress.</li><li>Resolve identity on the server too, inside siwe_verify and a daily refresh job, and store display_name, avatar_url and identity_source on the players table so leaderboards never resolve names in the browser.</li><li>Show the identity everywhere through one IdentityChip component: hero select header, leaderboard rows, death screen and the share card.</li><li>Add the NFT avatar picker: an Edge Function lists NFTs the wallet holds via an indexer API, the player picks one, and the daily job drops it if the wallet no longer owns it.</li><li>Build public profile pages at /p/:name: a page showing name, avatar, owned heroes, best wave and badges, plus a Vercel function that renders a social preview image.</li><li>Add holder perks from src/data/perks.json (chain, contract address, cosmetic reward); siwe_verify checks balances and unlocks only cosmetics.</li><li>Write the soulbound badge contract: an ERC721 that blocks transfers and reports locked status (ERC5192), minted with the same server signed vouchers as heroes, deployed to Base Sepolia with Foundry tests.</li><li>Add tests: provider order, fallbacks, timeouts, cache expiry, SIWE replay protection, and a fake provider proving a new name system plugs in with one file and one line in identity.json.</li></ol>
+<div class="cost"><b>Cost: $0</b><span>Reading Basenames and ENS is free through the same free RPC tier; badges stay on testnet until launch.</span></div>
+<div class="label">Step by step</div><ol class="steps"><li>Add a private RPC provider (for example Alchemy or QuickNode) for Ethereum mainnet and Base, stored in environment variables; public RPCs are too slow for name resolution.</li><li>Create src/identity/types.ts with a PlayerIdentity type: address, displayName, avatarUrl and source (basename, ens or address).</li><li>Write one provider file per name system in src/identity/providers: basenameProvider uses viem getEnsName with the Base coin type, ensProvider uses getEnsName and getEnsAvatar on mainnet, addressProvider returns the short address. Each exposes resolve(address) and returns an identity or null.</li><li>Write resolveIdentity(address) in src/identity/index.ts: it tries providers in the order listed in src/data/identity.json, gives each a 2 second timeout, and caches the result for 24 hours.</li><li>Add Sign In With Ethereum: a siwe_nonce Edge Function issues a one time nonce, the player signs a message, and a siwe_verify Edge Function checks the signature and links the wallet to their Supabase player, merging any guest progress.</li><li>Resolve identity on the server too, inside siwe_verify and a daily refresh job, and store display_name, avatar_url and identity_source on the players table so leaderboards never resolve names in the browser.</li><li>Show the identity everywhere through one IdentityChip component: hero select header, leaderboard rows, death screen and the share card.</li><li>Add the NFT avatar picker: an Edge Function lists NFTs the wallet holds via an indexer API, the player picks one, and the daily job drops it if the wallet no longer owns it.</li><li>Build public profile pages at /p/:name: a page showing name, avatar, owned heroes, best wave and badges, plus a Cloudflare Pages Function that renders a social preview image.</li><li>Add holder perks from src/data/perks.json (chain, contract address, cosmetic reward); siwe_verify checks balances and unlocks only cosmetics.</li><li>Write the soulbound badge contract: an ERC721 that blocks transfers and reports locked status (ERC5192), minted with the same server signed vouchers as heroes, deployed to Base Sepolia with Foundry tests.</li><li>Add tests: provider order, fallbacks, timeouts, cache expiry, SIWE replay protection, and a fake provider proving a new name system plugs in with one file and one line in identity.json.</li></ol>
 <div class="label">Done when</div><ul><li>A wallet with a Basename shows it on every screen; one with only ENS shows that; one with neither shows the short address.</li><li>Leaderboard rows show names and avatars without any browser side lookups.</li><li>A profile link shared on social media shows a preview card.</li><li>A holder perk unlocks for a test wallet, and a badge mints on Base Sepolia and cannot be transferred.</li><li>A fake provider added in tests works with one new file and one line of config.</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 8 of the PRD, following its step by step list in order. Build the identity layer in src/identity with one file per provider and the provider order in src/data/identity.json, so a future Endless Domains provider needs only one new file and one config line. Add Sign In With Ethereum through Supabase Edge Functions with nonce replay protection, store resolved names on the players table, add the IdentityChip, NFT avatar picker, /p/:name profile pages with preview images, cosmetic holder perks, and an ERC5192 soulbound badge contract on Base Sepolia with Foundry tests. Use environment variables for every RPC URL and key.</pre></article>
 <article class="phase"><h3>Phase 9: Production launch <small>3 to 5 days</small> <span class="diff med">Medium</span></h3>
-<p>Ship it publicly.</p><div class="label">Tasks</div><ul><li>Production Supabase and Vercel environments with secrets in environment variables.</li><li>Custom domain, error tracking with Sentry, uptime checks.</li><li>PWA install support; later wrap with Capacitor for stores.</li><li>Contract audit or experienced review before mainnet deploy.</li></ul><div class="label">Done when</div><ul><li>Live URL, error tracking working, contracts reviewed and deployed to mainnet.</li></ul>
+<p>Ship it publicly.</p><div class="cost"><b>Cost: $0 possible</b><span>Launch on free tiers with a free pages.dev address and the Sentry free tier. Optional spends after real user testing: a custom domain (a small yearly fee), Supabase Pro, mainnet gas, and app store developer accounts only if you wrap it for stores (Google charges a one time fee, Apple a yearly one).</span></div>
+<div class="label">Tasks</div><ul><li>Production Supabase and Cloudflare Pages environments with secrets in environment variables.</li><li>Custom domain, error tracking with Sentry, uptime checks.</li><li>PWA install support; later wrap with Capacitor for stores.</li><li>Contract audit or experienced review before mainnet deploy.</li></ul><div class="label">Done when</div><ul><li>Live URL, error tracking working, contracts reviewed and deployed to mainnet.</li></ul>
 <div class="label">Prompt for the agent</div><pre class="prompt">Prepare Phase 9: production configs, Sentry, PWA manifest and a launch checklist. Do not deploy contracts to mainnet; list the steps for me to run after review.</pre></article>
 <p>Phase 10, later: when the Endless Domains SDK arrives, add an endlessProvider as the first entry in the identity provider order from Phase 8, and add “owns an Endless domain” as a perk rule. No screen needs to change.</p>
 </section>
 
+
+<section id="cost">
+<h2><span class="n">16</span>Cost plan: no spend until real users test it</h2>
+<p class="lead">Everything up to and including real user testing costs 0 USD: phases 0 to 8 run entirely on free tiers and testnets, and the first paid item only appears once players prove they want the game.</p>
+<div class="tbl"><table>
+<tr><th>Phase</th><th>Cost while building and testing</th><th>First possible spend, and its trigger</th></tr>
+<tr><td>0 to 5: game core</td><td>$0</td><td>None needed</td></tr>
+<tr><td>6: leaderboard</td><td>$0 (Supabase Free)</td><td>Supabase Pro, about 25 USD a month, when real players need uptime and backups</td></tr>
+<tr><td>7: Web3 heroes</td><td>$0 (testnet, free RPC and IPFS tiers)</td><td>Mainnet gas (a few dollars or less on Base) and sponsored mints (cents each) after the go decision; a paid audit only if NFT sales justify it</td></tr>
+<tr><td>8: identity</td><td>$0</td><td>None; badges mint on mainnet with the heroes</td></tr>
+<tr><td>9: launch</td><td>$0 on free tiers</td><td>Optional custom domain, app store accounts</td></tr>
+<tr><td>10: Endless Domains</td><td>$0</td><td>None; it is your own product’s SDK</td></tr>
+</table></div>
+<h3>The spend gate</h3>
+<p>Money is spent only after a free soft launch where real players, not just friends, play the plain web version for at least two weeks and the numbers from section 2 hold up: Day 1 retention near 40%, 4 or more runs per session, and players restarting within 10 seconds of dying. If those numbers miss, fix the game on the free stack instead of paying for infrastructure.</p>
+<p>Two notes: your AI agent subscription is outside this plan, and free tier limits and prices change, so check each provider’s pricing page before you rely on it. Prices here were checked in November 2026.</p>
+</section>
 </main>
 </div>
 <footer>Concept screens are flat vector stand ins for the final 3D art.</footer>
