@@ -1,0 +1,717 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lane Siege · Product Requirements</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0B0D1A; --track:#171B36; --lane:#3A4170;
+  --cyan:#3DE0FF; --pink:#FF4FA3; --amber:#FFB23D; --mint:#4DFFB0;
+  --paper:#EEF0FA; --surface:#FFFFFF; --ink:#151834; --muted:#4A5078; --rule:#D3D7EE; --tag:#E2E6FA;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#10132A; --surface:#171B36; --ink:#EEF0FF; --muted:#A9B0DD; --rule:#2C3260; --tag:#232953; color-scheme: dark; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+a{color:inherit}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;line-height:1.15;margin:0}
+.hero{background:var(--night);color:#F2F4FF;position:relative;overflow:hidden;padding:56px 24px 48px}
+.hero::before{content:"";position:absolute;inset:0;background:
+  linear-gradient(transparent 0 0),
+  repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),rgba(58,65,112,.45) calc(20% - 1px) 20%);
+  mask-image:linear-gradient(to bottom,transparent,#000 60%);pointer-events:none}
+.hero-head{position:relative;max-width:1200px;margin:0 auto 40px;display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+.hero h1{font-size:clamp(48px,9vw,112px);letter-spacing:-.03em;line-height:.92}
+.hero h1 .row2{display:block;color:var(--cyan)}
+.hero p{max-width:60ch;margin:0;color:#C9CEF5;font-size:18px}
+.meta{display:flex;flex-wrap:wrap;gap:8px 20px;color:#9EA6DA;font-size:14px}
+.screens{position:relative;max-width:1260px;margin:0 auto;display:flex;gap:28px;overflow-x:auto;padding:4px 4px 16px;scroll-snap-type:x mandatory}
+.screen{margin:0;flex:0 0 auto;scroll-snap-align:start;display:flex;flex-direction:column;gap:12px;width:292px}
+.phone{width:292px;height:633px;border-radius:28px;overflow:hidden;border:3px solid #2A2F55;background:var(--night);box-shadow:0 24px 60px rgba(0,0,0,.45)}
+.phone-inner{width:390px;height:844px;transform:scale(.7487);transform-origin:top left}
+.phone-inner button{cursor:default}
+.screen figcaption{display:flex;flex-direction:column;gap:2px;font-size:14px;color:#C9CEF5}
+.screen figcaption strong{color:#F2F4FF;font-family:"Space Grotesk",sans-serif;font-size:16px}
+.layout{max-width:1200px;margin:0 auto;padding:56px 24px 96px;display:flex;flex-wrap:wrap;gap:48px}
+nav.toc{flex:1 1 200px;max-width:240px}
+nav.toc ol{list-style:none;margin:0;padding:0;position:sticky;top:24px;display:flex;flex-direction:column;gap:6px;font-size:14px;counter-reset:s}
+nav.toc li{counter-increment:s}
+nav.toc a{text-decoration:none;color:var(--muted);display:block;padding:4px 0 4px 12px;border-left:2px solid var(--rule)}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--ink);border-left-color:var(--pink);outline:none}
+main{flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:56px}
+section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:24px}
+section h2{font-size:30px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:14px}
+section h2 .n{font-size:15px;color:var(--pink);font-weight:700;min-width:24px}
+section h3{font-size:18px;margin-top:8px}
+.lead{font-size:19px;line-height:1.5;margin:0;max-width:62ch}
+p{margin:0;max-width:68ch}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font-weight:700;background:var(--tag);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+ol.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;max-width:68ch}
+.formula{font-family:"Space Grotesk",sans-serif;font-size:18px;background:var(--surface);border:1px solid var(--rule);border-radius:12px;padding:14px 18px;overflow-x:auto}
+.decide{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+.decide div{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--cyan);border-radius:10px;padding:14px 16px;display:flex;flex-direction:column;gap:4px}
+.decide strong{font-family:"Space Grotesk",sans-serif;font-size:17px}
+.decide span{color:var(--muted);font-size:14.5px}
+footer{max-width:1200px;margin:0 auto;padding:0 24px 48px;color:var(--muted);font-size:14px}
+.diff{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:13px}
+.easy{background:#C9F7E3;color:#0D4A31}.med{background:#FFE7BF;color:#5A3A00}.hard{background:#FFD3E6;color:#6B0F38}
+.phase{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:20px 22px;display:flex;flex-direction:column;gap:12px}
+.phase h3{margin:0;font-size:20px;display:flex;flex-wrap:wrap;gap:6px 12px;align-items:baseline}
+.phase h3 small{font-family:Inter,sans-serif;font-weight:600;font-size:13px;color:var(--muted)}
+.phase ul{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;max-width:70ch}
+.phase .label{font-weight:700;font-size:14px}
+pre.prompt{margin:0;white-space:pre-wrap;background:var(--night);color:#DDE2FF;border-radius:10px;padding:14px 16px;font:13.5px/1.55 "Space Grotesk",Inter,sans-serif;overflow-x:auto}
+@media (prefers-reduced-motion:no-preference){.screens{scroll-behavior:smooth}}
+@media print{.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}nav.toc{display:none}}
+</style>
+</head>
+<body>
+<header class="hero">
+<div class="hero-head">
+<h1>Lane Siege<span class="row2">Survival Shooter</span></h1>
+<p>Product requirements for a portrait Web3 minigame: run five lanes, dodge, pick upgrades, and outlast monsters that grow stronger every 30 seconds. Every hero is an NFT you own.</p>
+<div class="meta"><span>Product requirements document</span><span>Updated 19 November 2026</span><span>Owner: Akshat</span><a href="https://claude.ai/artifact/QzcgAuXCetMC6BRtfp2XDM">Play the prototype</a></div>
+</div>
+<div class="screens" tabindex="0" aria-label="Concept screens, scroll sideways">
+<figure class="screen"><div class="phone"><div class="phone-inner"><div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0D1A; font-family: Inter, system-ui, sans-serif; color: #F2F4FF">
+<svg width="390" height="844" viewBox="0 0 390 844" style="position: absolute; inset: 0" role="img" aria-label="Third person view of a hero running down five lanes, shooting at monsters ahead">
+<defs>
+<linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B0D1A"></stop><stop offset="1" stop-color="#2A1240"></stop></linearGradient>
+<radialGradient id="glow" cx="0.5" cy="0.5" r="0.5"><stop offset="0" stop-color="#3DE0FF" stop-opacity="0.9"></stop><stop offset="1" stop-color="#3DE0FF" stop-opacity="0"></stop></radialGradient>
+</defs>
+<rect width="390" height="250" fill="url(#sky)"></rect>
+<circle cx="195" cy="236" r="60" fill="#FF4FA3" opacity="0.35"></circle>
+<path d="M0 250 L40 205 L80 228 L120 190 L160 222 L200 196 L240 226 L280 186 L320 220 L360 198 L390 214 L390 250 Z" fill="#14112B"></path>
+<rect y="250" width="390" height="594" fill="#0E1022"></rect>
+<polygon points="160,250 230,250 430,844 -40,844" fill="#171B36"></polygon>
+<g stroke="#3A4170" stroke-width="2">
+<line x1="174" y1="250" x2="54" y2="844"></line>
+<line x1="188" y1="250" x2="148" y2="844"></line>
+<line x1="202" y1="250" x2="242" y2="844"></line>
+<line x1="216" y1="250" x2="336" y2="844"></line>
+</g>
+<g stroke="#FF4FA3" stroke-width="3" opacity="0.7">
+<line x1="160" y1="250" x2="-40" y2="844"></line>
+<line x1="230" y1="250" x2="430" y2="844"></line>
+</g>
+<g fill="#262C52" opacity="0.8">
+<rect x="0" y="400" width="390" height="2"></rect>
+<rect x="0" y="520" width="390" height="3"></rect>
+<rect x="0" y="680" width="390" height="4"></rect>
+</g>
+<g>
+<rect x="132" y="370" width="10" height="12" rx="4" fill="#FF8AC4"></rect>
+<rect x="126" y="374" width="9" height="10" rx="4" fill="#FF8AC4"></rect>
+<rect x="141" y="374" width="9" height="10" rx="4" fill="#FF8AC4"></rect>
+</g>
+<g transform="translate(229 398) scale(0.45)">
+<ellipse cx="0" cy="0" rx="34" ry="28" fill="#B84DFF"></ellipse>
+<circle cx="-12" cy="-6" r="7" fill="#FFF"></circle><circle cx="12" cy="-6" r="7" fill="#FFF"></circle>
+<circle cx="-12" cy="-5" r="3" fill="#0B0D1A"></circle><circle cx="12" cy="-5" r="3" fill="#0B0D1A"></circle>
+<path d="M-14 12 L-8 6 L-2 12 L4 6 L10 12" stroke="#FFF" stroke-width="3" fill="none"></path>
+</g>
+<g transform="translate(153 458) scale(0.6)">
+<ellipse cx="0" cy="0" rx="34" ry="28" fill="#FF4FA3"></ellipse>
+<circle cx="-12" cy="-6" r="7" fill="#FFF"></circle><circle cx="12" cy="-6" r="7" fill="#FFF"></circle>
+<circle cx="-12" cy="-5" r="3" fill="#0B0D1A"></circle><circle cx="12" cy="-5" r="3" fill="#0B0D1A"></circle>
+<path d="M-14 12 L-8 6 L-2 12 L4 6 L10 12" stroke="#FFF" stroke-width="3" fill="none"></path>
+<circle cx="0" cy="0" r="40" fill="none" stroke="#FFFFFF" stroke-width="3" opacity="0.6"></circle>
+</g>
+<text x="153" y="425" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="14" fill="#FFE27A">24</text>
+<g transform="translate(298 512) scale(0.75)">
+<rect x="-34" y="-46" width="68" height="70" rx="16" fill="#FF8A3D"></rect>
+<rect x="-46" y="-30" width="18" height="40" rx="8" fill="#D9682A"></rect>
+<rect x="28" y="-30" width="18" height="40" rx="8" fill="#D9682A"></rect>
+<rect x="-18" y="-30" width="36" height="10" rx="4" fill="#3B1A0A"></rect>
+<circle cx="-8" cy="-25" r="3" fill="#FFE27A"></circle><circle cx="8" cy="-25" r="3" fill="#FFE27A"></circle>
+<rect x="-30" y="-58" width="60" height="6" rx="3" fill="#2A1D12"></rect>
+<rect x="-30" y="-58" width="38" height="6" rx="3" fill="#FF4F4F"></rect>
+</g>
+<g>
+<polygon points="61,540 113,540 117,566 57,566" fill="#3A4170" stroke="#6E78C0" stroke-width="2"></polygon>
+<text x="87" y="558" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="9" fill="#C9CEF5">JUMP</text>
+</g>
+<g>
+<rect x="226" y="586" width="62" height="34" rx="4" fill="#FFB23D"></rect>
+<g stroke="#0B0D1A" stroke-width="6"><line x1="232" y1="620" x2="252" y2="586"></line><line x1="252" y1="620" x2="272" y2="586"></line><line x1="272" y1="620" x2="288" y2="593"></line></g>
+</g>
+<g fill="#4DFFB0">
+<circle cx="140" cy="520" r="4"></circle><circle cx="152" cy="540" r="5"></circle><circle cx="128" cy="560" r="5"></circle>
+</g>
+<g stroke="#3DE0FF" stroke-width="4" stroke-linecap="round">
+<line x1="206" y1="690" x2="188" y2="620" opacity="0.9"></line>
+<line x1="182" y1="585" x2="170" y2="530" opacity="0.8"></line>
+<line x1="214" y1="690" x2="220" y2="640" opacity="0.9"></line>
+<line x1="224" y1="600" x2="228" y2="560" opacity="0.7"></line>
+<line x1="198" y1="690" x2="170" y2="630" opacity="0.6"></line>
+</g>
+<g transform="translate(195 760)">
+<ellipse cx="0" cy="70" rx="44" ry="10" fill="#000" opacity="0.4"></ellipse>
+<rect x="-24" y="18" width="18" height="48" rx="8" fill="#1F2547"></rect>
+<rect x="6" y="10" width="18" height="52" rx="8" fill="#1F2547"></rect>
+<rect x="-30" y="-36" width="60" height="62" rx="18" fill="#2B3570"></rect>
+<rect x="-20" y="-28" width="40" height="40" rx="10" fill="#1A2050"></rect>
+<rect x="-14" y="-20" width="28" height="6" rx="3" fill="#3DE0FF"></rect>
+<circle cx="0" cy="-54" r="20" fill="#2B3570"></circle>
+<path d="M-20 -58 Q0 -80 20 -58" fill="#3DE0FF"></path>
+<rect x="24" y="-40" width="14" height="44" rx="6" fill="#2B3570"></rect>
+<rect x="18" y="-74" width="22" height="40" rx="5" fill="#C9CEF5"></rect>
+<circle cx="29" cy="-78" r="14" fill="url(#glow)"></circle>
+</g>
+</svg>
+<div style="position: absolute; top: 20px; left: 16px; right: 16px; display: flex; justify-content: space-between; align-items: flex-start">
+<div style="display: flex; flex-direction: column; gap: 6px; width: 120px">
+<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.08em; color: #C9CEF5">HP 72 / 100</div>
+<div style="height: 10px; border-radius: 6px; background: #2A2F55; overflow: hidden"><div style="width: 72%; height: 100%; background: #4DFFB0"></div></div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px">
+<div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 26px">02:47</div>
+<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: #FF8AC4">WAVE 6</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px; width: 120px">
+<div style="display: flex; align-items: center; gap: 6px; font-weight: 700"><svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="#FFE27A"></circle></svg>1,284</div>
+<div style="font-size: 12px; color: #C9CEF5">186 kills</div>
+</div>
+</div>
+<div style="position: absolute; bottom: 24px; left: 16px; display: flex; align-items: center; gap: 10px; background: rgba(11,13,26,0.85); border: 2px solid #B84DFF; border-radius: 14px; padding: 8px 12px">
+<svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><rect x="3" y="11" width="18" height="7" rx="2" fill="none" stroke="#F2F4FF" stroke-width="2"></rect><path d="M21 12 L26 9 M21 14 L26 14 M21 16 L26 19" stroke="#3DE0FF" stroke-width="2"></path><rect x="7" y="18" width="5" height="6" rx="1" fill="none" stroke="#F2F4FF" stroke-width="2"></rect></svg>
+<div style="display: flex; flex-direction: column">
+<div style="font-weight: 700; font-size: 13px">Scatter Gun</div>
+<div style="font-size: 11px; font-weight: 700; color: #D9A6FF">EPIC · x3 multishot</div>
+</div>
+</div>
+<button style="position: absolute; bottom: 24px; right: 16px; width: 64px; height: 64px; border-radius: 50%; border: 3px solid #3DE0FF; background: #0B0D1A; color: #3DE0FF; font-family: Inter, sans-serif; font-weight: 700; font-size: 11px">NOVA<br>READY</button>
+<div style="position: absolute; top: 300px; left: 0; right: 0; text-align: center; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 15px; color: #4DFFB0; letter-spacing: 0.1em">NEAR MISS +5</div>
+</div></div></div><figcaption><strong>In run gameplay</strong><span>Auto fire, five lanes, a brute and a barricade ahead, HUD at the edges.</span></figcaption></figure>
+<figure class="screen"><div class="phone"><div class="phone-inner"><div style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #0B0D1A; font-family: Inter, system-ui, sans-serif; color: #F2F4FF">
+<svg width="390" height="844" viewBox="0 0 390 844" style="position: absolute; inset: 0" role="img" aria-label="Two glowing upgrade gates span the lanes ahead of the running hero">
+<defs>
+<linearGradient id="sky2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0B0D1A"></stop><stop offset="1" stop-color="#2A1240"></stop></linearGradient>
+</defs>
+<rect width="390" height="250" fill="url(#sky2)"></rect>
+<circle cx="195" cy="236" r="60" fill="#FF4FA3" opacity="0.35"></circle>
+<path d="M0 250 L40 205 L80 228 L120 190 L160 222 L200 196 L240 226 L280 186 L320 220 L360 198 L390 214 L390 250 Z" fill="#14112B"></path>
+<rect y="250" width="390" height="594" fill="#0E1022"></rect>
+<polygon points="160,250 230,250 430,844 -40,844" fill="#171B36"></polygon>
+<g stroke="#3A4170" stroke-width="2">
+<line x1="174" y1="250" x2="54" y2="844"></line>
+<line x1="188" y1="250" x2="148" y2="844"></line>
+<line x1="202" y1="250" x2="242" y2="844"></line>
+<line x1="216" y1="250" x2="336" y2="844"></line>
+</g>
+<g stroke="#FF4FA3" stroke-width="3" opacity="0.7">
+<line x1="160" y1="250" x2="-40" y2="844"></line>
+<line x1="230" y1="250" x2="430" y2="844"></line>
+</g>
+<g>
+<rect x="72" y="360" width="104" height="112" rx="6" fill="#3DE0FF" fill-opacity="0.18" stroke="#3DE0FF" stroke-width="4"></rect>
+<rect x="72" y="360" width="104" height="22" fill="#3DE0FF"></rect>
+<text x="124" y="376" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="11" fill="#0B0D1A">MULTISHOT</text>
+<text x="124" y="425" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="30" fill="#F2F4FF">+2</text>
+<text x="124" y="448" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="12" fill="#C9F6FF">bullets</text>
+</g>
+<g>
+<rect x="214" y="360" width="104" height="112" rx="6" fill="#FFB23D" fill-opacity="0.18" stroke="#FFB23D" stroke-width="4"></rect>
+<rect x="214" y="360" width="104" height="22" fill="#FFB23D"></rect>
+<text x="266" y="376" text-anchor="middle" font-family="Inter, sans-serif" font-weight="700" font-size="11" fill="#0B0D1A">FIRE RATE</text>
+<text x="266" y="425" text-anchor="middle" font-family="Space Grotesk, sans-serif" font-weight="700" font-size="30" fill="#F2F4FF">+30%</text>
+<text x="266" y="448" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="12" fill="#FFE2B0">faster shots</text>
+</g>
+<g transform="translate(195 330) scale(0.4)">
+<rect x="-34" y="-46" width="68" height="70" rx="16" fill="#FF8A3D"></rect>
+<rect x="-18" y="-30" width="36" height="10" rx="4" fill="#3B1A0A"></rect>
+<circle cx="-8" cy="-25" r="3" fill="#FFE27A"></circle><circle cx="8" cy="-25" r="3" fill="#FFE27A"></circle>
+</g>
+<g stroke="#F2F4FF" stroke-width="3" fill="none" opacity="0.8" stroke-linecap="round">
+<path d="M150 610 Q128 580 135 545"></path><path d="M126 557 L135 543 L146 555"></path>
+<path d="M240 610 Q262 580 255 545"></path><path d="M244 555 L255 543 L264 557"></path>
+</g>
+<g transform="translate(195 690)">
+<ellipse cx="0" cy="70" rx="44" ry="10" fill="#000" opacity="0.4"></ellipse>
+<rect x="-24" y="18" width="18" height="48" rx="8" fill="#1F2547"></rect>
+<rect x="6" y="10" width="18" height="52" rx="8" fill="#1F2547"></rect>
+<rect x="-30" y="-36" width="60" height="62" rx="18" fill="#2B3570"></rect>
+<rect x="-20" y="-28" width="40" height="40" rx="10" fill="#1A2050"></rect>
+<rect x="-14" y="-20" width="28" height="6" rx="3" fill="#3DE0FF"></rect>
+<circle cx="0" cy="-54" r="20" fill="#2B3570"></circle>
+<path d="M-20 -58 Q0 -80 20 -58" fill="#3DE0FF"></path>
+<rect x="24" y="-40" width="14" height="44" rx="6" fill="#2B3570"></rect>
+<rect x="18" y="-74" width="22" height="40" rx="5" fill="#C9CEF5"></rect>
+</g>
+</svg>
+<div style="position: absolute; top: 28px; left: 16px; right: 16px; display: flex; flex-direction: column; align-items: center; gap: 6px">
+<div style="font-size: 11px; font-weight: 700; letter-spacing: 0.14em; color: #FF8AC4">WAVE 7 · 03:12</div>
+<div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 24px">Pick your path</div>
+<div style="font-size: 13px; color: #C9CEF5">Swipe into a gate before it reaches you</div>
+</div>
+<div style="position: absolute; top: 500px; left: 0; right: 0; display: flex; justify-content: center">
+<div style="display: flex; align-items: center; gap: 8px; background: rgba(11,13,26,0.85); border-radius: 999px; padding: 6px 12px; font-size: 12px; font-weight: 600">
+<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><circle cx="7" cy="7" r="6" fill="none" stroke="#FFB23D" stroke-width="2"></circle><line x1="7" y1="4" x2="7" y2="8" stroke="#FFB23D" stroke-width="2"></line><circle cx="7" cy="10.5" r="1" fill="#FFB23D"></circle></svg>
+Brute in the middle lane
+</div>
+</div>
+<div style="position: absolute; bottom: 20px; left: 16px; right: 16px; display: flex; gap: 8px; justify-content: center">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px; background: rgba(23,27,54,0.92); border: 1px solid #3A4170; border-radius: 10px; padding: 8px 10px; min-width: 64px">
+<div style="font-size: 10px; font-weight: 700; color: #C9CEF5; letter-spacing: 0.08em">MULTI</div><div style="font-weight: 700">x3</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px; background: rgba(23,27,54,0.92); border: 1px solid #3A4170; border-radius: 10px; padding: 8px 10px; min-width: 64px">
+<div style="font-size: 10px; font-weight: 700; color: #C9CEF5; letter-spacing: 0.08em">RATE</div><div style="font-weight: 700">+15%</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px; background: rgba(23,27,54,0.92); border: 1px solid #3A4170; border-radius: 10px; padding: 8px 10px; min-width: 64px">
+<div style="font-size: 10px; font-weight: 700; color: #C9CEF5; letter-spacing: 0.08em">CRIT</div><div style="font-weight: 700">10%</div>
+</div>
+<div style="display: flex; flex-direction: column; align-items: center; gap: 2px; background: rgba(23,27,54,0.92); border: 1px solid #3A4170; border-radius: 10px; padding: 8px 10px; min-width: 64px">
+<div style="font-size: 10px; font-weight: 700; color: #C9CEF5; letter-spacing: 0.08em">DRONE</div><div style="font-weight: 700">1</div>
+</div>
+</div>
+</div></div></div><figcaption><strong>Upgrade gate choice</strong><span>Two gates side by side; the brute in the middle lane makes the pick matter.</span></figcaption></figure>
+<figure class="screen"><div class="phone"><div class="phone-inner"><div style="width: 390px; height: 844px; box-sizing: border-box; padding: 24px 20px; display: flex; flex-direction: column; gap: 18px; background: #0B0D1A; font-family: Inter, system-ui, sans-serif; color: #F2F4FF">
+<div style="display: flex; justify-content: space-between; align-items: center">
+<div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px">Your heroes</div>
+<button style="display: flex; align-items: center; gap: 8px; height: 44px; padding: 0 14px; border-radius: 999px; border: 1px solid #3A4170; background: #171B36; color: #F2F4FF; font-family: Inter, sans-serif; font-weight: 600; font-size: 13px">
+<svg width="10" height="10" viewBox="0 0 10 10" aria-hidden="true"><circle cx="5" cy="5" r="5" fill="#4DFFB0"></circle></svg>
+0x7a3f…91c2
+</button>
+</div>
+<div style="position: relative; border-radius: 24px; background: #171B36; border: 2px solid #FFB23D; padding: 18px; display: flex; flex-direction: column; align-items: center; gap: 10px">
+<div style="align-self: stretch; display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: 0.1em">
+<span style="color: #FFB23D">LEGENDARY</span>
+<span style="color: #C9CEF5">NFT #0421</span>
+</div>
+<svg width="200" height="220" viewBox="0 0 200 220" role="img" aria-label="Cyber Soldier hero with a glowing cyan visor">
+<circle cx="100" cy="110" r="92" fill="#22284D"></circle>
+<circle cx="100" cy="110" r="92" fill="none" stroke="#FFB23D" stroke-width="2" stroke-dasharray="4 8"></circle>
+<rect x="56" y="110" width="88" height="90" rx="26" fill="#2B3570"></rect>
+<rect x="72" y="126" width="56" height="44" rx="10" fill="#1A2050"></rect>
+<rect x="80" y="136" width="40" height="7" rx="3" fill="#FFB23D"></rect>
+<circle cx="100" cy="76" r="38" fill="#2B3570"></circle>
+<rect x="70" y="66" width="60" height="18" rx="9" fill="#3DE0FF"></rect>
+<rect x="76" y="70" width="20" height="5" rx="2" fill="#E6FCFF"></rect>
+<path d="M62 60 Q100 20 138 60" stroke="#FFB23D" stroke-width="6" fill="none" stroke-linecap="round"></path>
+</svg>
+<div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 24px">Cyber Soldier</div>
+<div style="display: flex; gap: 16px; font-size: 12px; color: #C9CEF5">
+<span>Best wave <strong style="color: #F2F4FF">14</strong></span>
+<span>Runs <strong style="color: #F2F4FF">82</strong></span>
+<span>Trail <strong style="color: #F2F4FF">Gold ion</strong></span>
+</div>
+<div style="font-size: 11px; color: #9EA6DA">Cosmetic only · same base stats for every hero</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<div style="border-radius: 16px; background: #171B36; border: 1px solid #3A4170; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px">
+<svg width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="Arcane Wizard"><circle cx="36" cy="36" r="34" fill="#2A1A4D"></circle><path d="M20 34 L36 6 L52 34 Z" fill="#B84DFF"></path><circle cx="36" cy="42" r="13" fill="#3A2A6B"></circle><circle cx="31" cy="41" r="2" fill="#E9D2FF"></circle><circle cx="41" cy="41" r="2" fill="#E9D2FF"></circle><rect x="22" y="54" width="28" height="14" rx="6" fill="#3A2A6B"></rect></svg>
+<div style="font-weight: 700; font-size: 12px">Arcane Wizard</div>
+<div style="font-size: 10px; font-weight: 700; color: #D9A6FF">EPIC · OWNED</div>
+</div>
+<div style="border-radius: 16px; background: #171B36; border: 1px solid #3A4170; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px">
+<svg width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="Neon Runner"><circle cx="36" cy="36" r="34" fill="#13303A"></circle><circle cx="36" cy="30" r="13" fill="#1F4F5C"></circle><rect x="25" y="27" width="22" height="6" rx="3" fill="#4DFFB0"></rect><rect x="22" y="44" width="28" height="22" rx="8" fill="#1F4F5C"></rect></svg>
+<div style="font-weight: 700; font-size: 12px">Neon Runner</div>
+<div style="font-size: 10px; font-weight: 700; color: #4DFFB0">STARTER · FREE</div>
+</div>
+<div style="border-radius: 16px; background: #12142A; border: 1px dashed #3A4170; padding: 10px; display: flex; flex-direction: column; align-items: center; gap: 6px">
+<svg width="72" height="72" viewBox="0 0 72 72" role="img" aria-label="Rust Robot, locked"><circle cx="36" cy="36" r="34" fill="#2A1D12"></circle><rect x="22" y="18" width="28" height="24" rx="5" fill="#5A3A22"></rect><rect x="27" y="26" width="6" height="6" fill="#FF8A3D"></rect><rect x="39" y="26" width="6" height="6" fill="#FF8A3D"></rect><rect x="20" y="46" width="32" height="20" rx="5" fill="#5A3A22"></rect><rect x="30" y="38" width="12" height="10" rx="2" fill="#0B0D1A" opacity="0.7"></rect></svg>
+<div style="font-weight: 700; font-size: 12px; color: #C9CEF5">Rust Robot</div>
+<div style="font-size: 10px; font-weight: 700; color: #FF8A3D; text-align: center">REACH WAVE 15 TO CLAIM</div>
+</div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px; border-radius: 14px; background: #12142A; border: 1px solid #262C52; padding: 12px 14px">
+<svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true"><circle cx="11" cy="11" r="9" fill="none" stroke="#3DE0FF" stroke-width="2"></circle><path d="M2 11 H20 M11 2 Q16 11 11 20 Q6 11 11 2" stroke="#3DE0FF" stroke-width="1.5" fill="none"></path></svg>
+<div style="display: flex; flex-direction: column; gap: 2px; flex-grow: 1">
+<div style="font-size: 13px; font-weight: 700">Link your Endless domain</div>
+<div style="font-size: 11px; color: #9EA6DA">Use [your domain] as your player name</div>
+</div>
+<div style="font-size: 10px; font-weight: 700; letter-spacing: 0.08em; color: #0B0D1A; background: #3DE0FF; border-radius: 6px; padding: 4px 6px">SOON</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: auto">
+<button style="height: 56px; border-radius: 16px; border: none; background: #3DE0FF; color: #0B0D1A; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 18px">Play as Cyber Soldier</button>
+<button style="height: 48px; border-radius: 16px; border: 1px solid #3A4170; background: transparent; color: #F2F4FF; font-family: Inter, sans-serif; font-weight: 600; font-size: 14px">View on marketplace</button>
+</div>
+</div></div></div><figcaption><strong>NFT hero select</strong><span>Owned, free and locked heroes, wallet chip and the future Endless domain link.</span></figcaption></figure>
+<figure class="screen"><div class="phone"><div class="phone-inner"><div style="width: 390px; height: 844px; box-sizing: border-box; padding: 40px 20px 28px; display: flex; flex-direction: column; gap: 20px; background: #0B0D1A; font-family: Inter, system-ui, sans-serif; color: #F2F4FF">
+<div style="display: flex; flex-direction: column; align-items: center; gap: 4px">
+<div style="font-size: 12px; font-weight: 700; letter-spacing: 0.16em; color: #FF8AC4">RUN OVER · WAVE 9</div>
+<div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 64px; line-height: 1">04:18</div>
+<div style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 700; color: #4DFFB0">
+<svg width="14" height="14" viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 L9 5 L13 5.5 L10 8.5 L11 13 L7 11 L3 13 L4 8.5 L1 5.5 L5 5 Z" fill="#4DFFB0"></path></svg>
+New best, 22 s longer than last run
+</div>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px">
+<div style="border-radius: 14px; background: #171B36; padding: 12px; display: flex; flex-direction: column; gap: 2px; align-items: center"><div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #C9CEF5">KILLS</div><div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px">312</div></div>
+<div style="border-radius: 14px; background: #171B36; padding: 12px; display: flex; flex-direction: column; gap: 2px; align-items: center"><div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #C9CEF5">COINS</div><div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px; color: #FFE27A">+486</div></div>
+<div style="border-radius: 14px; background: #171B36; padding: 12px; display: flex; flex-direction: column; gap: 2px; align-items: center"><div style="font-size: 10px; font-weight: 700; letter-spacing: 0.1em; color: #C9CEF5">BOSSES</div><div style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px">1</div></div>
+</div>
+<div style="border-radius: 18px; background: #171B36; border: 1px solid #FF8A3D; padding: 16px; display: flex; gap: 14px; align-items: center">
+<svg width="64" height="64" viewBox="0 0 72 72" role="img" aria-label="Rust Robot silhouette"><circle cx="36" cy="36" r="34" fill="#2A1D12"></circle><rect x="22" y="18" width="28" height="24" rx="5" fill="#5A3A22"></rect><rect x="27" y="26" width="6" height="6" fill="#FF8A3D"></rect><rect x="39" y="26" width="6" height="6" fill="#FF8A3D"></rect><rect x="20" y="46" width="32" height="20" rx="5" fill="#5A3A22"></rect></svg>
+<div style="display: flex; flex-direction: column; gap: 6px; flex-grow: 1">
+<div style="font-size: 14px; font-weight: 700">6 more waves to claim Rust Robot</div>
+<div style="height: 8px; border-radius: 6px; background: #2A2F55; overflow: hidden"><div style="width: 60%; height: 100%; background: #FF8A3D"></div></div>
+<div style="font-size: 11px; color: #9EA6DA">Mintable NFT hero · wave 9 of 15</div>
+</div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 8px">
+<div style="font-size: 12px; font-weight: 700; letter-spacing: 0.1em; color: #C9CEF5">DAILY MISSIONS</div>
+<div style="display: flex; justify-content: space-between; align-items: center; border-radius: 12px; background: #12142A; padding: 10px 12px; font-size: 13px"><span>Kill 200 Runners</span><span style="font-weight: 700; color: #4DFFB0">Done</span></div>
+<div style="display: flex; justify-content: space-between; align-items: center; border-radius: 12px; background: #12142A; padding: 10px 12px; font-size: 13px"><span>Beat a boss with Scatter Gun</span><span style="font-weight: 700; color: #4DFFB0">Done</span></div>
+<div style="display: flex; justify-content: space-between; align-items: center; border-radius: 12px; background: #12142A; padding: 10px 12px; font-size: 13px"><span>Reach wave 10</span><span style="font-weight: 700; color: #FFB23D">9 / 10</span></div>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px; margin-top: auto">
+<button style="height: 64px; border-radius: 18px; border: none; background: #3DE0FF; color: #0B0D1A; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 22px">Run again</button>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px">
+<button style="height: 48px; border-radius: 14px; border: 1px solid #3A4170; background: transparent; color: #F2F4FF; font-family: Inter, sans-serif; font-weight: 600; font-size: 13px">Revive (watch ad)</button>
+<button style="height: 48px; border-radius: 14px; border: 1px solid #3A4170; background: transparent; color: #F2F4FF; font-family: Inter, sans-serif; font-weight: 600; font-size: 13px">Upgrades</button>
+</div>
+</div>
+</div></div></div><figcaption><strong>Death screen</strong><span>New best, next mintable hero, daily missions and a big Run again button.</span></figcaption></figure>
+</div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Sections">
+<ol>
+<li><a href="#overview">Overview and vision</a></li>
+<li><a href="#goals">Goals and success metrics</a></li>
+<li><a href="#loop">Core gameplay loop</a></li>
+<li><a href="#controls">Controls and camera</a></li>
+<li><a href="#lanes">Lanes and obstacles</a></li>
+<li><a href="#weapons">Weapons and upgrades</a></li>
+<li><a href="#monsters">Monsters and bosses</a></li>
+<li><a href="#difficulty">Difficulty curve</a></li>
+<li><a href="#retention">Addictiveness and retention</a></li>
+<li><a href="#hud">HUD, game feel and audio</a></li>
+<li><a href="#web3">Web3 and NFT heroes</a></li>
+<li><a href="#tech">Technical requirements</a></li>
+<li><a href="#mvp">MVP scope, milestones and risks</a></li>
+<li><a href="#effort">Build effort and deployment</a></li>
+<li><a href="#plan">Agent implementation plan</a></li>
+</ol>
+</nav>
+<main>
+
+<section id="overview">
+<h2><span class="n">1</span>Overview and vision</h2>
+<p class="lead">Lane Siege is a third person, endless survival shooter where the player runs forward across five lanes, dodges obstacles, grabs weapon upgrades and holds off monsters that grow stronger every 30 seconds. One run lasts 3 to 8 minutes, and the goal is to survive longer than last time.</p>
+<div class="tbl"><table>
+<tr><th>Attribute</th><th>Decision</th></tr>
+<tr><td>Genre</td><td>Endless lane runner crossed with an auto aim survival shooter</td></tr>
+<tr><td>View</td><td>Third person, camera behind and slightly above the player</td></tr>
+<tr><td>Platform</td><td>Web first (desktop and mobile browser, portrait on mobile), then wrapped for Android and iOS</td></tr>
+<tr><td>Session length</td><td>3 to 8 minutes per run, 15 to 25 minutes per sitting</td></tr>
+<tr><td>Audience</td><td>Casual and midcore players aged 14 to 35 who like Subway Surfers, Vampire Survivors and Archero</td></tr>
+<tr><td>Monetization</td><td>NFT hero sales and secondary royalties, plus optional rewarded ads for a revive; no pay to win</td></tr>
+</table></div>
+<p>The design pillar is “one more run”: every death should feel fair, every run should show visible power growth, and the next unlock should always be in sight.</p>
+</section>
+
+<section id="goals">
+<h2><span class="n">2</span>Goals and success metrics</h2>
+<p class="lead">The MVP succeeds if players come back the next day and start a second run within 10 seconds of dying.</p>
+<div class="tbl"><table>
+<tr><th>Metric</th><th>Target for MVP</th></tr>
+<tr><td>Day 1 retention</td><td>40% or higher</td></tr>
+<tr><td>Day 7 retention</td><td>15% or higher</td></tr>
+<tr><td>Runs per session</td><td>4 or more</td></tr>
+<tr><td>Time from death to next run</td><td>Under 10 seconds median</td></tr>
+<tr><td>Average run length</td><td>3 to 5 minutes in week one</td></tr>
+<tr><td>Tutorial completion on first run</td><td>90% or higher</td></tr>
+<tr><td>Crash free sessions</td><td>99.5% or higher</td></tr>
+</table></div>
+<p>Non goals for v1: multiplayer, story mode, a level editor, fiat in app purchases and tokens or staking.</p>
+</section>
+
+<section id="loop">
+<h2><span class="n">3</span>Core gameplay loop</h2>
+<p class="lead">The player only steers; the gun fires automatically at the nearest threat, so all skill goes into lane choice, timing and which upgrade gate to run through.</p>
+<h3>Moment to moment (every 2 to 5 seconds)</h3>
+<ol class="steps">
+<li>Read the next row of obstacles and monsters coming down the lanes.</li>
+<li>Switch lanes to dodge, or stay in a lane to focus fire on a dangerous monster.</li>
+<li>Pick up coins, XP orbs and weapon crates dropped by kills.</li>
+<li>Choose between two upgrade gates side by side, for example “+2 bullets” or “+30% fire rate”.</li>
+</ol>
+<h3>Run loop (every 30 seconds)</h3>
+<ol class="steps">
+<li>A new wave starts and monster types or stats step up.</li>
+<li>Every 3rd wave a mini boss blocks the centre lanes.</li>
+<li>Every 5th wave a full boss fight drops a guaranteed rare weapon.</li>
+<li>The run ends when health reaches zero; score is time survived plus kills.</li>
+</ol>
+<h3>Meta loop (between runs)</h3>
+<ol class="steps">
+<li>Spend coins on permanent upgrades such as base health, starting weapon and magnet range.</li>
+<li>Unlock new heroes and weapon types by hitting milestones.</li>
+<li>Complete 3 daily missions for bonus coins.</li>
+</ol>
+</section>
+
+<section id="controls">
+<h2><span class="n">4</span>Controls and camera</h2>
+<p class="lead">Controls must work with one thumb on mobile and two keys on desktop.</p>
+<div class="tbl"><table>
+<tr><th>Action</th><th>Mobile</th><th>Desktop</th></tr>
+<tr><td>Move one lane left or right</td><td>Swipe left or right</td><td>A / D or arrow keys</td></tr>
+<tr><td>Jump over low obstacles</td><td>Swipe up</td><td>W, Space or up arrow</td></tr>
+<tr><td>Slide under high obstacles</td><td>Swipe down</td><td>S or down arrow</td></tr>
+<tr><td>Use special ability (charged)</td><td>Double tap</td><td>E</td></tr>
+<tr><td>Pause</td><td>Tap pause icon</td><td>Esc</td></tr>
+</table></div>
+<p>Shooting is automatic and targets the closest monster in the current lane first, then adjacent lanes. Lane switches take 0.15 seconds with an eased tween so movement feels snappy but readable.</p>
+<p>The camera sits 6 units behind and 3.5 units above the hero, tilted 18 degrees down, so players see roughly 40 units ahead. In portrait it sits higher and frames the lanes narrower. It shakes briefly on big hits and boss spawns, and pulls back 10% during boss fights.</p>
+</section>
+
+<section id="lanes">
+<h2><span class="n">5</span>Lanes and obstacles</h2>
+<p class="lead">The track has 5 lanes; obstacles spawn in rows so at least one lane is always passable, which keeps every death the player’s fault rather than the game’s.</p>
+<div class="tbl"><table>
+<tr><th>Obstacle</th><th>Lanes blocked</th><th>How to beat it</th><th>First appears</th></tr>
+<tr><td>Barricade</td><td>1</td><td>Switch lane</td><td>Wave 1</td></tr>
+<tr><td>Low wall</td><td>1 to 2</td><td>Jump</td><td>Wave 1</td></tr>
+<tr><td>Overhead beam</td><td>1 to 2</td><td>Slide</td><td>Wave 2</td></tr>
+<tr><td>Explosive barrel</td><td>1</td><td>Shoot it to clear and damage nearby monsters</td><td>Wave 3</td></tr>
+<tr><td>Moving sawblade</td><td>Sweeps across 3</td><td>Time the lane switch</td><td>Wave 5</td></tr>
+<tr><td>Lava strip</td><td>1 for 4 seconds</td><td>Avoid; deals 20 damage per second</td><td>Wave 7</td></tr>
+<tr><td>Collapsing floor</td><td>2, warned 1.5 s early</td><td>Move before it drops</td><td>Wave 10</td></tr>
+</table></div>
+<p>A pattern generator picks from hand built row templates weighted by wave number. The gap between rows starts at 25 units and shrinks to 14 units by wave 15. No two hard rows spawn back to back, and every 8th row is a breather row with only pickups.</p>
+</section>
+
+<section id="weapons">
+<h2><span class="n">6</span>Weapons and upgrades</h2>
+<p class="lead">The player holds one main weapon at a time and stacks in run upgrades on top of it; weapons swap via crates, upgrades come from gates and level ups.</p>
+<div class="tbl"><table>
+<tr><th>Weapon</th><th>Role</th><th>Base damage</th><th>Fire rate (shots/s)</th><th>Unlock</th></tr>
+<tr><td>Blaster</td><td>Reliable single target</td><td>10</td><td>4</td><td>Default</td></tr>
+<tr><td>Scatter Gun</td><td>Wide spread, hits 3 lanes</td><td>6 per pellet, 5 pellets</td><td>1.5</td><td>Wave 3 crate</td></tr>
+<tr><td>Laser Beam</td><td>Pierces every monster in a lane</td><td>4 per tick</td><td>10 ticks</td><td>Wave 5 crate</td></tr>
+<tr><td>Rocket Launcher</td><td>Splash damage</td><td>40</td><td>0.8</td><td>Wave 8 crate</td></tr>
+<tr><td>Tesla Coil</td><td>Chains to 4 nearby monsters</td><td>12</td><td>2</td><td>Boss drop</td></tr>
+<tr><td>Plasma Minigun</td><td>Spins up, shreds bosses</td><td>8</td><td>Ramps 3 to 15</td><td>Boss drop</td></tr>
+</table></div>
+<p>Each weapon has 5 tiers: Common, Rare, Epic, Legendary and Mythic. Picking up the same weapon again raises its tier, adding roughly 35% damage and a visual change in muzzle flash, projectile colour and sound.</p>
+<div class="tbl"><table>
+<tr><th>Gate upgrade</th><th>Effect per stack</th><th>Max stacks</th></tr>
+<tr><td>Multishot</td><td>+1 projectile</td><td>5</td></tr>
+<tr><td>Fire rate</td><td>+15%</td><td>6</td></tr>
+<tr><td>Damage</td><td>+20%</td><td>8</td></tr>
+<tr><td>Crit chance</td><td>+5% (2x damage)</td><td>6</td></tr>
+<tr><td>Ricochet</td><td>Bullets bounce to 1 more target</td><td>3</td></tr>
+<tr><td>Shield drone</td><td>Absorbs 1 hit, recharges in 12 s</td><td>2</td></tr>
+<tr><td>Magnet</td><td>+40% pickup radius</td><td>3</td></tr>
+</table></div>
+<p>Gates appear in pairs every 15 to 20 seconds. Some are traps, like “−1 projectile, +50% damage”, so the choice always takes a moment of thought.</p>
+</section>
+
+<section id="monsters">
+<h2><span class="n">7</span>Monsters and bosses</h2>
+<p class="lead">Monsters grow in three ways over a run: more of them spawn, each gets tougher, and new types with new behaviours join the mix.</p>
+<div class="tbl"><table>
+<tr><th>Monster</th><th>Behaviour</th><th>Base HP</th><th>Contact damage</th><th>First wave</th></tr>
+<tr><td>Crawler</td><td>Walks straight down one lane</td><td>20</td><td>10</td><td>1</td></tr>
+<tr><td>Runner</td><td>Fast, low HP, comes in packs of 4</td><td>10</td><td>8</td><td>2</td></tr>
+<tr><td>Brute</td><td>Slow, tanky, blocks a lane</td><td>120</td><td>25</td><td>4</td></tr>
+<tr><td>Spitter</td><td>Stays back and lobs acid into lanes</td><td>40</td><td>15 (projectile)</td><td>5</td></tr>
+<tr><td>Lane Jumper</td><td>Hops sideways to cut you off</td><td>35</td><td>12</td><td>7</td></tr>
+<tr><td>Shield Bearer</td><td>Frontal shield; hit it from an angled lane</td><td>80</td><td>20</td><td>9</td></tr>
+<tr><td>Splitter</td><td>Breaks into 3 Runners on death</td><td>60</td><td>15</td><td>11</td></tr>
+</table></div>
+<p>From wave 6, any monster has a 10% chance, rising 2% per wave, to spawn as an Elite with a glowing outline, 3x HP, one bonus trait (fast, armoured, regenerating or explosive on death) and a guaranteed rare drop.</p>
+<div class="tbl"><table>
+<tr><th>Boss</th><th>Wave</th><th>Signature attack</th></tr>
+<tr><td>Iron Golem</td><td>5</td><td>Slams 2 lanes after a 1 second red warning</td></tr>
+<tr><td>Hive Queen</td><td>10</td><td>Spawns Runner swarms and fires a lane wide sweep</td></tr>
+<tr><td>Void Wyrm</td><td>15</td><td>Burrows and resurfaces under the player’s lane</td></tr>
+<tr><td>Remix bosses</td><td>20 and up</td><td>Earlier bosses return with 2 attacks combined and +100% HP</td></tr>
+</table></div>
+</section>
+
+<section id="difficulty">
+<h2><span class="n">8</span>Difficulty curve</h2>
+<p class="lead">Difficulty rises every 30 second wave on a gentle exponential, tuned so an average new player dies around wave 6 (3 minutes) and a skilled player reaches wave 15 or beyond.</p>
+<div class="formula">HP(n) = HP<sub>base</sub> × 1.12<sup>n−1</sup></div>
+<div class="formula">Spawns(n) = 6 + 2n + ⌊n<sup>1.3</sup> ÷ 2⌋</div>
+<p>Run speed rises continuously, not per wave: it starts at 14 units per second and climbs by 0.07 every second, reaching 18 at one minute, 22 at two, 27 at three and the cap of 34 around 4:45. Because rows and monsters spawn at fixed distances, faster running also means less reaction time. The camera field of view widens from 62 to about 71 degrees as speed rises so the rush is felt, and each new wave shows “speed up” with the wave number.</p>
+<div class="tbl"><table>
+<tr><th>Wave</th><th>Time</th><th>Monster HP multiplier</th><th>New threat</th></tr>
+<tr><td>1</td><td>0:00</td><td>1.0x</td><td>Crawlers, barricades</td></tr>
+<tr><td>5</td><td>2:00</td><td>1.6x</td><td>Iron Golem boss, Spitters</td></tr>
+<tr><td>10</td><td>4:30</td><td>2.8x</td><td>Hive Queen, collapsing floors</td></tr>
+<tr><td>15</td><td>7:00</td><td>4.9x</td><td>Void Wyrm, mixed elite packs</td></tr>
+<tr><td>20</td><td>9:30</td><td>8.6x</td><td>Remix bosses, endless scaling</td></tr>
+</table></div>
+<p>A dynamic difficulty assist quietly lowers spawn count by up to 15% for players who die before wave 3 three runs in a row, so new players are not lost early.</p>
+</section>
+
+<section id="retention">
+<h2><span class="n">9</span>Addictiveness and retention</h2>
+<p class="lead">The hook is visible power growth inside a run plus a reachable goal outside it; every mechanic below feeds one of those two.</p>
+<div class="tbl"><table>
+<tr><th>Mechanic</th><th>Why it hooks</th><th>Detail</th></tr>
+<tr><td>Instant restart</td><td>Removes friction after death</td><td>Run again is the largest element on the death screen; a new run loads in under 1 second</td></tr>
+<tr><td>Near miss feedback</td><td>Feeling of skill</td><td>Slow motion flash and +5 bonus score when dodging within 0.5 units</td></tr>
+<tr><td>Choice gates</td><td>Ownership of the build</td><td>Two upgrades side by side every 15 to 20 seconds</td></tr>
+<tr><td>Escalating spectacle</td><td>Power fantasy</td><td>Higher weapon tiers add bigger particles, screen shake and louder sounds</td></tr>
+<tr><td>Best time ghost</td><td>Beat yourself</td><td>A faint marker shows where you died last run</td></tr>
+<tr><td>Milestone unlocks</td><td>Always a next goal</td><td>Death screen shows progress toward the next mintable hero</td></tr>
+<tr><td>Daily missions</td><td>Reason to return</td><td>3 per day, like “Kill 200 Runners” or “Beat a boss with the Scatter Gun”</td></tr>
+<tr><td>Login streak</td><td>Habit</td><td>Coins and a cosmetic every 7 days</td></tr>
+<tr><td>Weekly leaderboard</td><td>Social pull</td><td>Global and friends board, reset every Monday; deferred until after v1</td></tr>
+</table></div>
+<p>Ethical guardrails: no loot boxes, no energy timers that block play, and an optional session reminder after 30 minutes.</p>
+</section>
+
+<section id="hud">
+<h2><span class="n">10</span>HUD, game feel and audio</h2>
+<p class="lead">The screen stays clean so the lanes are always readable; all HUD sits at the edges and fades during calm moments.</p>
+<div class="tbl"><table>
+<tr><th>HUD element</th><th>Position</th><th>Notes</th></tr>
+<tr><td>Health bar</td><td>Top left</td><td>Flashes red below 25%</td></tr>
+<tr><td>Timer and wave number</td><td>Top centre</td><td>Pulses when a new wave starts</td></tr>
+<tr><td>Coins and kills</td><td>Top right</td><td>Counts up with a small bounce</td></tr>
+<tr><td>Current weapon and tier</td><td>Bottom left</td><td>Icon with tier colour ring</td></tr>
+<tr><td>Special ability meter</td><td>Bottom right</td><td>Glows when ready</td></tr>
+<tr><td>Boss health bar</td><td>Below timer</td><td>Only during boss fights</td></tr>
+</table></div>
+<p>Game feel essentials: 40 ms hit stop on heavy hits, damage numbers that pop and fade, enemies flash white when struck, and a dissolve with an orb burst on death. Weapon pickups trigger a 0.3 second zoom and a rising sound sting.</p>
+<p>Audio: a driving synthwave track that layers in extra instruments every 5 waves, distinct sounds per weapon tier, and a clear cue 1 second before any lane wide attack so players can react by sound alone.</p>
+</section>
+
+<section id="web3">
+<h2><span class="n">11</span>Web3 and NFT heroes</h2>
+<p class="lead">Every hero is an NFT the player owns, while the game stays fully playable without a wallet so Web3 never blocks the first run.</p>
+<div class="tbl"><table>
+<tr><th>Area</th><th>Decision</th></tr>
+<tr><td>Hero NFTs</td><td>Each hero is an ERC721 token; metadata holds name, skin, rarity, trail effect and lifetime stats like best wave</td></tr>
+<tr><td>Fairness</td><td>Cosmetic and identity only in v1; same base stats for every hero, so no pay to win</td></tr>
+<tr><td>Free entry</td><td>A free starter hero lives off chain; players can claim it as an NFT once they connect a wallet</td></tr>
+<tr><td>Wallet</td><td>Optional connect via WalletConnect and injected wallets (MetaMask, Coinbase Wallet); guest play with local saves until then</td></tr>
+<tr><td>Chain</td><td>A low fee EVM chain (Base or Polygon shortlisted) so minting and trading cost cents</td></tr>
+<tr><td>Minting</td><td>Lazy minting on claim, with gas sponsored for the starter hero</td></tr>
+<tr><td>Earning heroes</td><td>Milestone heroes (for example “reach wave 15”) become claimable, verified by a server signed proof of the run</td></tr>
+<tr><td>Trading</td><td>Tradable on standard marketplaces; a royalty on secondary sales funds development</td></tr>
+<tr><td>Anti cheat</td><td>Run results validated server side before any on chain claim, so modded clients cannot farm NFTs</td></tr>
+</table></div>
+<p>Endless Domains integration (future): once the SDK is ready, a player’s Endless domain can act as their in game name and profile, shown on the death screen and later on leaderboards, with their hero NFTs displayed on that profile. This phase starts with a review of what the SDK exposes. Until then, Basenames and ENS provide the same experience through a provider layer (Phase 8) that Endless plugs into as the first provider.</p>
+<h3>Web3 rollout</h3>
+<ol class="steps">
+<li>v1: guest play, wallet connect, starter hero claim, 3 to 5 mintable heroes.</li>
+<li>v1.5: milestone hero claims with signed run proofs, marketplace listing, plus Basename and ENS identity, Sign In With Ethereum, profile pages, holder perks and soulbound badges.</li>
+<li>v2: Endless Domains identity, leaderboards keyed to domain names, domain linked profiles.</li>
+</ol>
+<h3>Open Web3 questions</h3>
+<ol class="steps">
+<li>Base or Polygon, or the chain Endless Domains runs on, to keep one ecosystem?</li>
+<li>Fixed supply per hero for scarcity, or open editions with rarity tiers?</li>
+<li>Should the starter hero claim be free with sponsored gas, or tied to a domain claim?</li>
+</ol>
+</section>
+
+<section id="tech">
+<h2><span class="n">12</span>Technical requirements</h2>
+<p class="lead">Build for the web with Three.js so it runs instantly in a browser and can later be wrapped with Capacitor for app stores.</p>
+<div class="tbl"><table>
+<tr><th>Area</th><th>Choice</th></tr>
+<tr><td>Rendering</td><td>Three.js or React Three Fiber with low poly, toon shaded assets</td></tr>
+<tr><td>Animation</td><td>GSAP for UI and camera tweens; baked GLTF animations for characters</td></tr>
+<tr><td>Physics</td><td>Simple lane based AABB collision; no full physics engine needed</td></tr>
+<tr><td>State</td><td>Zustand store for run state, Web Worker for the spawn generator</td></tr>
+<tr><td>Performance</td><td>60 fps on a 2021 midrange Android; object pooling for bullets, monsters and particles; max 150 draw calls</td></tr>
+<tr><td>Build size</td><td>Under 15 MB initial load, assets streamed per wave</td></tr>
+<tr><td>Saves</td><td>Local storage for progress, optional cloud sync later</td></tr>
+<tr><td>Analytics</td><td>Events for run start, death wave, upgrade picked, restart time</td></tr>
+<tr><td>Leaderboard</td><td>Post v1: lightweight backend (Supabase or Firebase) with server side score sanity checks</td></tr>
+</table></div>
+</section>
+
+<section id="mvp">
+<h2><span class="n">13</span>MVP scope, milestones and risks</h2>
+<p class="lead">The MVP ships in 8 weeks with 3 weapons, 4 monster types, 1 boss and the full upgrade gate system; everything else follows in updates.</p>
+<div class="tbl"><table>
+<tr><th>Milestone</th><th>Weeks</th><th>Deliverable</th></tr>
+<tr><td>Prototype</td><td>1 to 2</td><td>Grey box runner with 5 lanes, auto fire, 1 monster, lane obstacles</td></tr>
+<tr><td>Core loop</td><td>3 to 4</td><td>Upgrade gates, 3 weapons with tiers, wave scaling, death and restart screen</td></tr>
+<tr><td>Content and feel</td><td>5 to 6</td><td>4 monsters, Iron Golem boss, HUD, audio, particles, camera polish</td></tr>
+<tr><td>Meta and launch</td><td>7 to 8</td><td>Coins, permanent upgrades, hero picker, daily missions, analytics, soft launch</td></tr>
+</table></div>
+<div class="tbl"><table>
+<tr><th>Risk</th><th>Mitigation</th></tr>
+<tr><td>Screen too cluttered to read lanes</td><td>Strict particle budget; monsters keep bright silhouettes against a darker track</td></tr>
+<tr><td>Difficulty spikes cause churn</td><td>Playtest every wave with 10 new players; tune with the dynamic assist</td></tr>
+<tr><td>Mobile performance drops</td><td>Object pooling from day one; test on low end devices weekly</td></tr>
+<tr><td>Auto fire feels passive</td><td>Strong gate choices, special ability and lane based targeting keep players active</td></tr>
+</table></div>
+<h3>Decisions</h3>
+<div class="decide">
+<div><strong>Portrait layout</strong><span>Lanes framed narrower, camera higher to show more track ahead.</span></div>
+<div><strong>Players pick their hero</strong><span>A roster such as cyber soldier, wizard and robot, each an ownable NFT over the same base stats.</span></div>
+<div><strong>Leaderboard as its own phase</strong><span>Built and secured in Phase 6; switched on publicly once there are enough players.</span></div>
+</div>
+</section>
+
+
+<section id="effort">
+<h2><span class="n">14</span>Build effort and deployment</h2>
+<p class="lead">The game and a basic leaderboard are very buildable with an AI agent in about 6 to 8 weeks solo; the hard parts are game feel tuning, cheat resistance and the NFT contracts, which need a human to test and review.</p>
+<div class="tbl"><table>
+<tr><th>Part</th><th>Difficulty</th><th>Time with an agent</th><th>Notes</th></tr>
+<tr><td>Game core (phases 0 to 5)</td><td><span class="diff med">Medium</span></td><td>4 to 5 weeks</td><td>Agents write the code well; feel and balance need your playtesting</td></tr>
+<tr><td>Basic leaderboard</td><td><span class="diff easy">Easy</span></td><td>1 to 2 days</td><td>A table plus an insert is quick, but anyone could post fake scores</td></tr>
+<tr><td>Cheat resistant leaderboard</td><td><span class="diff med">Medium</span></td><td>4 to 6 days</td><td>Server run tokens and plausibility checks; it stops casual cheaters, not determined ones</td></tr>
+<tr><td>Frontend deploy</td><td><span class="diff easy">Easy</span></td><td>Under 1 hour</td><td>Vercel or Netlify, automatic on every push</td></tr>
+<tr><td>Backend deploy</td><td><span class="diff easy">Easy</span></td><td>Under 1 hour</td><td>Supabase hosted; free tier first, about 25 USD a month on Pro at scale</td></tr>
+<tr><td>Onchain identity layer</td><td><span class="diff med">Medium</span></td><td>1 to 1.5 weeks</td><td>Name lookups are simple; SIWE, profile pages and badges add the work</td></tr>
+<tr><td>NFT contracts and claims</td><td><span class="diff hard">Hard</span></td><td>1.5 to 2 weeks</td><td>Real money risk; testnet first and a review before mainnet</td></tr>
+</table></div>
+<p>Recommended stack for the agent: Vite, TypeScript and Three.js for the game, Howler.js for audio, Supabase (Postgres, Auth, Edge Functions, scheduled jobs) for the backend, Vercel for hosting, and OpenZeppelin, Foundry, wagmi and viem for Web3.</p>
+</section>
+
+<section id="plan">
+<h2><span class="n">15</span>Agent implementation plan</h2>
+<p class="lead">Give the agent this whole file, then run one phase per session; each phase ends with something playable and deployed, so mistakes stay small.</p>
+<h3>Rules to paste at the start of every session</h3>
+<pre class="prompt">You are building Lane Siege from the attached PRD. Work on ONE phase at a time and stop when its "Done when" checks pass.
+Use TypeScript strictly. Keep every balance number in src/data/*.json, never hard coded.
+Use object pooling for bullets, monsters, particles and pickups.
+Keep the game playable without a wallet or an account.
+Never commit secrets or private keys; use environment variables.
+After each phase: run lint and tests, update README with how to run and deploy, and list anything you could not finish.</pre>
+<article class="phase"><h3>Phase 0: Project setup and first deploy <small>1 day</small> <span class="diff easy">Easy</span></h3>
+<p>Get an empty game running at a public URL so every later phase ships continuously.</p><div class="label">Tasks</div><ul><li>Scaffold a Vite project with TypeScript and Three.js.</li><li>Create the folder structure: src/game (scene, entities, systems), src/ui, src/data (all balance numbers as JSON), src/net, src/web3.</li><li>Add ESLint, Prettier and Vitest.</li><li>Connect the GitHub repo to Vercel so every push gets a preview URL.</li></ul><div class="label">Done when</div><ul><li>A dark scene with five lanes renders at a Vercel URL on desktop and on a phone in portrait.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Read the attached PRD. Implement Phase 0 only. Scaffold a Vite + TypeScript + Three.js app with the folder structure from the PRD, put every balance value in src/data/*.json, add ESLint, Prettier and Vitest, and render a five lane track at night in portrait. Stop when it builds cleanly and give me the commands to deploy it on Vercel.</pre></article><article class="phase"><h3>Phase 1: Runner core <small>3 to 4 days</small> <span class="diff med">Medium</span></h3>
+<p>Movement, camera, obstacles and death: the game is playable with no combat yet.</p><div class="label">Tasks</div><ul><li>Hero with lane switch (0.15 s eased), jump and slide; swipe and keyboard input.</li><li>Third person camera as specified in section 4, tuned for portrait.</li><li>Obstacle row generator from templates in src/data/obstacles.json, always leaving one lane open.</li><li>AABB collision, health, death, and restart in under 1 second.</li></ul><div class="label">Done when</div><ul><li>60 fps on a midrange phone, a run can be lost and restarted instantly, no row is ever fully blocked (unit test the generator).</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 1 of the PRD: hero movement, controls, camera, obstacle generator and death/restart. Use object pooling. Write Vitest tests proving every generated row has at least one passable lane. Do not start combat.</pre></article><article class="phase"><h3>Phase 2: Combat and waves <small>4 to 5 days</small> <span class="diff med">Medium</span></h3>
+<p>Auto fire, monsters and the 30 second wave clock.</p><div class="label">Tasks</div><ul><li>Auto aim targeting (current lane first, then adjacent).</li><li>Pooled bullets and monsters: Crawler, Runner, Brute.</li><li>Wave director using the HP and spawn formulas from section 8.</li><li>Coins and XP orbs with magnet pickup.</li></ul><div class="label">Done when</div><ul><li>Wave 6 feels hard for a new player, HP and spawn counts match the formulas in tests, no garbage collection spikes in the profiler.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 2: auto fire, three monster types, the wave director with the exact formulas from section 8, and pickups. Read all numbers from src/data. Add tests for the scaling formulas.</pre></article><article class="phase"><h3>Phase 3: Weapons, upgrade gates and HUD <small>4 days</small> <span class="diff med">Medium</span></h3>
+<p>The build crafting layer that makes runs feel different.</p><div class="label">Tasks</div><ul><li>Blaster, Scatter Gun and Laser Beam with 5 tiers each.</li><li>Upgrade gates in pairs every 15 to 20 seconds, including trap gates.</li><li>Upgrade stacks with max limits from section 6.</li><li>HUD from section 10 as an HTML overlay above the canvas.</li></ul><div class="label">Done when</div><ul><li>Every upgrade visibly changes play, tiers change colour and sound, HUD matches the concept screens.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 3: three weapons with tiers, the upgrade gate system with stack limits, and the HUD as an HTML overlay matching the concept screens in the PRD.</pre></article><article class="phase"><h3>Phase 4: Boss, game feel and audio <small>4 to 5 days</small> <span class="diff med">Medium</span></h3>
+<p>The polish that makes it addictive.</p><div class="label">Tasks</div><ul><li>Iron Golem boss at wave 5 with telegraphed slams.</li><li>Hit stop, damage numbers, white flash, death dissolve, near miss slow motion, screen shake.</li><li>Synthwave music layers per 5 waves, weapon sounds, warning cues.</li><li>Dynamic difficulty assist.</li></ul><div class="label">Done when</div><ul><li>Five playtesters each say they wanted another run; frame rate holds during the boss fight.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 4: the Iron Golem boss, every game feel effect in section 10, audio with Howler.js, and the dynamic difficulty assist. Keep all effects behind a quality setting for low end phones.</pre></article><article class="phase"><h3>Phase 5: Meta, screens and saves <small>3 to 4 days</small> <span class="diff easy">Easy</span></h3>
+<p>Everything between runs.</p><div class="label">Tasks</div><ul><li>Hero select and death screens matching the concept screens.</li><li>Coins, permanent upgrades, daily missions, login streak.</li><li>Local saves with a versioned schema.</li><li>Analytics events listed in section 12.</li></ul><div class="label">Done when</div><ul><li>A guest player can play 5 runs, close the tab, return and keep all progress.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 5: hero select, death screen, permanent upgrades, daily missions and versioned local saves. Match the concept screens in the PRD. Add analytics events behind a single track() function.</pre></article><article class="phase"><h3>Phase 6: Backend leaderboard <small>4 to 6 days</small> <span class="diff med">Medium</span></h3>
+<p>A weekly leaderboard that cannot be filled by fake scores.</p><div class="label">Tasks</div><ul><li>Supabase project: tables players, runs, and a weekly_leaderboard view; Row Level Security so clients can only read.</li><li>Anonymous auth for guests, upgraded later by wallet sign in.</li><li>Edge Function start_run issues a signed run token with seed and start time.</li><li>Edge Function submit_run checks the token, real elapsed time, max score per second, max kills per wave, and rate limits per player.</li><li>Scheduled function archives and resets the board every Monday.</li><li>Leaderboard screen with global and friends tabs.</li></ul><div class="label">Done when</div><ul><li>Posting a score directly to the database fails, an impossible score is rejected, the board resets weekly.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 6: a Supabase backend with the tables, Row Level Security, start_run and submit_run Edge Functions, plausibility checks, rate limiting and a weekly reset job, plus the leaderboard UI. Clients must never write scores directly. Include SQL migrations and a README with deploy commands.</pre></article><article class="phase"><h3>Phase 7: Web3 heroes on testnet <small>1.5 to 2 weeks</small> <span class="diff hard">Hard</span></h3>
+<p>Wallet connect, NFT heroes and claims, first on a testnet.</p><div class="label">Tasks</div><ul><li>ERC721 hero contract with OpenZeppelin, royalties (ERC2981) and a claim function that accepts a server signed voucher; tests in Foundry.</li><li>Deploy to Base Sepolia; metadata and art on IPFS.</li><li>Wallet connect with wagmi and viem; game fully works without a wallet.</li><li>Edge Function signs claim vouchers only for verified milestone runs.</li><li>Owned heroes load from the chain into the hero select screen.</li></ul><div class="label">Done when</div><ul><li>A guest can connect a wallet, claim the starter hero, reach a milestone and claim a second hero on testnet; contract tests pass with full coverage.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 7 on Base Sepolia only: an OpenZeppelin ERC721 with ERC2981 royalties and voucher based claims, Foundry tests, IPFS metadata, wagmi wallet connect, and a Supabase Edge Function that signs vouchers only for runs verified in Phase 6. Never put private keys in the client or the repo.</pre></article><article class="phase"><h3>Phase 8: Onchain identity before Endless <small>1 to 1.5 weeks</small> <span class="diff med">Medium</span></h3>
+<p>Give players the “domain as identity” experience now with Basenames and ENS, through a provider layer that Endless Domains slots into later. Needs Phases 6 and 7.</p>
+<div class="label">Step by step</div><ol class="steps"><li>Add a private RPC provider (for example Alchemy or QuickNode) for Ethereum mainnet and Base, stored in environment variables; public RPCs are too slow for name resolution.</li><li>Create src/identity/types.ts with a PlayerIdentity type: address, displayName, avatarUrl and source (basename, ens or address).</li><li>Write one provider file per name system in src/identity/providers: basenameProvider uses viem getEnsName with the Base coin type, ensProvider uses getEnsName and getEnsAvatar on mainnet, addressProvider returns the short address. Each exposes resolve(address) and returns an identity or null.</li><li>Write resolveIdentity(address) in src/identity/index.ts: it tries providers in the order listed in src/data/identity.json, gives each a 2 second timeout, and caches the result for 24 hours.</li><li>Add Sign In With Ethereum: a siwe_nonce Edge Function issues a one time nonce, the player signs a message, and a siwe_verify Edge Function checks the signature and links the wallet to their Supabase player, merging any guest progress.</li><li>Resolve identity on the server too, inside siwe_verify and a daily refresh job, and store display_name, avatar_url and identity_source on the players table so leaderboards never resolve names in the browser.</li><li>Show the identity everywhere through one IdentityChip component: hero select header, leaderboard rows, death screen and the share card.</li><li>Add the NFT avatar picker: an Edge Function lists NFTs the wallet holds via an indexer API, the player picks one, and the daily job drops it if the wallet no longer owns it.</li><li>Build public profile pages at /p/:name: a page showing name, avatar, owned heroes, best wave and badges, plus a Vercel function that renders a social preview image.</li><li>Add holder perks from src/data/perks.json (chain, contract address, cosmetic reward); siwe_verify checks balances and unlocks only cosmetics.</li><li>Write the soulbound badge contract: an ERC721 that blocks transfers and reports locked status (ERC5192), minted with the same server signed vouchers as heroes, deployed to Base Sepolia with Foundry tests.</li><li>Add tests: provider order, fallbacks, timeouts, cache expiry, SIWE replay protection, and a fake provider proving a new name system plugs in with one file and one line in identity.json.</li></ol>
+<div class="label">Done when</div><ul><li>A wallet with a Basename shows it on every screen; one with only ENS shows that; one with neither shows the short address.</li><li>Leaderboard rows show names and avatars without any browser side lookups.</li><li>A profile link shared on social media shows a preview card.</li><li>A holder perk unlocks for a test wallet, and a badge mints on Base Sepolia and cannot be transferred.</li><li>A fake provider added in tests works with one new file and one line of config.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Implement Phase 8 of the PRD, following its step by step list in order. Build the identity layer in src/identity with one file per provider and the provider order in src/data/identity.json, so a future Endless Domains provider needs only one new file and one config line. Add Sign In With Ethereum through Supabase Edge Functions with nonce replay protection, store resolved names on the players table, add the IdentityChip, NFT avatar picker, /p/:name profile pages with preview images, cosmetic holder perks, and an ERC5192 soulbound badge contract on Base Sepolia with Foundry tests. Use environment variables for every RPC URL and key.</pre></article>
+<article class="phase"><h3>Phase 9: Production launch <small>3 to 5 days</small> <span class="diff med">Medium</span></h3>
+<p>Ship it publicly.</p><div class="label">Tasks</div><ul><li>Production Supabase and Vercel environments with secrets in environment variables.</li><li>Custom domain, error tracking with Sentry, uptime checks.</li><li>PWA install support; later wrap with Capacitor for stores.</li><li>Contract audit or experienced review before mainnet deploy.</li></ul><div class="label">Done when</div><ul><li>Live URL, error tracking working, contracts reviewed and deployed to mainnet.</li></ul>
+<div class="label">Prompt for the agent</div><pre class="prompt">Prepare Phase 9: production configs, Sentry, PWA manifest and a launch checklist. Do not deploy contracts to mainnet; list the steps for me to run after review.</pre></article>
+<p>Phase 10, later: when the Endless Domains SDK arrives, add an endlessProvider as the first entry in the identity provider order from Phase 8, and add “owns an Endless domain” as a perk rule. No screen needs to change.</p>
+</section>
+
+</main>
+</div>
+<footer>Concept screens are flat vector stand ins for the final 3D art.</footer>
+</body>
+</html>
