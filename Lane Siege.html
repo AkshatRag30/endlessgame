@@ -77,6 +77,20 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
 .hud-bottom{position:fixed;left:0;right:0;bottom:0;padding:0 12px calc(env(safe-area-inset-bottom,0px) + 14px);display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
 .weapon{display:flex;flex-direction:column;gap:7px;min-width:0}
 .chips{display:flex;gap:5px;flex-wrap:wrap}
+.xp{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:4px 8px;border-radius:12px;padding:6px 10px;max-width:220px}
+.xp b{font-size:12px;color:var(--gold)}
+.xp .bar{height:6px}
+.xp .bar i{background:linear-gradient(90deg,#FFB23D,#FFE27A);box-shadow:0 0 10px rgba(255,210,80,.6)}
+.xp span{grid-column:1 / -1;font-size:10.5px;font-weight:700;color:var(--dim)}
+.armory{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px}
+.arm{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;min-height:48px;border-radius:10px;border:1px solid var(--edge);background:rgba(255,255,255,.04);padding:4px 0;font-family:inherit;transition:background .15s,border-color .15s}
+.arm span{display:grid;place-items:center}
+.arm svg{width:22px;height:22px}
+.arm small{font-size:9.5px;color:var(--dim);font-weight:800}
+.arm.locked{opacity:.4}
+.arm[aria-pressed="true"]{border-color:var(--ac,#3DE0FF);background:rgba(255,255,255,.09);box-shadow:0 0 14px -4px var(--ac,#3DE0FF)}
+.arm-info{margin:-4px 0 0;min-height:18px;font-size:12.5px;color:var(--muted);line-height:1.4}
+.arm-info b{color:var(--ink)}
 .chip{border-radius:9px;padding:3px 8px;font-size:11px;font-weight:800;color:var(--muted)}
 .chip b{color:var(--ink)}
 .wcard{display:flex;align-items:center;gap:10px;border-radius:16px;padding:9px 12px;border:1.5px solid var(--cyan);box-shadow:0 0 18px -4px var(--wglow,#3DE0FF)}
@@ -115,11 +129,11 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
 .panel{width:100%;max-width:440px;border-radius:26px;padding:16px;display:flex;flex-direction:column;gap:14px;animation:rise .8s .05s cubic-bezier(.2,.8,.2,1) both}
 @keyframes rise{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 .panel h2{margin:0;font-size:15px;color:var(--muted);font-weight:700;font-family:Inter,sans-serif}
-.heroes{display:flex;gap:10px;overflow-x:auto;padding:2px 2px 6px;margin:-2px;scroll-snap-type:x mandatory}
-.hero{flex:0 0 116px;scroll-snap-align:start;border-radius:18px;background:var(--card);border:1.5px solid var(--line);padding:10px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;transition:transform .15s,border-color .15s}
+.heroes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.hero{min-width:0;border-radius:16px;background:var(--card);border:1.5px solid var(--line);padding:8px 4px 9px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center;transition:transform .15s,border-color .15s}
 .hero svg{display:block}
-.hero b{font-size:13px}
-.hero small{font-size:10.5px;font-weight:700;color:var(--dim);line-height:1.3}
+.hero b{font-size:11.5px;line-height:1.2}
+.hero small{font-size:10px;font-weight:700;color:var(--dim);line-height:1.25}
 .hero[aria-pressed="true"]{border-color:var(--hc,#3DE0FF);box-shadow:0 0 0 1px var(--hc,#3DE0FF) inset,0 0 22px -6px var(--hc,#3DE0FF);transform:translateY(-2px)}
 .hero:disabled{opacity:.5;cursor:not-allowed;border-style:dashed}
 .primary{position:relative;height:62px;border-radius:20px;border:none;background:linear-gradient(180deg,#7BEBFF,#3DE0FF 50%,#22B8E0);color:#06101F;font-family:"Space Grotesk",sans-serif;font-weight:700;font-size:22px;box-shadow:0 10px 30px -8px rgba(61,224,255,.7),inset 0 1px 0 rgba(255,255,255,.6);overflow:hidden}
@@ -176,6 +190,7 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
   <div id="hint"><span class="glass" id="hintText"></span></div>
   <div class="hud-bottom">
     <div class="weapon">
+      <div class="xp glass"><b id="lvText">Lv 1</b><div class="bar"><i id="xpBar"></i></div><span id="nextW">Scatter at Lv 2</span></div>
       <div class="chips" id="chips"></div>
       <div class="wcard glass" id="wcard"><span id="wIcon"></span><div class="wtext"><b id="wName">Blaster</b><div class="pips" id="pips"><i></i><i></i><i></i><i></i><i></i></div><span class="wtier" id="wTier">Common</span></div></div>
     </div>
@@ -197,6 +212,9 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
   <div class="panel glass">
     <h2>Choose your hero</h2>
     <div class="heroes" id="heroes"></div>
+    <h2>Armory</h2>
+    <div class="armory" id="armory"></div>
+    <p class="arm-info" id="armInfo">Weapons unlock as you level up during a run. Tap one to see what it does.</p>
     <button class="primary" id="playBtn">Play</button>
     <div class="row2"><button class="secondary" id="soundBtn">Sound on</button><button class="secondary" id="resetHint">Show tips</button></div>
     <p class="keys">Swipe left or right to switch lanes, up to jump, down to slide, double tap for Nova. Keyboard: arrows, E for Nova, Esc to pause.</p>
@@ -223,7 +241,7 @@ button:focus-visible{outline:3px solid var(--cyan);outline-offset:3px}
       <div class="stat glass"><small>Kills</small><b id="oKills">0</b></div>
       <div class="stat glass"><small>Coins</small><b id="oCoins" style="color:#FFE27A">+0</b></div>
       <div class="stat glass"><small>Best combo</small><b id="oCombo">0</b></div>
-      <div class="stat glass"><small>Bosses</small><b id="oBoss">0</b></div>
+      <div class="stat glass"><small>Level reached</small><b id="oBoss">1</b></div>
     </div>
     <div class="unlock glass" id="unlockCard"><b id="unlockText">Reach wave 5 to unlock Arcane Wizard</b><div class="bar"><i id="unlockFill"></i></div></div>
     <button class="primary" id="againBtn" style="height:70px;font-size:25px">Run again</button>
@@ -251,14 +269,28 @@ const TIER_NAMES = ['Common','Rare','Epic','Legendary','Mythic'];
 const TIER_HEX = [0xc9d2ff,0x3de0ff,0xb84dff,0xffb23d,0xff4fa3];
 const TIER_CSS = ['#C9D2FF','#3DE0FF','#D9A6FF','#FFB23D','#FF8AC4'];
 const WEAPONS = {
-  blaster:{name:'Blaster', rate:4, dmg:10, color:0x3de0ff},
-  scatter:{name:'Scatter Gun', rate:1.6, dmg:6, color:0xffb23d},
-  laser:{name:'Laser Beam', rate:10, dmg:4, color:0xb84dff}
+  blaster:{name:'Blaster', short:'Blaster', rate:4, dmg:10, color:0x3de0ff, css:'#3DE0FF', lvl:1},
+  scatter:{name:'Scatter Gun', short:'Scatter', rate:2.4, dmg:9, color:0xffb23d, css:'#FFB23D', lvl:2},
+  laser:{name:'Laser Beam', short:'Laser', rate:10, dmg:4, color:0xb84dff, css:'#B84DFF', lvl:3},
+  rocket:{name:'Rocket Launcher', short:'Rockets', rate:1.1, dmg:34, color:0xff6a3d, css:'#FF6A3D', lvl:4},
+  tesla:{name:'Tesla Coil', short:'Tesla', rate:2.4, dmg:18, color:0x9be7ff, css:'#9BE7FF', lvl:5},
+  saw:{name:'Saw Disc', short:'Saw Disc', rate:1.5, dmg:16, color:0x4dffb0, css:'#4DFFB0', lvl:6},
+  railgun:{name:'Railgun', short:'Railgun', rate:.9, dmg:70, color:0xf4f5ff, css:'#F4F5FF', lvl:7},
+  minigun:{name:'Plasma Minigun', short:'Minigun', rate:3, dmg:6, color:0xff4fa3, css:'#FF4FA3', lvl:8},
+  black:{name:'Black Hole Cannon', short:'Black Hole', rate:.4, dmg:30, color:0x8a4dff, css:'#A97BFF', lvl:10}
 };
+const WKEYS = Object.keys(WEAPONS);
+const S = 'fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"';
 const WICON = {
-  blaster:'<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="11" width="18" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><rect x="21" y="13" width="6" height="3" rx="1" fill="currentColor"/><rect x="7" y="18" width="5" height="7" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
-  scatter:'<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="12" width="15" height="7" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M19 13 L27 8 M19 15.5 L28 15.5 M19 18 L27 23" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="6" y="19" width="5" height="6" rx="1.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>',
-  laser:'<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="11" width="13" height="8" rx="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M16 15 H28" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="9.5" cy="15" r="2" fill="currentColor"/></svg>'
+  blaster:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="11" width="18" height="7" rx="2" ${S}/><path d="M21 14.5 H27" ${S}/><rect x="7" y="18" width="5" height="7" rx="1.5" ${S}/></svg>`,
+  scatter:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="12" width="15" height="7" rx="2" ${S}/><path d="M19 13 L27 8 M19 15.5 L28 15.5 M19 18 L27 23" ${S}/><rect x="6" y="19" width="5" height="6" rx="1.5" ${S}/></svg>`,
+  laser:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="11" width="13" height="8" rx="2" ${S}/><path d="M16 15 H28" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"/><circle cx="9.5" cy="15" r="2" fill="currentColor"/></svg>`,
+  rocket:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M5 15 H20 L26 15 L20 11 H5 Z M5 15 L20 19" ${S}/><path d="M8 11 L5 7 M8 19 L5 23" ${S}/></svg>`,
+  tesla:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M16 3 L9 16 H15 L12 27 L22 12 H16 Z" ${S}/></svg>`,
+  saw:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="7" ${S}/><circle cx="15" cy="15" r="2" fill="currentColor"/><path d="M15 3 L18 8 M27 15 L22 18 M15 27 L12 22 M3 15 L8 12 M23.5 6.5 L21 11 M23.5 23.5 L19 21 M6.5 23.5 L9 19 M6.5 6.5 L11 9" ${S}/></svg>`,
+  railgun:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><path d="M3 15 H28" ${S}/><rect x="5" y="11" width="10" height="8" rx="2" ${S}/><path d="M18 12 V18 M21 12 V18 M24 12 V18" ${S}/></svg>`,
+  minigun:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><rect x="3" y="10" width="9" height="10" rx="2" ${S}/><path d="M12 11.5 H27 M12 15 H28 M12 18.5 H27" ${S}/><path d="M24 10 V20" ${S}/></svg>`,
+  black:`<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="4" fill="currentColor"/><path d="M15 5 A10 10 0 0 1 25 15 M25 15 A10 10 0 0 1 15 25 M15 25 A10 10 0 0 1 5 15 M5 15 A10 10 0 0 1 15 5" ${S} stroke-dasharray="6 5"/></svg>`
 };
 const HEROES = [
   {id:'runner', name:'Neon Runner', body:0x1f4f5c, accent:0x4dffb0, css:'#4DFFB0', bg:'#13303A', bodyCss:'#1F4F5C', req:0},
@@ -406,7 +438,7 @@ function buildHero(h){
   if (h.hat) g.add(mesh(GEO.cone, acc, .45, .8, .45, 0, 2.55, 0));
   g.add(mesh(GEO.box, body, .26, .7, .26, .6, 1.3, 0));
   g.add(mesh(GEO.box, lam(0xc9cef5), .2, .2, .75, .62, 1.55, -.35));
-  const muzzle = glow(h.accent, .9, .9); muzzle.position.set(.62, 1.55, -.8); g.add(muzzle);
+  const muz = glow(h.accent, .9, .9); muz.position.set(.62, 1.55, -.8); g.add(muz); P.muzzle = muz;
   scene.add(g); P.mesh = g; P.accent = h.accent;
   if (!P.shadow){ P.shadow = mesh(GEO.circle, new THREE.MeshBasicMaterial({color:0x000000, transparent:true, opacity:.45}), .75, .75, 1, 0, .03, 0); P.shadow.rotation.x = -Math.PI/2; scene.add(P.shadow); }
 }
@@ -485,7 +517,12 @@ const getSpark = c => { const s = sparkPool.pop() || (()=>{ const sp = new THREE
 const beamMeshes = []; for (let i = 0; i < 5; i++){ const g = new THREE.Group(); const core = mesh(GEO.box, new THREE.MeshBasicMaterial({color:0xffffff}), .06, .06, 1); const outer = mesh(GEO.box, new THREE.MeshBasicMaterial({color:0xb84dff, transparent:true, opacity:.5, blending:THREE.AdditiveBlending, depthWrite:false}), .3, .3, 1); g.add(core, outer); g.userData.outer = outer; g.visible = false; scene.add(g); beamMeshes.push(g); }
 const warnMeshes = []; for (let i = 0; i < 2; i++){ const w = mesh(GEO.plane, new THREE.MeshBasicMaterial({color:0xff3b4f, transparent:true, opacity:.35, depthWrite:false}), LW*.96, 22, 1, 0, .03, -6); w.rotation.x = -Math.PI/2; w.visible = false; scene.add(w); warnMeshes.push(w); }
 const novaRing = mesh(GEO.ring, new THREE.MeshBasicMaterial({color:0x3de0ff, transparent:true, opacity:0, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false}), 1, 1, 1, 0, .2, 0); novaRing.rotation.x = -Math.PI/2; scene.add(novaRing);
-const crateMats = { blaster: lam(0x3de0ff, 0x3de0ff, .55), scatter: lam(0xffb23d, 0xffb23d, .55), laser: lam(0xb84dff, 0xb84dff, .55) };
+const crateMats = {}; WKEYS.forEach(k => crateMats[k] = lam(WEAPONS[k].color, WEAPONS[k].color, .55));
+const kindCore = { rocket: basic(0xff8a3d), saw: basic(0x4dffb0), black: basic(0x14001f) };
+const kindGlow = { rocket: glowMat(0xff6a3d, 1), saw: glowMat(0x4dffb0, .9), black: glowMat(0x8a4dff, 1) };
+const zaps = []; for (let i = 0; i < 16; i++){ const g = new THREE.BufferGeometry(); g.setAttribute('position', new THREE.Float32BufferAttribute(new Float32Array(24), 3)); const l = new THREE.Line(g, new THREE.LineBasicMaterial({color:0xd8f8ff, transparent:true, opacity:1})); l.visible = false; l.frustumCulled = false; scene.add(l); zaps.push({l, life:0}); }
+const rails = []; for (let i = 0; i < 5; i++){ const g = new THREE.Group(); const core = mesh(GEO.box, new THREE.MeshBasicMaterial({color:0xffffff, transparent:true}), .12, .12, 1); const outer = mesh(GEO.box, new THREE.MeshBasicMaterial({color:0x9be7ff, transparent:true, opacity:.6, blending:THREE.AdditiveBlending, depthWrite:false}), .7, .7, 1); g.add(core, outer); g.visible = false; scene.add(g); rails.push({g, core, outer, life:0}); }
+let holes = [];
 
 /* ---------- damage numbers ---------- */
 const dmgLayer = $('dmg'), dmgEls = []; let dmgIdx = 0; const v3 = new THREE.Vector3();
@@ -505,7 +542,8 @@ let boss = null, shake = 0, hitStop = 0, slowmo = 0, novaFx = 0;
 let heroId = store.get('hero', 'soldier');
 function freshState(){
   return { time:0, wave:1, hp:100, maxHp:100, speed:14, kills:0, coins:0, bosses:0, combo:0, comboT:0, bestCombo:0,
-    weapon:'blaster', tiers:{blaster:0, scatter:-1, laser:-1}, up:{multi:1, rate:0, dmg:0, crit:0},
+    weapon:'blaster', tiers:Object.fromEntries(WKEYS.map(k => [k, k === 'blaster' ? 0 : -1])), up:{multi:1, rate:0, dmg:0, crit:0},
+    xp:0, level:1, weaponGates:0, spin:0, charge:0,
     nova:0, fireT:0, spawnT:2.5, rowDist:0, rowGap:25, rowCount:0, gateT:8, hudT:0 };
 }
 function clearWorld(){
@@ -518,6 +556,8 @@ function clearWorld(){
   gates.forEach(removeGate); gates = [];
   crates.forEach(removeCrate); crates = [];
   if (boss){ scene.remove(boss.mesh); boss = null; }
+  holes.forEach(removeHole); holes = [];
+  zaps.forEach(z => { z.life = 0; z.l.visible = false; }); rails.forEach(r => { r.life = 0; r.g.visible = false; });
   beamMeshes.forEach(b => b.visible = false); warnMeshes.forEach(w => w.visible = false);
   trail.forEach(t => { t.life = 0; t.s.material.opacity = 0; });
   $('bossbar').hidden = true;
@@ -568,7 +608,7 @@ function gateTexture(opt){
     x.lineWidth = 7; x.strokeStyle = hex; x.shadowColor = hex; x.shadowBlur = 18; x.stroke(); x.shadowBlur = 0;
     roundRect(x, 70, 24, 180, 40, 20); x.fillStyle = hex; x.fill();
     x.fillStyle = '#0B0D1A'; x.textAlign = 'center'; x.font = '800 22px Inter, sans-serif'; x.fillText(opt.head, 160, 52);
-    x.shadowColor = hex; x.shadowBlur = 20; x.fillStyle = '#FFFFFF'; x.font = '700 92px "Space Grotesk", Inter, sans-serif'; x.fillText(opt.big, 160, 168); x.shadowBlur = 0;
+    x.shadowColor = hex; x.shadowBlur = 20; x.fillStyle = '#FFFFFF'; let fs = 92; do { x.font = `700 ${fs}px "Space Grotesk", Inter, sans-serif`; fs -= 4; } while (x.measureText(opt.big).width > 280 && fs > 30); x.fillText(opt.big, 160, 162); x.shadowBlur = 0;
     x.fillStyle = '#F4F5FF'; x.font = '700 26px Inter, sans-serif'; x.fillText(opt.sub, 160, 222);
   });
 }
@@ -631,32 +671,40 @@ function findTargets(n){
 }
 function weaponDamage(){ return WEAPONS[G.weapon].dmg * Math.pow(1.35, G.tiers[G.weapon]) * (1 + .2*G.up.dmg); }
 function rollCrit(d){ return Math.random() < .05*G.up.crit ? [d*2, true] : [d, false]; }
-function fireBullet(tx, tz, target, homing, angleOff, speed, life){
+function fireBullet(tx, tz, target, homing, angleOff, speed, life, kind){
   const ox = P.x + .62, oz = -.8;
   const a = Math.atan2(tx - ox, tz - oz) + angleOff;
   const [d, crit] = rollCrit(weaponDamage());
-  const m = getBullet(), t = G.tiers[G.weapon];
-  m.userData.core.material = crit ? critMat : bulletMats[t]; m.userData.glow.material = crit ? critGlow : bulletGlow[t];
+  const m = getBullet(), t = G.tiers[G.weapon], core = m.userData.core, gl = m.userData.glow;
+  core.rotation.set(0, 0, 0);
+  if (kind === 'rocket'){ core.material = kindCore.rocket; gl.material = kindGlow.rocket; core.scale.set(.24, .24, .7); gl.scale.set(1.5, 1.5, 1); }
+  else if (kind === 'saw'){ core.material = kindCore.saw; gl.material = kindGlow.saw; core.scale.set(.62, .07, .62); gl.scale.set(1.3, 1.3, 1); }
+  else if (kind === 'black'){ core.material = kindCore.black; gl.material = kindGlow.black; core.scale.set(.5, .5, .5); gl.scale.set(2.4, 2.4, 1); }
+  else { core.material = crit ? critMat : bulletMats[t]; gl.material = crit ? critGlow : bulletGlow[t]; const s = kind === 'mini' ? .7 : 1; core.scale.set(.12*s, .12*s, .75*s); gl.scale.set(.85*s, .85*s, 1); }
   m.position.set(ox, 1.55 + P.y, oz);
-  bullets.push({mesh:m, x:ox, z:oz, vx:Math.sin(a)*speed, vz:Math.cos(a)*speed, speed, target, homing, life, dmg:d, crit});
-  muzzle(ox, 1.55 + P.y, oz - .2, TIER_HEX[t]);
+  const b = {mesh:m, x:ox, z:oz, vx:Math.sin(a)*speed, vz:Math.cos(a)*speed, speed, target, homing, life, dmg:d, crit, kind:kind || 'bolt'};
+  if (kind === 'saw'){ b.hits = new Set(); b.pierce = 3 + t; }
+  if (kind === 'black'){ b.dx = tx; b.dz = tz; }
+  bullets.push(b);
+  muzzle(ox, 1.55 + P.y, oz - .2, kind === 'black' ? 0x8a4dff : kind === 'rocket' ? 0xff6a3d : TIER_HEX[t]);
 }
 function muzzle(x, y, z, c){ const s = getSpark(c); s.position.set(x, y, z); s.scale.set(1.2, 1.2, 1); s.material.opacity = 1; sparks.push({s, life:.08, max:.08, grow:2}); }
 function fire(dt){
-  const W = WEAPONS[G.weapon], rate = W.rate * (1 + .15*G.up.rate);
-  G.fireT -= dt;
-  if (G.weapon === 'laser'){
+  const id = G.weapon, W = WEAPONS[id], tier = G.tiers[id], rateMul = 1 + .15*G.up.rate;
+  if (P.muzzle){ const s = id === 'railgun' ? .9 + G.charge*2.2 : .9; P.muzzle.scale.set(s, s, 1); }
+  if (id === 'laser'){
+    G.fireT -= dt;
     const targets = findTargets(Math.min(5, G.up.multi));
     beamMeshes.forEach((b,i) => {
       const t = targets[i];
       if (!t){ b.visible = false; return; }
       const ox = P.x + .62, oz = -.8, ex = t.x, ez = Math.max(-52, t.z - 8), dx = ex - ox, dz = ez - oz, len = Math.hypot(dx, dz);
-      b.visible = true; b.userData.outer.material.color.setHex(TIER_HEX[G.tiers.laser]); b.userData.outer.material.opacity = .35 + Math.random()*.35;
-      const w = 1 + .25*G.tiers.laser; b.scale.set(w, w, len); b.position.set((ox+ex)/2, 1.55 + P.y, (oz+ez)/2); b.rotation.y = Math.atan2(dx, dz);
+      b.visible = true; b.userData.outer.material.color.setHex(TIER_HEX[tier]); b.userData.outer.material.opacity = .35 + Math.random()*.35;
+      const w = 1 + .25*tier; b.scale.set(w, w, len); b.position.set((ox+ex)/2, 1.55 + P.y, (oz+ez)/2); b.rotation.y = Math.atan2(dx, dz);
       b.userData.seg = [ox, oz, ex, ez];
     });
     if (G.fireT <= 0 && targets.length){
-      G.fireT = 1/rate; Sound.shot();
+      G.fireT = 1/(W.rate*rateMul); Sound.shot();
       beamMeshes.forEach(b => {
         if (!b.visible) return; const [ax, az, bx, bz] = b.userData.seg;
         monsters.filter(m => m.alive && segDist(m.x, m.z, ax, az, bx, bz) < m.r + .3).forEach(m => { const [d, c] = rollCrit(weaponDamage()); damageMonster(m, d, c); });
@@ -666,31 +714,109 @@ function fire(dt){
     return;
   }
   beamMeshes.forEach(b => b.visible = false);
-  if (G.fireT > 0) return;
   const targets = findTargets(Math.max(1, G.up.multi));
+  if (id === 'minigun') G.spin = targets.length ? Math.min(1, G.spin + dt*.6) : Math.max(0, G.spin - dt*1.2);
+  if (id === 'railgun'){
+    if (!targets.length){ G.charge = Math.max(0, G.charge - dt); return; }
+    G.charge += dt*W.rate*rateMul;
+    if (G.charge >= 1){ G.charge = 0; railShot(targets); }
+    return;
+  }
+  G.fireT -= dt;
+  if (G.fireT > 0) return;
   if (!targets.length){ G.fireT = 0; return; }
-  G.fireT = 1/rate; Sound.shot();
-  if (G.weapon === 'blaster'){
-    const n = G.up.multi;
+  const rate = id === 'minigun' ? (3 + 12*G.spin)*rateMul : W.rate*rateMul;
+  G.fireT = 1/rate;
+  const n = G.up.multi, t0 = targets[0];
+  if (id === 'blaster'){
+    Sound.shot();
     for (let i = 0; i < n; i++){ const t = targets[i % targets.length]; fireBullet(t.x, t.z, t, true, (i - (n-1)/2)*.07, 58, 1.2); }
-  } else {
-    const t = targets[0], n = 5 + 2*(G.up.multi - 1), spread = .55;
-    for (let i = 0; i < n; i++) fireBullet(t.x, t.z, null, false, -spread/2 + spread*(i/(n-1)), 48, .8);
+  } else if (id === 'scatter'){
+    Sound.shot();
+    const k = 7 + 2*(n - 1), spread = .42;
+    for (let i = 0; i < k; i++) fireBullet(t0.x, t0.z, null, false, -spread/2 + spread*(i/(k-1)), 54, .95);
+  } else if (id === 'minigun'){
+    Sound.shot();
+    for (let i = 0; i < n; i++){ const t = targets[i % targets.length]; fireBullet(t.x, t.z, t, true, rand(-.06,.06), 64, 1.1, 'mini'); }
+  } else if (id === 'rocket'){
+    Sound.beep(180, .22, 'sawtooth', .04, 70);
+    for (let i = 0; i < n; i++){ const t = targets[i % targets.length]; fireBullet(t.x, t.z, t, true, (i - (n-1)/2)*.25, 30, 2.6, 'rocket'); }
+  } else if (id === 'saw'){
+    Sound.beep(700, .12, 'triangle', .04, 1400);
+    for (let i = 0; i < n; i++){ const t = targets[i % targets.length]; fireBullet(t.x, t.z, t, true, (i - (n-1)/2)*.15, 36, 1.8, 'saw'); }
+  } else if (id === 'tesla'){
+    Sound.beep(1400, .09, 'square', .03, 300);
+    teslaChain(t0, 3 + tier + (n - 1));
+  } else if (id === 'black'){
+    fireBullet(t0.x, t0.z, t0, false, 0, 26, 3, 'black');
   }
 }
+function isAlive(t){ return t === boss ? !!boss : !!(t && t.alive); }
+function nearestExcept(x, z, set, maxD, withBoss){
+  let best = null, bd = maxD;
+  for (const m of monsters){ if (!m.alive || set.has(m) || m.z > .5) continue; const d = Math.hypot(m.x - x, m.z - z); if (d < bd){ bd = d; best = m; } }
+  if (withBoss && boss && !set.has(boss)){ const d = Math.hypot(boss.x - x, boss.z - z) - 1.5; if (d < bd) best = boss; }
+  return best;
+}
+function hitTarget(t, d, crit){ if (t === boss) damageBoss(d, crit); else damageMonster(t, d, crit); }
+function zap(ax, ay, az, bx, by, bz){
+  const z = zaps.find(q => q.life <= 0) || zaps[0], p = z.l.geometry.attributes.position.array;
+  for (let i = 0; i < 8; i++){ const k = i/7, j = i > 0 && i < 7 ? .45 : 0; p[i*3] = ax + (bx-ax)*k + rand(-j,j); p[i*3+1] = ay + (by-ay)*k + rand(-j,j); p[i*3+2] = az + (bz-az)*k + rand(-j,j); }
+  z.l.geometry.attributes.position.needsUpdate = true; z.life = .14; z.l.visible = true; z.l.material.opacity = 1;
+}
+function teslaChain(first, count){
+  let fx = P.x + .62, fy = 1.55 + P.y, fz = -.8, cur = first; const hit = new Set();
+  for (let i = 0; i < count && cur; i++){
+    const ty = cur === boss ? 3 : 1;
+    zap(fx, fy, fz, cur.x, ty, cur.z); zap(fx, fy, fz, cur.x, ty, cur.z); flare(cur.x, ty, cur.z, 0x9be7ff, 2.6);
+    const [d, c] = rollCrit(weaponDamage()*(1 - .06*i)); hitTarget(cur, d, c);
+    hit.add(cur); fx = cur.x; fy = ty; fz = cur.z;
+    cur = nearestExcept(cur.x, cur.z, hit, 7.5, true);
+  }
+}
+function railShot(targets){
+  const n = Math.min(G.up.multi, targets.length), tier = G.tiers.railgun;
+  shake = Math.max(shake, .16); Sound.beep(2200, .18, 'sawtooth', .05, 200); Sound.beep(90, .3, 'square', .05, 40);
+  for (let i = 0; i < n; i++){
+    const t = targets[i], ox = P.x + .62, oz = -.8, dx = t.x - ox, dz = t.z - oz, l = Math.hypot(dx, dz) || 1;
+    const ex = ox + dx/l*65, ez = oz + dz/l*65;
+    monsters.filter(m => m.alive && segDist(m.x, m.z, ox, oz, ex, ez) < m.r + .45).forEach(m => { const [d, c] = rollCrit(weaponDamage()); damageMonster(m, d, c); burst(m.x, 1, m.z, 0xffffff, 4, 6); });
+    if (boss && segDist(boss.x, boss.z, ox, oz, ex, ez) < 2.4){ const [d, c] = rollCrit(weaponDamage()); damageBoss(d, c); }
+    const r = rails.find(q => q.life <= 0) || rails[0];
+    r.life = .25; r.g.visible = true; r.outer.material.color.setHex(TIER_HEX[tier]);
+    r.g.position.set((ox+ex)/2, 1.55 + P.y, (oz+ez)/2); r.g.rotation.y = Math.atan2(dx, dz); r.g.scale.set(1, 1, 65);
+    flare(ox, 1.55 + P.y, oz - .3, 0xffffff, 4);
+  }
+}
+function explode(x, z, dmg, crit){
+  flare(x, 1, z, 0xff6a3d, 7); flare(x, 1, z, 0xffe27a, 3.5); burst(x, .8, z, 0xff6a3d, 14, 8);
+  shake = Math.max(shake, .12); Sound.beep(110, .25, 'sawtooth', .05, 45);
+  monsters.forEach(m => { if (m.alive && Math.hypot(m.x - x, m.z - z) < 2.5) damageMonster(m, dmg, crit, true); });
+  if (boss && Math.abs(boss.x - x) < 3.4 && Math.abs(boss.z - z) < 2.4) damageBoss(dmg, crit);
+}
+function spawnHole(x, z){
+  const g = new THREE.Group();
+  const core = mesh(GEO.sphere, new THREE.MeshBasicMaterial({color:0x05000c}), .6, .6, .6, 0, 1, 0);
+  const halo = new THREE.Sprite(glowMat(0x8a4dff, .95)); halo.scale.set(5, 5, 1); halo.position.y = 1;
+  const ring = mesh(GEO.ring, new THREE.MeshBasicMaterial({color:0xb84dff, transparent:true, opacity:.85, side:THREE.DoubleSide, blending:THREE.AdditiveBlending, depthWrite:false}), 2.4, 2.4, 1, 0, .15, 0); ring.rotation.x = -Math.PI/2;
+  g.add(core, halo, ring); g.position.set(x, 0, z); scene.add(g);
+  holes.push({g, core, halo, ring, x, z, t:2.4, dps:weaponDamage()});
+  Sound.nova(); shake = Math.max(shake, .14);
+}
+function removeHole(h){ scene.remove(h.g); h.core.material.dispose(); h.halo.material.dispose(); h.ring.material.dispose(); }
 function segDist(px, pz, ax, az, bx, bz){
   const dx = bx-ax, dz = bz-az, l2 = dx*dx + dz*dz; let t = l2 ? ((px-ax)*dx + (pz-az)*dz)/l2 : 0; t = Math.max(0, Math.min(1, t));
   return Math.hypot(px - (ax + t*dx), pz - (az + t*dz));
 }
-function damageMonster(m, d, crit){
+function damageMonster(m, d, crit, silent){
   if (!m.alive) return;
-  m.hp -= d; m.flash = .07; Sound.hit();
+  m.hp -= d; m.flash = .07; if (!silent) Sound.hit();
   if (crit || G.time - m.numT > .14){ m.numT = G.time; popNumber(m.x, 1.7*m.sc, m.z, d, crit); }
   if (crit) burst(m.x, 1, m.z, 0xffffff, 4, 4);
   if (m.hp <= 0) killMonster(m);
 }
 function killMonster(m){
-  m.alive = false; G.kills++;
+  m.alive = false; G.kills++; addXp(m.type === 'brute' ? 4 : 1 + (m.elite ? 3 : 0));
   G.combo = G.comboT > 0 ? G.combo + 1 : 1; G.comboT = 1.7; G.bestCombo = Math.max(G.bestCombo, G.combo);
   if (G.combo >= 3){ const c = $('combo'); $('comboNum').textContent = 'x' + G.combo; c.classList.add('on'); c.classList.remove('pop'); void c.offsetWidth; c.classList.add('pop'); }
   if (G.combo % 10 === 0){ G.coins += 5; toast(`Combo x${G.combo} · +5`); }
@@ -712,7 +838,7 @@ function killBoss(){
   const b = boss; burst(b.x, 2, b.z, 0xff8a3d, 40, 12); burst(b.x, 2, b.z, 0x5b6190, 30, 10); flare(b.x, 2.5, b.z, 0xff8a3d, 16);
   for (let i = 0; i < 25; i++) spawnCoin(laneX(randi(LANES)), b.z - rand(0, 10));
   spawnCrate(G.weapon, 2, b.z + 2);
-  scene.remove(b.mesh); boss = null; G.bosses++; G.kills++; G.nova = 1;
+  scene.remove(b.mesh); boss = null; G.bosses++; G.kills++; G.nova = 1; addXp(20);
   warnMeshes.forEach(w => w.visible = false); $('bossbar').hidden = true;
   hitStop = .12; shake = .55; banner('Golem down', 'Rare loot dropped', false); Sound.boom();
 }
@@ -747,10 +873,32 @@ function nearMiss(){ G.coins += 5; slowmo = .25; toast('Near miss +5'); Sound.co
 function onWave(w){
   if (w % 5 === 0 && !boss){ banner(`Wave ${w}`, 'Iron Golem incoming', true); spawnBoss(); }
   else if (w > 1) banner(`Wave ${w}`, 'Speed up', false);
-  if (w >= 2){
-    const opts = ['blaster', 'scatter']; if (w >= 4) opts.push('laser');
-    spawnCrate(Math.random() < .4 ? G.weapon : pick(opts), randi(LANES), -92);
+}
+const xpNeed = L => 5 + 4*L;
+function addXp(n){
+  G.xp += n;
+  while (G.xp >= xpNeed(G.level)){
+    G.xp -= xpNeed(G.level); G.level++;
+    const fresh = WKEYS.find(k => WEAPONS[k].lvl === G.level);
+    banner(`Level ${G.level}`, fresh ? `${WEAPONS[fresh].name} unlocked` : 'Weapon gate ahead', false);
+    G.weaponGates++; Sound.gate();
   }
+}
+function weaponOpt(w){
+  const tr = G.tiers[w], next = Math.min(4, tr + 1);
+  return { weapon:w, head: tr < 0 ? 'NEW WEAPON' : w === G.weapon ? 'UPGRADE' : 'SWITCH', big: WEAPONS[w].short, sub: tr < 0 ? 'Common' : `to ${TIER_NAMES[next]}`, color: WEAPONS[w].css, noToast:true, apply: () => pickupWeapon(w) };
+}
+function spawnWeaponGate(){
+  const unlocked = WKEYS.filter(k => WEAPONS[k].lvl <= G.level && G.tiers[k] < 4);
+  if (!unlocked.length){ spawnGatePair(); return; }
+  const fresh = unlocked.filter(k => G.tiers[k] < 0);
+  const others = unlocked.filter(k => k !== G.weapon);
+  let a = fresh.length ? fresh[fresh.length - 1] : (others.length ? pick(others) : unlocked[0]);
+  let b = G.tiers[G.weapon] < 4 && G.weapon !== a ? G.weapon : null;
+  if (!b){ const rest = unlocked.filter(k => k !== a); b = rest.length ? pick(rest) : null; }
+  if (!b){ const u = UPGRADES.filter(x => x.ok(G)); const oa = weaponOpt(a), ob = pick(u); const opts = Math.random() < .5 ? [oa, ob] : [ob, oa]; gates.push({ z:-88, opts, meshes:[makeGate(opts[0],-1), makeGate(opts[1],1)], resolved:false }); return; }
+  const opts = Math.random() < .5 ? [weaponOpt(a), weaponOpt(b)] : [weaponOpt(b), weaponOpt(a)];
+  gates.push({ z:-88, opts, meshes:[makeGate(opts[0],-1), makeGate(opts[1],1)], resolved:false });
 }
 function scrollEnv(dz, spd){
   stripes.forEach(s => { s.position.z += dz; if (s.position.z > 12) s.position.z -= 270; });
@@ -801,11 +949,20 @@ function update(dt){
   G.rowDist += dz;
   if (G.rowDist >= G.rowGap){ G.rowDist = 0; G.rowGap = Math.max(14, 25 - (G.wave - 1)*.8); spawnRow(); }
   G.gateT -= dt;
-  if (G.gateT <= 0){ G.gateT = 17; spawnGatePair(); }
+  const laneBusy = gates.some(g => g.z < -66);
+  if (G.weaponGates > 0 && !laneBusy && G.gateT > 2.5){ G.weaponGates--; spawnWeaponGate(); }
+  else if (G.gateT <= 0){ if (laneBusy) G.gateT = 2; else { G.gateT = 17; spawnGatePair(); } }
+  for (const h of holes){
+    h.t -= dt; h.g.position.z = h.z; h.ring.rotation.z += dt*7; const pul = 1 + Math.sin(G.time*18)*.08; h.halo.scale.set(5*pul, 5*pul, 1);
+    if (h.t < .3){ const k = Math.max(0, h.t/.3); h.g.scale.set(k, k, k); }
+    for (const m of monsters){ if (!m.alive) continue; const d = Math.hypot(m.x - h.x, m.z - h.z); if (d < 7.5){ m.held = G.time; m.x += (h.x - m.x)*Math.min(1, dt*4); m.z += (h.z - m.z)*Math.min(1, dt*4); } if (d < 3.6) damageMonster(m, h.dps*dt, false, true); }
+    if (boss && Math.abs(boss.x - h.x) < 3.5 && Math.abs(boss.z - h.z) < 3) damageBoss(h.dps*dt*.6, false);
+  }
+  holes = holes.filter(h => { if (h.t <= 0){ burst(h.x, 1, h.z, 0x8a4dff, 16, 7); removeHole(h); return false; } return true; });
 
   for (const m of monsters){
     if (!m.alive) continue;
-    m.z += dz + m.own*dt; m.bob += dt*8;
+    if (m.held !== G.time) m.z += dz + m.own*dt; m.bob += dt*8;
     m.mesh.position.set(m.x, Math.abs(Math.sin(m.bob))*(m.type === 'brute' ? .05 : .15), m.z);
     const ud = m.mesh.userData, bm = ud.bodyMat;
     if (m.flash > 0){ m.flash -= dt; bm.emissive.setHex(0xffffff); bm.emissiveIntensity = .9; }
@@ -834,7 +991,7 @@ function update(dt){
     if (!g.resolved && g.z > -.2){
       g.resolved = true;
       const side = P.lane <= 1 ? 0 : P.lane >= 3 ? 1 : -1;
-      if (side >= 0){ const u = g.opts[side], col = parseInt(u.color.slice(1),16); u.apply(G); toast(`${u.big} ${u.sub}`); Sound.gate(); g.meshes[side].visible = false; burst(laneX(side ? 3.5 : .5), 1.5, 0, col, 22, 8); flare(P.x, 1.5, -.5, col, 10); updateChips(); }
+      if (side >= 0){ const u = g.opts[side], col = parseInt(u.color.slice(1),16); u.apply(G); if (!u.noToast) toast(`${u.big} ${u.sub}`); Sound.gate(); g.meshes[side].visible = false; burst(laneX(side ? 3.5 : .5), 1.5, 0, col, 22, 8); flare(P.x, 1.5, -.5, col, 10); updateChips(); }
     }
   }
   gates = gates.filter(g => { if (g.z > 10){ removeGate(g); return false; } return true; });
@@ -857,19 +1014,36 @@ function update(dt){
   fire(dt);
 
   for (const b of bullets){
-    if (b.homing && b.target && (b.target === boss ? !!boss : b.target.alive)){
-      const dx = b.target.x - b.x, dzz = b.target.z - b.z, l = Math.hypot(dx, dzz) || 1, k = Math.min(1, dt*10);
+    if (b.kind === 'black'){
+      if (isAlive(b.target)){ b.dx = b.target.x; b.dz = b.target.z; } else b.dz += dz;
+      const dx = b.dx - b.x, dzz = b.dz - b.z, l = Math.hypot(dx, dzz);
+      if (l < 1.2 || b.life < .05){ spawnHole(b.x, b.z); b.life = 0; continue; }
+      b.vx = dx/l*b.speed; b.vz = dzz/l*b.speed;
+    } else if (b.homing && b.target && isAlive(b.target)){
+      const dx = b.target.x - b.x, dzz = b.target.z - b.z, l = Math.hypot(dx, dzz) || 1, k = Math.min(1, dt*(b.kind === 'saw' ? 14 : 10));
       b.vx += (dx/l*b.speed - b.vx)*k; b.vz += (dzz/l*b.speed - b.vz)*k;
       const vl = Math.hypot(b.vx, b.vz) || 1; b.vx = b.vx/vl*b.speed; b.vz = b.vz/vl*b.speed;
-    }
+    } else if (b.kind === 'saw' && b.hits.size){ b.target = nearestExcept(b.x, b.z, b.hits, 14, true); b.homing = !!b.target; }
     b.x += b.vx*dt; b.z += b.vz*dt; b.life -= dt;
     b.mesh.position.set(b.x, b.mesh.position.y, b.z); b.mesh.rotation.y = Math.atan2(b.vx, b.vz);
+    if (b.kind === 'saw') b.mesh.userData.core.rotation.y = G.time*30;
+    if (b.kind === 'rocket' && Math.random() < .5) flare(b.x, b.mesh.position.y, b.z + .4, 0xffb23d, 1.2);
+    if (b.kind === 'black') continue;
     for (const m of monsters){
-      if (!m.alive) continue;
+      if (!m.alive || (b.hits && b.hits.has(m))) continue;
       const dx = m.x - b.x, dzz = m.z - b.z;
-      if (dx*dx + dzz*dzz < (m.r + .25)*(m.r + .25)){ damageMonster(m, b.dmg, b.crit); b.life = 0; flare(b.x, 1.2, b.z, b.crit ? 0xffe27a : 0xffffff, 1.6); break; }
+      if (dx*dx + dzz*dzz < (m.r + .25)*(m.r + .25)){
+        if (b.kind === 'rocket'){ explode(b.x, b.z, b.dmg, b.crit); b.life = 0; }
+        else if (b.kind === 'saw'){ damageMonster(m, b.dmg, b.crit); b.hits.add(m); b.pierce--; flare(b.x, 1.2, b.z, 0x4dffb0, 1.6); if (b.pierce <= 0) b.life = 0; else { b.target = nearestExcept(b.x, b.z, b.hits, 14, true); b.homing = !!b.target; } }
+        else { damageMonster(m, b.dmg, b.crit); b.life = 0; flare(b.x, 1.2, b.z, b.crit ? 0xffe27a : 0xffffff, 1.6); }
+        break;
+      }
     }
-    if (b.life > 0 && boss && Math.abs(boss.x - b.x) < 2.2 && Math.abs(boss.z - b.z) < 1.4){ damageBoss(b.dmg, b.crit); b.life = 0; flare(b.x, 2, b.z, 0xffd0a0, 2); }
+    if (b.life > 0 && boss && Math.abs(boss.x - b.x) < 2.2 && Math.abs(boss.z - b.z) < 1.4 && !(b.hits && b.hits.has(boss))){
+      if (b.kind === 'rocket'){ explode(b.x, b.z, b.dmg, b.crit); b.life = 0; }
+      else if (b.kind === 'saw'){ damageBoss(b.dmg, b.crit); b.hits.add(boss); b.pierce--; if (b.pierce <= 0) b.life = 0; else { b.target = nearestExcept(b.x, b.z, b.hits, 14, false); b.homing = !!b.target; } }
+      else { damageBoss(b.dmg, b.crit); b.life = 0; flare(b.x, 2, b.z, 0xffd0a0, 2); }
+    }
   }
   monsters = monsters.filter(m => { if (!m.alive){ m.mesh.visible = false; monsterPool[m.type].push(m.mesh); return false; } return true; });
   bullets = bullets.filter(b => { if (b.life <= 0 || b.z < -60){ b.mesh.visible = false; bulletPool.push(b.mesh); return false; } return true; });
@@ -905,6 +1079,8 @@ function updateFx(dt){
   parts = parts.filter(p => { if (p.life <= 0){ p.mesh.visible = false; partPool.push(p.mesh); return false; } return true; });
   for (const s of sparks){ s.life -= dt; const k = Math.max(0, s.life/s.max); s.s.material.opacity = k; const sc = s.grow*(1.15 - k*.6); s.s.scale.set(sc, sc, 1); }
   sparks = sparks.filter(s => { if (s.life <= 0){ s.s.visible = false; sparkPool.push(s.s); return false; } return true; });
+  zaps.forEach(z => { if (z.life <= 0) return; z.life -= dt; z.l.material.opacity = Math.max(0, z.life/.14); if (z.life <= 0) z.l.visible = false; });
+  rails.forEach(r => { if (r.life <= 0) return; r.life -= dt; const k = Math.max(0, r.life/.25); r.outer.material.opacity = .7*k; r.core.material.opacity = k; r.g.scale.set(.4 + k*.8, .4 + k*.8, 65); if (r.life <= 0) r.g.visible = false; });
   if (novaFx > 0){ novaFx -= dt; const k = 1 - novaFx/.6; novaRing.position.set(P.x, .25, -k*20); const s = 1 + k*28; novaRing.scale.set(s, s, 1); novaRing.material.opacity = (1 - k)*.95; }
   else novaRing.material.opacity = 0;
 }
@@ -958,6 +1134,8 @@ function updateHud(){
   $('timeText').textContent = fmtTime(G.time); $('waveText').textContent = `Wave ${G.wave}`;
   $('waveRing').style.strokeDashoffset = 213.6 * (1 - (G.time % 30)/30);
   $('coinText').textContent = G.coins.toLocaleString(); $('killText').textContent = `${G.kills} kills`;
+  $('lvText').textContent = `Lv ${G.level}`; $('xpBar').style.width = Math.min(100, G.xp/xpNeed(G.level)*100) + '%';
+  const nx = WKEYS.find(k => WEAPONS[k].lvl > G.level); $('nextW').textContent = nx ? `${WEAPONS[nx].name} at Lv ${WEAPONS[nx].lvl}` : 'Every weapon unlocked';
   $('novaBtn').style.setProperty('--p', Math.round(G.nova*100)); $('novaBtn').classList.toggle('ready', G.nova >= 1);
 }
 
@@ -967,7 +1145,7 @@ function portrait(h){
   const head = h.boxy ? `<rect x="22" y="14" width="28" height="24" rx="5" fill="${h.bodyCss}"/><rect x="26" y="22" width="20" height="6" rx="2" fill="${h.css}"/>`
     : `<circle cx="36" cy="27" r="14" fill="${h.bodyCss}"/><rect x="25" y="23" width="22" height="7" rx="3.5" fill="${h.css}"/>`;
   const hat = h.hat ? `<path d="M20 20 L36 0 L52 20 Z" fill="${h.css}"/>` : '';
-  return `<svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="35" fill="${h.bg}"/><circle cx="36" cy="36" r="34" fill="none" stroke="${h.css}" stroke-opacity=".35"/><rect x="18" y="42" width="36" height="28" rx="10" fill="${h.bodyCss}"/><rect x="30" y="48" width="12" height="3" rx="1.5" fill="${h.css}"/>${head}${hat}</svg>`;
+  return `<svg width="52" height="52" viewBox="0 0 72 72" aria-hidden="true"><circle cx="36" cy="36" r="35" fill="${h.bg}"/><circle cx="36" cy="36" r="34" fill="none" stroke="${h.css}" stroke-opacity=".35"/><rect x="18" y="42" width="36" height="28" rx="10" fill="${h.bodyCss}"/><rect x="30" y="48" width="12" height="3" rx="1.5" fill="${h.css}"/>${head}${hat}</svg>`;
 }
 function renderMenu(){
   const best = store.get('best', 0), bestWave = store.get('bestWave', 0);
@@ -981,6 +1159,14 @@ function renderMenu(){
     b.addEventListener('click', () => { heroId = h.id; store.set('hero', heroId); buildHero(h); renderMenu(); });
     wrap.appendChild(b);
   });
+  const bl = store.get('bestLevel', 1);
+  const ARM_DESC = { blaster:'homing shots, reliable', scatter:'wide shotgun spread', laser:'beams that pierce everything in a line', rocket:'homing rockets with splash damage', tesla:'lightning that chains between enemies', saw:'blades that slice through and ricochet', railgun:'charges, then pierces the whole lane', minigun:'spins up to 15 shots a second', black:'a singularity that pulls enemies in and crushes them' };
+  $('armory').innerHTML = WKEYS.map(k => { const w = WEAPONS[k], seen = w.lvl <= Math.max(2, bl); return `<button class="arm${seen ? '' : ' locked'}" data-w="${k}" aria-pressed="false" aria-label="${seen ? w.name : 'Locked weapon'}, unlocks at level ${w.lvl}" style="--ac:${w.css}"><span style="color:${seen ? w.css : '#6B729E'}">${WICON[k]}</span><small>Lv ${w.lvl}</small></button>`; }).join('');
+  $('armory').querySelectorAll('.arm').forEach(btn => btn.addEventListener('click', () => {
+    const k = btn.dataset.w, w = WEAPONS[k], seen = !btn.classList.contains('locked');
+    $('armory').querySelectorAll('.arm').forEach(o => o.setAttribute('aria-pressed', String(o === btn)));
+    $('armInfo').innerHTML = seen ? `<b>${w.name}</b>, level ${w.lvl}: ${ARM_DESC[k]}.` : `<b>Locked</b>: reach level ${w.lvl} in a run to discover it.`;
+  }));
   buildHero(heroById(heroId));
 }
 function show(id){ ['menu','paused','over'].forEach(s => $(s).hidden = s !== id); }
@@ -1009,11 +1195,12 @@ function gameOver(){
   if (isBest) store.set('best', G.time);
   if (G.wave > bestWave) store.set('bestWave', G.wave);
   store.set('bank', store.get('bank', 0) + G.coins);
+  if (G.level > store.get('bestLevel', 1)) store.set('bestLevel', G.level);
   $('overWave').textContent = `Run over · wave ${G.wave}`;
   $('overTime').textContent = fmtTime(G.time);
   const nb = $('newBest'); nb.className = isBest ? 'yes' : '';
   nb.textContent = isBest ? (best > 0 ? `New best, ${Math.round(G.time - best)} s longer than before` : 'First run on the board') : `Best is ${fmtTime(best)}. ${Math.max(1, Math.ceil(best - G.time))} s to beat it.`;
-  countUp($('oKills'), G.kills, '', 700); countUp($('oCoins'), G.coins, '+', 800); countUp($('oCombo'), G.bestCombo, '', 700); $('oBoss').textContent = G.bosses;
+  countUp($('oKills'), G.kills, '', 700); countUp($('oCoins'), G.coins, '+', 800); countUp($('oCombo'), G.bestCombo, '', 700); $('oBoss').textContent = G.level;
   const bw = Math.max(bestWave, G.wave), next = HEROES.find(h => h.req > bw);
   if (next){ $('unlockCard').hidden = false; $('unlockText').textContent = `Reach wave ${next.req} to unlock ${next.name}`; $('unlockFill').style.width = '0%'; setTimeout(() => { $('unlockFill').style.width = Math.min(100, bw / next.req * 100) + '%'; }, 250); }
   else $('unlockCard').hidden = true;
