@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glitch Station Builder Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0B0D1A; --track:#171B36; --lane:#3A4170;
+  --red:#FF5E7A; --cyan:#3DE0FF; --amber:#FFB23D; --mint:#4DFFB0;
+  --paper:#EEF0FA; --surface:#FFFFFF; --ink:#151834; --muted:#4A5078; --rule:#D3D7EE; --tag:#E2E6FA;
+  --accent-ink:#0A6F86; --red-ink:#B4213F; --mint-ink:#0D6B45; --amber-ink:#8A5A00;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#10132A; --surface:#171B36; --ink:#EEF0FF; --muted:#A9B0DD; --rule:#2C3260; --tag:#232953;
+    --accent-ink:#3DE0FF; --red-ink:#FF7F96; --mint-ink:#4DFFB0; --amber-ink:#FFC56B; color-scheme: dark; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+a{color:var(--accent-ink)}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;line-height:1.15;margin:0}
+code,pre{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
+p code,td code,li code{font-size:.88em;background:var(--tag);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.hero{background:var(--night);color:#F2F4FF;position:relative;overflow:hidden;padding:56px 16px 48px}
+.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),rgba(58,65,112,.45) calc(20% - 1px) 20%);mask-image:linear-gradient(to bottom,transparent,#000 60%);pointer-events:none}
+.hero-in{position:relative;max-width:1200px;margin:0 auto;display:grid;gap:18px}
+.kicker{font-family:"Space Grotesk",sans-serif;letter-spacing:.18em;font-size:13px;color:var(--cyan);text-transform:uppercase}
+.hero h1{font-size:clamp(44px,8vw,96px);letter-spacing:-.03em;line-height:.95}
+.hero h1 .row2{display:block;color:var(--red)}
+.hero p{max-width:64ch;margin:0;color:#C9CEF5;font-size:18px}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stats span{background:rgba(23,27,54,.9);border:1px solid var(--lane);border-radius:999px;padding:6px 14px;font-size:14px;color:#C9CEF5}
+.stats b{color:var(--mint)}
+.layout{max-width:1200px;margin:0 auto;padding:48px 16px 96px;display:flex;flex-wrap:wrap;gap:48px}
+nav.toc{flex:1 1 200px;max-width:240px}
+nav.toc ol{list-style:none;margin:0;padding:0;position:sticky;top:24px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+nav.toc a{text-decoration:none;color:var(--muted);display:block;padding:4px 0 4px 12px;border-left:2px solid var(--rule)}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--ink);border-left-color:var(--cyan);outline:none}
+main{flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:56px}
+section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:24px}
+section h2{font-size:30px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:14px}
+section h2 .n{font-size:15px;color:var(--accent-ink);font-weight:700;min-width:24px}
+section h3{font-size:19px;margin-top:6px}
+.lead{font-size:19px;line-height:1.5;margin:0;max-width:62ch}
+p{margin:0;max-width:70ch}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font-weight:700;background:var(--tag);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+pre{margin:0;background:var(--night);color:#DDE2FF;border:1px solid var(--lane);border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.55;overflow-x:auto;max-width:100%}
+pre .c{color:#7F88C2}pre .k{color:#FF8FA3}pre .s{color:#4DFFB0}pre .f{color:#3DE0FF}
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;max-width:760px}
+.timeline li{position:relative;padding:0 0 22px 40px;border-left:2px solid var(--rule);margin-left:12px}
+.timeline li:last-child{border-left-color:transparent}
+.timeline li::before{content:attr(data-n);position:absolute;left:-13px;top:0;width:24px;height:24px;border-radius:50%;background:var(--night);color:var(--cyan);font:700 12px/24px "Space Grotesk",sans-serif;text-align:center;border:1px solid var(--lane)}
+.timeline b{font-family:"Space Grotesk",sans-serif;font-size:16.5px;display:block;margin-bottom:2px}
+.timeline span{color:var(--muted);font-size:15px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--cyan);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.card h3{margin:0;font-size:18px}
+.card p{font-size:15px;color:var(--muted)}
+.card.r{border-top-color:var(--red)}.card.a{border-top-color:var(--amber)}.card.m{border-top-color:var(--mint)}
+.tip{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--mint);border-radius:10px;padding:12px 16px;font-size:15px;max-width:76ch}
+.tip.warn{border-left-color:var(--amber)}
+.tip b{font-family:"Space Grotesk",sans-serif}
+.shots{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.shots figure{margin:0;display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:var(--muted)}
+.shots img{display:block;border-radius:12px;border:1px solid var(--lane);max-width:100%;height:auto}
+.diagram{background:var(--night);border-radius:16px;padding:12px;overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:640px;height:auto}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:12.5px;white-space:nowrap}
+.ok{background:#C9F7E3;color:#0D4A31}.todo{background:#FFE7BF;color:#5A3A00}
+footer{max-width:1200px;margin:0 auto;padding:0 16px 48px;color:var(--muted);font-size:14px}
+@media print{.hero,pre,.diagram{-webkit-print-color-adjust:exact;print-color-adjust:exact}nav.toc{display:none}}
+</style>
+<style>
+.gallery{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px}
+.gallery figure{margin:0;display:flex;flex-direction:column;gap:6px;font-size:13px;color:var(--muted)}
+.gallery img{width:100%;height:auto;border-radius:10px;border:1px solid var(--lane);display:block}
+.gallery .wide{grid-column:span 2}
+@media (max-width:520px){.gallery .wide{grid-column:span 2}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="kicker">Builder guide · Phases 0 to 6</div>
+    <h1>How Glitch Station <span class="row2">was built</span></h1>
+    <p>A plain language tour of the whole game: how the pieces fit, how a match runs on the server, how movement stays smooth on a phone, how cheating is blocked, what every file does, how it was tested, and how to change it yourself. Written for you, the owner of the project.</p>
+    <div class="stats">
+      <span><b>7</b> PRD phases built (0 to 6)</span><span><b>33</b> automated tests</span><span><b>~250 B</b> per snapshot</span><span><b>$0</b> spent</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Contents"><ol>
+  <li><a href="#now">What you have now</a></li>
+  <li><a href="#picture">The big picture</a></li>
+  <li><a href="#flow">How a match runs</a></li>
+  <li><a href="#story">What I did, step by step</a></li>
+  <li><a href="#tools">Every tool and why</a></li>
+  <li><a href="#files">File by file tour</a></li>
+  <li><a href="#netcode">Smooth movement explained</a></li>
+  <li><a href="#cheat">Anti cheat and safety</a></li>
+  <li><a href="#decisions">Decisions I made</a></li>
+  <li><a href="#bugs">Problems I hit</a></li>
+  <li><a href="#testing">How it was tested</a></li>
+  <li><a href="#commands">Command cheat sheet</a></li>
+  <li><a href="#recipes">Changing things yourself</a></li>
+  <li><a href="#next">What comes next</a></li>
+  <li><a href="#glossary">Glossary</a></li>
+</ol></nav>
+
+<main>
+
+<section id="now">
+  <h2><span class="n">1</span>What you have now</h2>
+  <p class="lead">A complete, playable social deduction game: create a room, play a full match on phones or computers, and rematch. Small groups can fill seats with bots.</p>
+  <div class="gallery">
+    <figure><img src="img/home-phone.png" width="390" height="844" alt="Home screen on a phone: logo, nickname, suit colour grid with patterns, hats, create room and join by code" loading="lazy"><figcaption>Home</figcaption></figure>
+    <figure><img src="img/lobby-phone.png" width="390" height="844" alt="Lobby: room code JTFZ, six players including four bots, start match button" loading="lazy"><figcaption>Lobby with bots</figcaption></figure>
+    <figure><img src="img/game-phone.png" width="390" height="844" alt="In game on a phone: light circle cut by walls, two players, emergency button, task bar" loading="lazy"><figcaption>Playing (crew)</figcaption></figure>
+    <figure><img src="img/meeting-phone.png" width="390" height="844" alt="Emergency meeting on a phone with player cards, timer and quick chat messages" loading="lazy"><figcaption>Meeting</figcaption></figure>
+    <figure class="wide"><img src="img/game-desktop.png" width="1280" height="800" alt="In game on desktop as a Glitch: fake task list, eliminate and sabotage buttons with cooldowns" loading="lazy"><figcaption>Playing (Glitch, desktop)</figcaption></figure>
+    <figure class="wide"><img src="img/task-desktop.png" width="1280" height="800" alt="Sort Packets task minigame open over the Dock" loading="lazy"><figcaption>A task minigame</figcaption></figure>
+    <figure><img src="img/map-phone.png" width="390" height="844" alt="Station map overlay with task markers" loading="lazy"><figcaption>Map</figcaption></figure>
+    <figure class="wide"><img src="img/results-desktop.png" width="1280" height="800" alt="Results: Glitches win, roles revealed" loading="lazy"><figcaption>Results</figcaption></figure>
+  </div>
+  <p>All screenshots are real, taken by automated browser runs against the local build.</p>
+  <div class="tbl"><table>
+    <tr><th>PRD phase</th><th>Status</th><th>Main files</th></tr>
+    <tr><td>0 Monorepo and first deploy</td><td><span class="pill ok">Built</span> deploy is your step (<a href="deployment-guide.html">guide</a>)</td><td>root config, <code>wrangler.jsonc</code></td></tr>
+    <tr><td>1 Rooms and lobby</td><td><span class="pill ok">Built</span></td><td><code>server/index.ts</code>, <code>server/room.ts</code>, <code>ui/lobby.ts</code></td></tr>
+    <tr><td>2 Map and movement sync</td><td><span class="pill ok">Built</span> map defined in code, not Tiled</td><td><code>shared/map.ts</code>, <code>shared/movement.ts</code>, <code>StationScene.ts</code></td></tr>
+    <tr><td>3 Roles, tasks and crew win</td><td><span class="pill ok">Built</span></td><td><code>server/match.ts</code>, <code>tasks/minigames.ts</code></td></tr>
+    <tr><td>4 Glitch kit</td><td><span class="pill ok">Built</span></td><td><code>server/match.ts</code>, <code>ui/hud.ts</code></td></tr>
+    <tr><td>5 Meetings, chat and voting</td><td><span class="pill ok">Built</span></td><td><code>ui/meeting.ts</code>, <code>shared/rules.ts</code></td></tr>
+    <tr><td>6 Polish, feel and rematch</td><td><span class="pill ok">Built</span> sounds are synthesised, art is shape based</td><td><code>audio.ts</code>, <code>game/sprites.ts</code>, <code>ui/overlays.ts</code></td></tr>
+    <tr><td>7 Free soft launch</td><td><span class="pill todo">Not built</span> needs real players and a Sentry account</td><td></td></tr>
+    <tr><td>8 Identity and cosmetics</td><td><span class="pill todo">Not built</span> needs wallet and chain decisions</td><td></td></tr>
+    <tr><td>9 Practice bots</td><td><span class="pill ok">Pulled forward</span> so 2 friends can play</td><td><code>server/bots.ts</code></td></tr>
+  </table></div>
+</section>
+
+<section id="picture">
+  <h2><span class="n">2</span>The big picture</h2>
+  <p class="lead">Three packages, one deployable Worker. The browser draws; the room server decides; the shared package is the contract both obey.</p>
+  <div class="diagram">
+    <svg viewBox="0 0 960 470" role="img" aria-label="Architecture: browser client with Phaser scene and HTML UI connects by WebSocket to the Cloudflare Worker, which serves the page and forwards each room to its own Durable Object holding the lobby and the match simulation with bots. The shared package is imported by both.">
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#3DE0FF"/></marker>
+      <marker id="ag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" fill="#4DFFB0"/></marker></defs>
+      <style>.bx{fill:#171B36;stroke:#3A4170;stroke-width:2}.in{fill:#0B0D1A;stroke:#3A4170;stroke-width:1.5}.t{fill:#F2F4FF;font:700 17px "Space Grotesk",sans-serif}.s{fill:#F2F4FF;font:700 14px "Space Grotesk",sans-serif}.d{fill:#A9B0DD;font:400 12.5px Inter,sans-serif}.e{fill:#3DE0FF;font:600 12.5px Inter,sans-serif}.g{fill:#4DFFB0;font:600 12.5px Inter,sans-serif}</style>
+      <text class="d" x="20" y="24">PHONE OR LAPTOP</text>
+      <rect class="bx" x="20" y="36" width="270" height="250" rx="14" style="stroke:#3DE0FF"/>
+      <text class="t" x="38" y="64">apps/client</text>
+      <rect class="in" x="36" y="78" width="238" height="78" rx="10"/>
+      <text class="s" x="48" y="100">StationScene (Phaser)</text>
+      <text class="d" x="48" y="120">map, suits, light and walls,</text>
+      <text class="d" x="48" y="138">prediction and interpolation</text>
+      <rect class="in" x="36" y="166" width="238" height="78" rx="10"/>
+      <text class="s" x="48" y="188">HTML UI</text>
+      <text class="d" x="48" y="208">home, lobby, HUD, minigames,</text>
+      <text class="d" x="48" y="226">meeting, results</text>
+      <text class="d" x="38" y="270">app.ts wires network to both</text>
+
+      <text class="d" x="350" y="24">CLOUDFLARE (one Worker)</text>
+      <rect class="bx" x="350" y="36" width="250" height="250" rx="14"/>
+      <text class="t" x="368" y="64">index.ts</text>
+      <text class="d" x="368" y="90">/ → the built game page</text>
+      <text class="d" x="368" y="112">POST /api/rooms → new code</text>
+      <text class="d" x="368" y="134">GET /api/rooms/ABCD → exists?</text>
+      <text class="d" x="368" y="156">/ws?room=ABCD → that room</text>
+      <text class="d" x="368" y="178">/health → ok</text>
+      <text class="d" x="368" y="214">checks codes, origins and</text>
+      <text class="d" x="368" y="232">room creation rate</text>
+
+      <rect class="bx" x="660" y="36" width="280" height="250" rx="14" style="stroke:#FF5E7A"/>
+      <text class="t" x="678" y="64">RoomServer · room.ts</text>
+      <text class="d" x="678" y="88">one Durable Object per room code</text>
+      <text class="d" x="678" y="106">lobby, sockets, 60 s reconnect</text>
+      <rect class="in" x="676" y="120" width="248" height="150" rx="10"/>
+      <text class="s" x="688" y="142">Match · match.ts</text>
+      <text class="d" x="688" y="162">20 ticks a second: movement,</text>
+      <text class="d" x="688" y="180">tasks, kills, sabotage, meetings,</text>
+      <text class="d" x="688" y="198">votes, wins. Sends each player</text>
+      <text class="d" x="688" y="216">only what they may see.</text>
+      <text class="s" x="688" y="244">BotBrain · bots.ts</text>
+      <text class="d" x="688" y="262">acts through the same rules</text>
+
+      <line x1="290" y1="150" x2="346" y2="150" stroke="#3DE0FF" stroke-width="2.5" marker-end="url(#ar)"/>
+      <text class="e" x="294" y="140">WebSocket</text>
+      <line x1="600" y1="150" x2="656" y2="150" stroke="#3DE0FF" stroke-width="2.5" marker-end="url(#ar)"/>
+      <text class="e" x="604" y="140">by name</text>
+      <line x1="656" y1="200" x2="294" y2="200" stroke="#3DE0FF" stroke-width="1.5" stroke-dasharray="5 5" marker-end="url(#ar)" opacity=".7"/>
+      <text class="e" x="420" y="196">snapshots, events</text>
+
+      <rect class="bx" x="170" y="340" width="620" height="110" rx="14" style="stroke:#4DFFB0"/>
+      <text class="t" x="190" y="370">packages/shared: the contract</text>
+      <text class="d" x="190" y="394">config.ts every number · map.ts grid, rooms, line of sight, pathfinding · movement.ts the step</text>
+      <text class="d" x="190" y="414">tasks.ts · rules.ts roles, votes, wins, chat filter · messages.ts protocol and validators</text>
+      <text class="d" x="190" y="434">cosmetics.ts colours and patterns · roomCode.ts</text>
+      <line x1="260" y1="336" x2="160" y2="290" stroke="#4DFFB0" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ag)"/>
+      <line x1="700" y1="336" x2="800" y2="290" stroke="#4DFFB0" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ag)"/>
+      <text class="g" x="100" y="320">imported by client</text>
+      <text class="g" x="760" y="320">imported by server</text>
+    </svg>
+  </div>
+  <p>The rule from your PRD drives everything: <b>the server is the boss</b>. A phone only says what its player is trying to do (move this way, use this task, eliminate that player). The room's Match decides what actually happens and sends each phone only what that player is allowed to know.</p>
+</section>
+
+<section id="flow">
+  <h2><span class="n">3</span>How a match runs</h2>
+  <ol class="timeline">
+    <li data-n="1"><b>Create</b><span>The home screen calls <code>POST /api/rooms</code>. The Worker picks a random code, asks that code's Durable Object to <code>/init</code>, and retries with a new code if it is taken.</span></li>
+    <li data-n="2"><b>Join</b><span>Each phone opens <code>/ws?room=CODE</code> and sends <code>hello</code> with a nickname, suit and a saved token. A known token gets the old seat back; otherwise the player gets a new seat and a new token, stored in local storage.</span></li>
+    <li data-n="3"><b>Lobby</b><span>The room broadcasts a <code>lobby</code> message on every change. The host can change settings (clamped by <code>applySettings</code>), kick, add bots, and start once enough players are ready.</span></li>
+    <li data-n="4"><b>Start</b><span><code>new Match(...)</code> assigns roles with <code>assignRoles</code>, deals tasks, and sends each player a private <code>matchStart</code>. Only Glitches get a partner list. A 4 second role reveal plays.</span></li>
+    <li data-n="5"><b>Play</b><span>Every 50 ms <code>Match.step</code> runs bot brains, applies queued movement inputs, ticks sabotage timers, and sends each human a <code>snap</code> containing only what they can see.</span></li>
+    <li data-n="6"><b>Actions</b><span>Task, kill, report, sabotage, fix, hold, conduit and chat messages go through <code>Match.handle</code>, which checks role, range, cooldowns and phase before doing anything.</span></li>
+    <li data-n="7"><b>Meeting</b><span>A report or button press switches to <code>meeting</code>: discussion, voting, result. Votes are tallied by <code>tallyVotes</code>. Afterwards everyone returns to the Hub, bodies are cleared, cooldowns reset.</span></li>
+    <li data-n="8"><b>Win</b><span><code>checkWinner</code> runs after every kill, task, eject and departure. The winner and every role go out in <code>over</code>. The host taps Back to lobby and the room is ready for a rematch.</span></li>
+  </ol>
+</section>
+
+<section id="story">
+  <h2><span class="n">4</span>What I did, step by step</h2>
+  <ol class="timeline">
+    <li data-n="1"><b>Phase 0 (first session)</b><span>Monorepo, a Durable Object answering pings, a placeholder map, a ping HUD. Found and fixed the "PING" room code bug (the letter I is banned).</span></li>
+    <li data-n="2"><b>Shared rules first</b><span>Wrote config, map, movement, tasks, rules and the full protocol in <code>packages/shared</code>, with 21 tests, before any server or client code. Fixed one bug the tests caught: rounding a diagonal joystick made it slightly faster than walking straight.</span></li>
+    <li data-n="3"><b>Match engine</b><span>Wrote <code>match.ts</code> as plain TypeScript with no Cloudflare code, so it can be tested with a fake clock. 12 tests cover hidden roles, vision culling, kill range and cooldown, speed caps, task timing, meltdown, voting and ghost chat.</span></li>
+    <li data-n="4"><b>Bots</b><span>Bots act only through the same messages humans send. Simulated hundreds of bot only matches to check every match ends, then tuned their pace.</span></li>
+    <li data-n="5"><b>Room server and Worker</b><span>Lobby, reconnect tokens, kicking, host handover, rate limits, room creation API, empty room cleanup alarm, and serving the client files from the same Worker.</span></li>
+    <li data-n="6"><b>Client</b><span>Network layer, Phaser scene (map drawing, prediction, interpolation, vision), suits with patterns, joystick, HUD, ten minigames, meeting screen, results, synthesised sounds.</span></li>
+    <li data-n="7"><b>End to end checks</b><span>A Node smoke test with five network players, a nine player load test, and automated browser playthroughs on a phone sized and a desktop sized window covering lobby, tasks, map, meetings, eliminations, results and rematch.</span></li>
+    <li data-n="8"><b>Fixes from testing</b><span>Added a missing <code>/api</code> dev proxy, shrank the darkness layer from map size to screen size after a headless renderer crash, made long names wrap on the results screen, added a favicon, let the fake players start their own match.</span></li>
+    <li data-n="9"><b>Docs</b><span>README, this guide, the player walkthrough and a deployment guide.</span></li>
+  </ol>
+</section>
+
+<section id="tools">
+  <h2><span class="n">5</span>Every tool and why</h2>
+  <div class="tbl"><table>
+    <tr><th>Tool</th><th>What it does here</th><th>Why this one</th></tr>
+    <tr><td><b>TypeScript</b> (strict)</td><td>All code. Catches mistakes before running.</td><td>PRD choice. Strict mode plus <code>noUncheckedIndexedAccess</code> catches "maybe undefined" bugs common in game code.</td></tr>
+    <tr><td><b>npm workspaces</b></td><td>One install links client, server and shared.</td><td>Already on your machine; no extra tool.</td></tr>
+    <tr><td><b>Phaser 3.90</b></td><td>Draws the station, suits, light, effects; camera.</td><td>PRD choice; mature 2D engine that works on phones.</td></tr>
+    <tr><td><b>Plain DOM (no framework)</b></td><td>Menus, HUD, minigames, meetings.</td><td>Light, fast to load on phones, and accessible (real buttons and text). A tiny <code>h()</code> helper keeps it readable.</td></tr>
+    <tr><td><b>Vite 6</b></td><td>Dev server with instant reload and a proxy to the Worker; production bundler.</td><td>PRD choice.</td></tr>
+    <tr><td><b>Cloudflare Workers + static assets</b></td><td>Serves the page and routes API and sockets.</td><td>Free, global, nothing to manage. Static assets replace a separate Pages deploy.</td></tr>
+    <tr><td><b>Durable Objects</b> (SQLite backed)</td><td>One live server per room.</td><td>PRD choice: "one room equals one object". SQLite backed is the kind the free plan allows.</td></tr>
+    <tr><td><b>Wrangler 4</b></td><td>Runs the Worker locally with real Durable Objects; deploys.</td><td>Cloudflare's official tool.</td></tr>
+    <tr><td><b>WebAudio</b></td><td>Every sound effect, generated from tones.</td><td>No audio files, no licences, tiny.</td></tr>
+    <tr><td><b>Vitest 5</b></td><td>Unit and simulation tests.</td><td>PRD choice; runs TypeScript directly.</td></tr>
+    <tr><td><b>ESLint 9 + typescript-eslint</b></td><td>Lint.</td><td>PRD asks for lint after every phase.</td></tr>
+    <tr><td><b>Playwright core + Edge</b></td><td>Drove two real browsers through matches to take screenshots and catch UI bugs.</td><td>Used only from a scratch folder during the build; not part of the project.</td></tr>
+  </table></div>
+</section>
+
+<section id="files">
+  <h2><span class="n">6</span>File by file tour</h2>
+  <h3><code>packages/shared/src</code>: the contract</h3>
+  <div class="tbl"><table>
+    <tr><th>File</th><th>What it holds</th></tr>
+    <tr><td><code>config.ts</code></td><td>Every tunable number: tick rate, speeds, vision, cooldowns, timers, limits. Change balance here.</td></tr>
+    <tr><td><code>map.ts</code></td><td>The Neon Relay as a 54 by 54 tile grid built from nine room rectangles and corridors; doors per room; task, fix, button and conduit positions; <code>lineOfSight</code>, <code>canSee</code>, <code>findPath</code>.</td></tr>
+    <tr><td><code>movement.ts</code></td><td><code>stepMovement</code>: the one movement step both client and server run, so prediction matches the server exactly.</td></tr>
+    <tr><td><code>tasks.ts</code></td><td>The eight tasks: name, type, room, stations, whether finishing is visible to others.</td></tr>
+    <tr><td><code>rules.ts</code></td><td>Settings and their ranges, Glitch count, role and task dealing, vote tally, win check, chat and name filters, quick chat sentences.</td></tr>
+    <tr><td><code>messages.ts</code></td><td>Every message type both ways and <code>parseClientMessage</code>, which rejects anything malformed.</td></tr>
+    <tr><td><code>cosmetics.ts</code></td><td>12 suit colours each paired with a pattern, 6 hats, bot names.</td></tr>
+    <tr><td><code>roomCode.ts</code></td><td>Make, check and tidy room codes.</td></tr>
+    <tr><td><code>shared.test.ts</code></td><td>21 tests.</td></tr>
+  </table></div>
+  <h3><code>apps/server/src</code>: the truth</h3>
+  <div class="tbl"><table>
+    <tr><th>File</th><th>What it does</th></tr>
+    <tr><td><code>index.ts</code></td><td>The Worker: routes, origin check, room creation rate limit, static files.</td></tr>
+    <tr><td><code>room.ts</code></td><td><code>RoomServer</code> Durable Object: seats, tokens, reconnect timers, host, lobby messages, starting and ending matches, analytics log lines, the empty room alarm.</td></tr>
+    <tr><td><code>match.ts</code></td><td>The authoritative simulation and every gameplay rule.</td></tr>
+    <tr><td><code>bots.ts</code></td><td>Bot brains: tasks, wandering, reporting, hunting without witnesses, sabotage, fixing, voting, quick chat.</td></tr>
+    <tr><td><code>env.ts</code></td><td>What the Worker is given: the room namespace, static files, optional allowed origins.</td></tr>
+    <tr><td><code>match.test.ts</code></td><td>12 tests including full bot matches.</td></tr>
+    <tr><td><code>wrangler.jsonc</code></td><td>Worker name, static files folder, Durable Object binding and migration, vars.</td></tr>
+  </table></div>
+  <h3><code>apps/client/src</code>: what players see</h3>
+  <div class="tbl"><table>
+    <tr><th>File</th><th>What it does</th></tr>
+    <tr><td><code>app.ts</code></td><td>The controller: joins rooms, handles every server message, switches screens, starts and stops the Phaser game.</td></tr>
+    <tr><td><code>net/connection.ts</code></td><td>Socket with reconnect and ping; room create and exists calls.</td></tr>
+    <tr><td><code>scenes/StationScene.ts</code></td><td>The world: map drawing, stations, prediction and reconciliation, interpolation, vision shadow, deciding what Use, Report and Eliminate can do.</td></tr>
+    <tr><td><code>game/bridge.ts</code></td><td>The shared match state between the HTML UI and the scene.</td></tr>
+    <tr><td><code>game/sprites.ts</code></td><td>Suits, patterns, hats, bodies, walk bob.</td></tr>
+    <tr><td><code>game/input.ts</code></td><td>Keyboard and floating touch joystick.</td></tr>
+    <tr><td><code>tasks/minigames.ts</code></td><td>Eight task games plus the blackout and comms fixes.</td></tr>
+    <tr><td><code>ui/home.ts</code>, <code>ui/lobby.ts</code></td><td>Home and lobby screens.</td></tr>
+    <tr><td><code>ui/hud.ts</code></td><td>Task bar and list, sabotage banner, action buttons, minigame window, sabotage menu, map, ghost chat.</td></tr>
+    <tr><td><code>ui/meeting.ts</code></td><td>Meeting table, voting, chat box with quick chat, mute and report.</td></tr>
+    <tr><td><code>ui/overlays.ts</code></td><td>Role reveal and results.</td></tr>
+    <tr><td><code>ui/suit.ts</code>, <code>ui/dom.ts</code>, <code>audio.ts</code>, <code>style.css</code></td><td>Menu suit drawings, DOM helpers and toasts, sounds, all styling.</td></tr>
+  </table></div>
+</section>
+
+<section id="netcode">
+  <h2><span class="n">7</span>Smooth movement explained</h2>
+  <p class="lead">Phones on 4G can take 100 ms or more to hear back from the server. Three tricks hide that.</p>
+  <h3>1. Prediction: you move instantly</h3>
+  <p>Every 50 ms the scene reads your joystick, moves your suit right away with <code>stepMovement</code>, and sends the input with a sequence number.</p>
+<pre><span class="k">const</span> next = <span class="f">stepMovement</span>(predicted, d.dx, d.dy, blocked);
+bridge.<span class="f">send</span>({ t: <span class="s">"input"</span>, seq: ++seq, dx: d.dx, dy: d.dy });</pre>
+  <h3>2. Reconciliation: the server still wins</h3>
+  <p>Each snapshot says where the server put you and the last input it applied (<code>ack</code>). The client starts from that position and replays any inputs the server has not seen yet. Because both sides run the identical step, the result normally matches exactly and you never notice. If it does not (a locked door, a conduit), you are corrected.</p>
+<pre>pending = pending.<span class="f">filter</span>(p => p.seq > snap.ack);
+<span class="k">let</span> pos = snap.me;
+<span class="k">for</span> (<span class="k">const</span> p <span class="k">of</span> pending) pos = <span class="f">stepMovement</span>(pos, p.dx, p.dy, blocked);</pre>
+  <h3>3. Interpolation: others glide</h3>
+  <p>Other players are drawn 100 ms in the past, blended between the two snapshots around that moment, so they move smoothly even though updates arrive in steps.</p>
+  <h3>Vision</h3>
+  <p>The server only puts a player in your snapshot if they are within your vision radius and <code>lineOfSight</code> is clear. On screen, the scene casts 180 rays from your eyes to build the lit shape and darkens everything else, so what you see matches what the server tells you.</p>
+</section>
+
+<section id="cheat">
+  <h2><span class="n">8</span>Anti cheat and safety</h2>
+  <div class="tbl"><table>
+    <tr><th>Threat (PRD section 11)</th><th>How it is blocked</th><th>Where</th></tr>
+    <tr><td>Reading roles from network data</td><td>Crew get no role info at all; Glitches get only partners. A test scans all crew traffic for the word "glitch".</td><td><code>sendMatchStart</code>, tests</td></tr>
+    <tr><td>Seeing through walls</td><td>Players and bodies outside vision are never sent.</td><td><code>Match.snapshot</code></td></tr>
+    <tr><td>Speed hacks</td><td>Server applies at most 3 inputs per tick, each a fixed step; queue capped at 12. A test floods 200 inputs.</td><td><code>simulateMovement</code></td></tr>
+    <tr><td>Fake eliminations</td><td>Role, alive, phase, 1.2 tile range and cooldown are checked server side.</td><td><code>handle("kill")</code></td></tr>
+    <tr><td>Instant tasks</td><td>Must be near the station when starting and finishing, and at least 1.2 s apart (8 s for upload stages).</td><td><code>handle("taskDone")</code></td></tr>
+    <tr><td>Junk or oversized messages</td><td>Every frame is parsed and validated; over 1 KB is dropped.</td><td><code>parseClientMessage</code></td></tr>
+    <tr><td>Spam and flooding</td><td>Per connection message budget; chat budget; room creation limit per IP.</td><td><code>room.ts</code>, <code>index.ts</code></td></tr>
+    <tr><td>Abusive chat</td><td>Word filter, 80 characters, quick chat built on the server from ids, mute, report, host kick, living cannot chat outside meetings.</td><td><code>rules.ts</code>, <code>match.ts</code></td></tr>
+    <tr><td>Young players</td><td>Nickname only, no accounts, no direct messages, private rooms only.</td><td>Whole design</td></tr>
+    <tr><td>Script injection through names or chat</td><td>All player text goes into the page as text, never as HTML.</td><td><code>ui/*</code></td></tr>
+  </table></div>
+</section>
+
+<section id="decisions">
+  <h2><span class="n">9</span>Decisions I made</h2>
+  <div class="tbl"><table>
+    <tr><th>Decision</th><th>Why</th></tr>
+    <tr><td>Serve the client from the Worker instead of Pages</td><td>One deploy, one address, no env file, no cross site setup. Pages still works (see the deployment guide).</td></tr>
+    <tr><td>Standard WebSockets instead of the hibernation API</td><td>A room keeps its lobby and match in memory; hibernation could wipe that while players sit in the lobby. Rooms with nobody connected are evicted and cost nothing.</td></tr>
+    <tr><td>Map defined in code, not Tiled</td><td>Client and server must share the exact collision grid; code makes that automatic and testable. A Tiled import can replace it later.</td></tr>
+    <tr><td>Bots pulled forward from phase 9</td><td>So you and one friend can play a real match now.</td></tr>
+    <tr><td>Practice mode allows 3+ players</td><td>Same reason. Normal rooms still need 5, per the PRD.</td></tr>
+    <tr><td>Minigames in HTML, not Phaser</td><td>Big touch targets, accessible, simple to build and change.</td></tr>
+    <tr><td>Sounds synthesised</td><td>The PRD allows CC0 sounds; generating them avoids files and licences entirely.</td></tr>
+    <tr><td>Analytics as JSON log lines</td><td>Free and visible in the Cloudflare dashboard; no extra service.</td></tr>
+    <tr><td>Doors lock by turning door tiles into walls</td><td>Movement, sight and bot paths all respect it with no special cases.</td></tr>
+  </table></div>
+</section>
+
+<section id="bugs">
+  <h2><span class="n">10</span>Problems I hit</h2>
+  <div class="cards">
+    <div class="card r"><h3>"PING" was an invalid room</h3><p>Phase 0's default room used a banned letter. Fixed and guarded by a test.</p></div>
+    <div class="card a"><h3>Diagonals were too fast</h3><p>Rounding 0.707 up to 0.71 made diagonal speed 0.4% over the limit. A test caught it; values are now truncated.</p></div>
+    <div class="card a"><h3>Unicode in a regex</h3><p>The chat filter's character range was written out as raw invisible characters and broke the parser. It is now built from an escaped string.</p></div>
+    <div class="card m"><h3>Bot balance</h3><p>First tuning: crew bots won 30 of 30. Second: Glitch bots won most. Final: depends on player count. Real balance is a phase 7 job with humans.</p></div>
+    <div class="card r"><h3>Create room did nothing in dev</h3><p>The Vite proxy only forwarded <code>/ws</code>. Added <code>/api</code>.</p></div>
+    <div class="card r"><h3>Browser crash after 5 minutes</h3><p>In headless software rendering, the full map darkness layer was too heavy. Memory checks showed no leak; the layer now covers only the screen, which also helps older phones.</p></div>
+  </div>
+</section>
+
+<section id="testing">
+  <h2><span class="n">11</span>How it was tested</h2>
+  <div class="tbl"><table>
+    <tr><th>Check</th><th>What it proves</th><th>Result</th></tr>
+    <tr><td><code>npm test</code> (33 tests)</td><td>Map connectivity, sight, movement, settings, votes, wins, chat, protocol, hidden roles, culling, kill validation, speed cap, task timing, meltdown, meetings, ghost chat, full bot matches</td><td>All pass</td></tr>
+    <tr><td><code>npm run lint</code></td><td>Lint and strict types on every package</td><td>Clean</td></tr>
+    <tr><td><code>npm run smoke</code></td><td>Real sockets: create, 5 joins, host rules, private roles, snapshots, bad frames</td><td>PASS, about 20 snapshots a second</td></tr>
+    <tr><td><code>scripts/fake-players.mjs</code></td><td>9 network players moving at once</td><td>About 250 bytes per snapshot (PRD limit 2 KB); about 16 snapshots a second locally</td></tr>
+    <tr><td>Browser playthroughs</td><td>Phone and desktop players: home, lobby, bots, reveal, walking, task, map, meeting, quick chat, voting, elimination, results, rematch</td><td>Working, no page errors</td></tr>
+    <tr><td>Memory sampling</td><td>3.5 minutes of play plus a rematch</td><td>Heap steady at 24 to 48 MB</td></tr>
+    <tr><td>Production check</td><td>Built page served by the Worker, debug handle removed</td><td>Working</td></tr>
+  </table></div>
+  <div class="tip warn"><b>Not yet tested:</b> real phones on 4G, and the deployed Cloudflare version. Both need you (see the deployment guide).</div>
+</section>
+
+<section id="commands">
+  <h2><span class="n">12</span>Command cheat sheet</h2>
+  <div class="tbl"><table>
+    <tr><th>Command</th><th>What it does</th></tr>
+    <tr><td><code>npm install</code></td><td>Install everything (once)</td></tr>
+    <tr><td><code>npm run dev</code></td><td>Local server (8787) and client (5173); open http://localhost:5173</td></tr>
+    <tr><td><code>npm test</code> / <code>npm run lint</code></td><td>Tests / lint and types</td></tr>
+    <tr><td><code>npm run smoke</code></td><td>End to end socket test (dev must be running; or pass a deployed URL)</td></tr>
+    <tr><td><code>npm run bots -- ABCD</code></td><td>Nine network fake players join room ABCD</td></tr>
+    <tr><td><code>npm run build</code></td><td>Production client build</td></tr>
+    <tr><td><code>npm run deploy</code></td><td>Build and deploy to Cloudflare (<a href="deployment-guide.html">guide</a>)</td></tr>
+  </table></div>
+</section>
+
+<section id="recipes">
+  <h2><span class="n">13</span>Changing things yourself</h2>
+  <h3>Tune balance</h3>
+  <p>Edit numbers in <code>packages/shared/src/config.ts</code> (speeds, vision, cooldowns, timers) or defaults in <code>DEFAULT_SETTINGS</code> in <code>rules.ts</code>. Run <code>npm test</code>.</p>
+  <h3>Add a task</h3>
+  <ol class="timeline">
+    <li data-n="1"><b>Define it</b><span>Add its id to <code>TaskId</code> and an entry to <code>TASKS</code> in <code>tasks.ts</code>, with a room and anchor.</span></li>
+    <li data-n="2"><b>Build the minigame</b><span>Write a function in <code>minigames.ts</code> that calls <code>done()</code> when solved, and add it to <code>GAMES</code>. TypeScript will tell you if you forget.</span></li>
+    <li data-n="3"><b>Test</b><span>The map test checks the station is on the floor in the right room.</span></li>
+  </ol>
+  <h3>Add a message</h3>
+  <p>Type it in <code>messages.ts</code>, validate it in <code>parseClientMessage</code>, handle it in <code>Match.handle</code> (or <code>room.ts</code> for lobby actions), send it from the client, and add a test.</p>
+  <h3>Change the map</h3>
+  <p>Room sizes are in <code>ROOM_DEFS</code> and corridors in <code>CORRIDORS</code> in <code>map.ts</code>. Run the tests: they check every room is reachable and every station sits on floor.</p>
+</section>
+
+<section id="next">
+  <h2><span class="n">14</span>What comes next</h2>
+  <div class="tbl"><table>
+    <tr><th>Item</th><th>Why it matters</th></tr>
+    <tr><td><b>Deploy and play on real phones</b></td><td>The PRD's done checks need real 4G play.</td></tr>
+    <tr><td>Batch two movement steps per message</td><td>Halves WebSocket messages, which count against the free daily limit.</td></tr>
+    <tr><td>Phase 7: Sentry, feedback button, end of match survey, admin page</td><td>Needed before the soft launch and the spend gate.</td></tr>
+    <tr><td>Tune toward a 45 to 55% crew win rate</td><td>Use match_finished events from real groups.</td></tr>
+    <tr><td>Phase 8: identity and NFT cosmetics</td><td>Waits on chain and wallet decisions shared with Lane Siege.</td></tr>
+    <tr><td>Smarter bots, Tiled map, special roles</td><td>Later polish and phase 9.</td></tr>
+  </table></div>
+  <p>Known limits: rooms reset on every deploy; nothing is stored between matches; the client UI has browser checks but no unit tests.</p>
+</section>
+
+<section id="glossary">
+  <h2><span class="n">15</span>Glossary</h2>
+  <div class="tbl"><table>
+    <tr><th>Term</th><th>Meaning</th></tr>
+    <tr><td>Authoritative server</td><td>The server decides what is true; clients only ask.</td></tr>
+    <tr><td>Durable Object</td><td>A tiny server Cloudflare creates on demand and always finds by name; here, one per room.</td></tr>
+    <tr><td>Tick</td><td>One 50 ms step of the simulation.</td></tr>
+    <tr><td>Snapshot</td><td>What a player receives each tick: what they can see and their own state.</td></tr>
+    <tr><td>Prediction / reconciliation / interpolation</td><td>Move yourself instantly / accept the server's correction / draw others slightly in the past.</td></tr>
+    <tr><td>Culling</td><td>Leaving out of a message anything the player should not know.</td></tr>
+    <tr><td>Seat and token</td><td>Your place in a room, and the secret saved on your device that gets it back after a drop.</td></tr>
+    <tr><td>Static assets</td><td>The built HTML, CSS and JS files the Worker hands to browsers.</td></tr>
+  </table></div>
+</section>
+
+</main>
+</div>
+<footer>Builder guide for Glitch Station phases 0 to 6, written 20 November 2026.</footer>
+</body>
+</html>

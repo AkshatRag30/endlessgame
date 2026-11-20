@@ -1,0 +1,31 @@
+{
+  "name": "glitch-station",
+  "private": true,
+  "version": "0.0.1",
+  "type": "module",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c magenta,cyan \"npm run dev -w @glitch/server\" \"npm run dev -w @glitch/client\"",
+    "build": "npm run build -w @glitch/client",
+    "typecheck": "tsc -p packages/shared && tsc -p apps/server && tsc -p apps/client",
+    "lint": "eslint . && npm run typecheck",
+    "test": "vitest run",
+    "smoke": "node scripts/smoke.mjs",
+    "deploy": "npm run build && npm run deploy:worker -w @glitch/server",
+    "bots": "node scripts/fake-players.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.30.0",
+    "concurrently": "^9.2.0",
+    "eslint": "^9.30.0",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.35.0",
+    "vitest": "^5.1.1"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

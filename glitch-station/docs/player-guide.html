@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glitch Station Walkthrough</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0B0D1A; --track:#171B36; --lane:#3A4170;
+  --red:#FF5E7A; --cyan:#3DE0FF; --amber:#FFB23D; --mint:#4DFFB0;
+  --paper:#EEF0FA; --surface:#FFFFFF; --ink:#151834; --muted:#4A5078; --rule:#D3D7EE; --tag:#E2E6FA;
+  --accent-ink:#0A6F86; --red-ink:#B4213F; --mint-ink:#0D6B45; --amber-ink:#8A5A00;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#10132A; --surface:#171B36; --ink:#EEF0FF; --muted:#A9B0DD; --rule:#2C3260; --tag:#232953;
+    --accent-ink:#3DE0FF; --red-ink:#FF7F96; --mint-ink:#4DFFB0; --amber-ink:#FFC56B; color-scheme: dark; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+a{color:var(--accent-ink)}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;line-height:1.15;margin:0}
+.hero{background:var(--night);color:#F2F4FF;position:relative;overflow:hidden;padding:56px 16px 48px}
+.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),rgba(58,65,112,.45) calc(20% - 1px) 20%);mask-image:linear-gradient(to bottom,transparent,#000 60%);pointer-events:none}
+.hero-in{position:relative;max-width:1200px;margin:0 auto;display:grid;gap:18px}
+.kicker{font-family:"Space Grotesk",sans-serif;letter-spacing:.18em;font-size:13px;color:var(--cyan);text-transform:uppercase}
+.hero h1{font-size:clamp(44px,8vw,96px);letter-spacing:-.03em;line-height:.95}
+.hero h1 .row2{display:block;color:var(--red)}
+.hero p{max-width:62ch;margin:0;color:#C9CEF5;font-size:18px}
+.status{display:flex;gap:14px;align-items:flex-start;max-width:760px;background:rgba(23,27,54,.9);border:1px solid var(--lane);border-left:4px solid var(--amber);border-radius:12px;padding:14px 18px;color:#DDE2FF;font-size:15px}
+.status b{color:var(--amber)}
+.layout{max-width:1200px;margin:0 auto;padding:48px 16px 96px;display:flex;flex-wrap:wrap;gap:48px}
+nav.toc{flex:1 1 200px;max-width:240px}
+nav.toc ol{list-style:none;margin:0;padding:0;position:sticky;top:24px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+nav.toc a{text-decoration:none;color:var(--muted);display:block;padding:4px 0 4px 12px;border-left:2px solid var(--rule)}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--ink);border-left-color:var(--cyan);outline:none}
+main{flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:56px}
+section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:24px}
+section h2{font-size:30px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:14px}
+section h2 .n{font-size:15px;color:var(--accent-ink);font-weight:700;min-width:24px}
+section h3{font-size:19px;margin-top:6px}
+.lead{font-size:19px;line-height:1.5;margin:0;max-width:62ch}
+p{margin:0;max-width:68ch}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font-weight:700;background:var(--tag);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+ol.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:8px;max-width:68ch}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--rule);border-radius:14px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.card h3{margin:0;font-size:20px}
+.card p{font-size:15px;color:var(--muted)}
+.card.crew{border-top:5px solid var(--cyan)}
+.card.glitch{border-top:5px solid var(--red)}
+.card.ghost{border-top:5px solid var(--lane)}
+.card .win{font-size:14.5px;color:var(--ink)}
+.card .win b{color:var(--mint-ink)}
+.tip{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--mint);border-radius:10px;padding:12px 16px;font-size:15px;max-width:72ch}
+.tip.warn{border-left-color:var(--red)}
+.tip b{font-family:"Space Grotesk",sans-serif}
+kbd{font:600 13px/1 "Space Grotesk",sans-serif;background:var(--tag);border:1px solid var(--rule);border-bottom-width:2px;border-radius:6px;padding:3px 7px}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:12.5px;white-space:nowrap}
+.p-short{background:#C9F7E3;color:#0D4A31}.p-common{background:#D6F3FF;color:#0A4A5A}.p-long{background:#FFE7BF;color:#5A3A00}
+.p-crit{background:#FFD3DC;color:#7A0F25}.p-norm{background:var(--tag);color:var(--ink)}
+.mapwrap{background:var(--night);border-radius:16px;padding:12px;max-width:640px}
+.mapwrap svg{display:block;width:100%;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:14px;color:var(--muted)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:6px;vertical-align:-1px}
+.flow{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.flow span.s{background:var(--surface);border:1px solid var(--rule);border-radius:10px;padding:8px 12px;font-weight:600;font-size:14.5px}
+.flow span.a{color:var(--muted)}
+.chat{display:flex;flex-wrap:wrap;gap:8px}
+.chat span{background:var(--night);color:#DDE2FF;border:1px solid var(--lane);border-radius:999px;padding:6px 12px;font-size:14px}
+footer{max-width:1200px;margin:0 auto;padding:0 16px 48px;color:var(--muted);font-size:14px}
+@media print{.hero{-webkit-print-color-adjust:exact;print-color-adjust:exact}nav.toc{display:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="kicker">Player walkthrough</div>
+    <h1>Glitch Station <span class="row2">How to play</span></h1>
+    <p>Everything you need to play your first match: joining a room, your secret role, the controls, the station map, every task, how Glitches strike, and how to win the argument at the meeting table.</p>
+    <div class="status"><span>✓</span><span><b>Playable now.</b> Everything in this guide works in the current build: rooms, roles, all eight tasks, eliminations, sabotage, meetings, voting, ghosts and rematch. Only a handful of later extras (marked in the last section) are still to come.</span></div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Contents"><ol>
+  <li><a href="#basics">The game in 60 seconds</a></li>
+  <li><a href="#join">Getting into a room</a></li>
+  <li><a href="#roles">Your role</a></li>
+  <li><a href="#controls">Controls</a></li>
+  <li><a href="#map">The Neon Relay map</a></li>
+  <li><a href="#vision">Light and vision</a></li>
+  <li><a href="#tasks">Tasks</a></li>
+  <li><a href="#glitch">Playing as a Glitch</a></li>
+  <li><a href="#sabotage">Surviving sabotage</a></li>
+  <li><a href="#meetings">Meetings and voting</a></li>
+  <li><a href="#ghosts">After you are eliminated</a></li>
+  <li><a href="#strategy">Strategy tips</a></li>
+  <li><a href="#settings">Host settings</a></li>
+  <li><a href="#fair">Fair play and safety</a></li>
+  <li><a href="#today">What works today</a></li>
+</ol></nav>
+
+<main>
+
+<section id="basics">
+  <h2><span class="n">1</span>The game in 60 seconds</h2>
+  <p class="lead">Five to ten friends crew a neon data station. One or two of you are secretly Glitches trying to break it from the inside. The crew fixes the station; the Glitches pick people off. Every so often everyone stops, argues, and votes someone out.</p>
+  <div class="flow">
+    <span class="s">Join with a code</span><span class="a">→</span>
+    <span class="s">Get your secret role</span><span class="a">→</span>
+    <span class="s">Roam, do tasks, strike</span><span class="a">→</span>
+    <span class="s">Body found or button pressed</span><span class="a">→</span>
+    <span class="s">Talk and vote</span><span class="a">→</span>
+    <span class="s">Back to roaming until someone wins</span>
+  </div>
+  <p>A match takes about 8 to 12 minutes. When it ends everyone sees who was who, and the host can start a rematch with one tap without anyone leaving the room.</p>
+  <div class="tip"><b>You need:</b> a phone or computer with a browser, 5 to 10 people, and ideally a voice call or the same room so you can actually argue. There is no install and no account; a nickname is enough.</div>
+</section>
+
+<section id="join">
+  <h2><span class="n">2</span>Getting into a room</h2>
+  <p class="lead">Rooms are private. One person hosts and everyone else joins with a four letter code.</p>
+  <ol class="steps">
+    <li><b>Host:</b> open the game, type a nickname, pick a colour, and tap <b>Create room</b>. You get a four letter code like <b>KXPT</b> and a share link.</li>
+    <li><b>Everyone else:</b> open the link, or open the game and type the code into <b>Join</b>. Codes never use the letters I, L or O, so you cannot mix them up with 1 or 0.</li>
+    <li>In the lobby, pick your colour and an accessory, then tap <b>Ready</b>.</li>
+    <li>The host checks the settings (see <a href="#settings">Host settings</a>) and taps <b>Start match</b> once at least five players are in and everyone is ready.</li>
+  </ol>
+  <div class="tip"><b>Fewer than five of you?</b> The host can turn on <b>Practice mode</b> in the settings, which allows a match with three or more, and tap <b>+ Add bot</b> to fill seats with computer players. Bots walk around, do tasks, report bodies, vote, and if a bot is the Glitch, it hunts. Two friends plus three bots makes a decent match.</div>
+  <div class="tip"><b>Dropped out?</b> If your signal dies mid match, reopen the game within 60 seconds and you slide back into your slot with your role intact. Empty rooms close by themselves after 10 minutes.</div>
+</section>
+
+<section id="roles">
+  <h2><span class="n">3</span>Your role</h2>
+  <p class="lead">When the match starts a full screen card shows your role. Keep your screen to yourself.</p>
+  <div class="cards">
+    <div class="card crew">
+      <h3>Crew</h3>
+      <p>Most players. You do tasks around the station, fix sabotage, report bodies, and vote out whoever you think is a Glitch. You get one emergency meeting per match.</p>
+      <div class="win"><b>You win when</b> every crew task is done, or every Glitch has been voted out.</div>
+    </div>
+    <div class="card glitch">
+      <h3>Glitch</h3>
+      <p>One Glitch with 5 to 7 players, two with 8 to 10. You see who your partner is. You can eliminate crew, slip through conduits, sabotage systems and pretend to do tasks.</p>
+      <div class="win"><b>You win when</b> Glitches equal or outnumber the crew, or a critical sabotage timer runs out.</div>
+    </div>
+    <div class="card ghost">
+      <h3>Ghost</h3>
+      <p>What you become after being eliminated or voted out. You keep playing quietly in the background and can only chat with other ghosts.</p>
+      <div class="win"><b>You win when</b> your living team wins.</div>
+    </div>
+  </div>
+</section>
+
+<section id="controls">
+  <h2><span class="n">4</span>Controls</h2>
+  <p class="lead">Phones play in portrait, computers in landscape. Movement is on the left, actions on the right.</p>
+  <div class="tbl"><table>
+    <tr><th>Action</th><th>On a phone</th><th>On a computer</th></tr>
+    <tr><td>Move</td><td>Put your left thumb anywhere on the left half and drag (a joystick appears under it)</td><td><kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> or the arrow keys</td></tr>
+    <tr><td>Use (start a task, fix, press the button)</td><td>The <b>Use</b> button, bottom right, lights up when something is in reach</td><td>Click the button</td></tr>
+    <tr><td>Report a body</td><td><b>Report</b> button, appears next to a body</td><td>Click the button</td></tr>
+    <tr><td>Eliminate (Glitch only)</td><td><b>Eliminate</b> button, glows when a target is close and your cooldown is ready</td><td>Click the button</td></tr>
+    <tr><td>Sabotage (Glitch only)</td><td><b>Sabotage</b> button opens the sabotage menu</td><td>Click the button</td></tr>
+    <tr><td>Task list and map</td><td>Task list top left (tap to fold), <b>Map</b> button top right</td><td>Same, or <kbd>M</kbd> for the map</td></tr>
+    <tr><td>Keyboard shortcuts</td><td></td><td><kbd>E</kbd> or <kbd>Space</kbd> use (hold it on a meltdown panel), <kbd>R</kbd> report, <kbd>Q</kbd> eliminate, <kbd>F</kbd> sabotage menu, <kbd>Esc</kbd> close a window</td></tr>
+  </table></div>
+  <p>The <b>Use</b> button changes its label to whatever is in reach: a task name, <i>Fix lights</i>, <i>Hold panel</i>, <i>Emergency meeting</i> or, for Glitches, <i>Conduit</i>. Your own task consoles glow amber on the map.</p>
+  <p>Everyone walks at the same speed, about four and a half tiles a second, so a full lap of the station takes roughly 40 seconds. That number matters: if someone claims they crossed the whole map in ten seconds, they did not.</p>
+</section>
+
+<section id="map">
+  <h2><span class="n">5</span>The Neon Relay map</h2>
+  <p class="lead">Nine rooms on a three by three grid, joined by corridors. The Hub sits in the middle and everything radiates out from it.</p>
+  <div class="mapwrap">
+    <svg viewBox="0 0 1080 1080" role="img" aria-label="Map of the Neon Relay: nine rooms in a three by three grid with Hub in the centre">
+      <style>
+        .cor{fill:#171B36;stroke:#3A4170;stroke-width:2}
+        .rm{fill:#171B36;stroke:#3A4170;stroke-width:3}
+        .hub{stroke:#3DE0FF}.core{stroke:#FF5E7A}
+        .lb{fill:#C9CEF5;font:700 22px "Space Grotesk",Inter,sans-serif;letter-spacing:2px}
+        .sm{fill:#9EA6DA;font:500 17px Inter,sans-serif}
+      </style>
+      <rect x="0" y="0" width="1080" height="1080" fill="#0B0D1A"/>
+      <g class="cor">
+        <rect x="180" y="152" width="360" height="56"/><rect x="540" y="152" width="360" height="56"/>
+        <rect x="180" y="512" width="360" height="56"/><rect x="540" y="512" width="360" height="56"/>
+        <rect x="180" y="872" width="360" height="56"/><rect x="540" y="872" width="360" height="56"/>
+        <rect x="152" y="180" width="56" height="360"/><rect x="512" y="180" width="56" height="360"/>
+        <rect x="872" y="180" width="56" height="360"/><rect x="512" y="540" width="56" height="360"/>
+        <rect x="872" y="540" width="56" height="360"/>
+      </g>
+      <rect class="rm" x="50" y="80" width="260" height="200" rx="18"/>
+      <rect class="rm" x="400" y="70" width="280" height="220" rx="18"/>
+      <rect class="rm" x="770" y="80" width="260" height="200" rx="18"/>
+      <rect class="rm" x="60" y="430" width="240" height="220" rx="18"/>
+      <rect class="rm hub" x="390" y="410" width="300" height="260" rx="18"/>
+      <rect class="rm" x="780" y="430" width="240" height="220" rx="18"/>
+      <rect class="rm" x="40" y="810" width="280" height="180" rx="18"/>
+      <rect class="rm core" x="400" y="780" width="280" height="240" rx="18"/>
+      <rect class="rm" x="780" y="810" width="240" height="180" rx="18"/>
+      <text class="lb" x="68" y="118">SIGNAL TOWER</text><text class="sm" x="68" y="146">Align Signal · comms fix</text>
+      <text class="lb" x="418" y="108">SERVER VAULT</text><text class="sm" x="418" y="136">Defrag Blocks · Upload</text>
+      <text class="lb" x="788" y="118">COOLING BAY</text><text class="sm" x="788" y="146">Purge Coolant</text>
+      <text class="lb" x="78" y="468">POWER GRID</text><text class="sm" x="78" y="496">Reroute · blackout fix</text>
+      <text class="lb" x="408" y="448">HUB</text><text class="sm" x="408" y="476">Spawn · Patch Firewall</text>
+      <circle cx="540" cy="560" r="34" fill="#FF5E7A" fill-opacity=".25" stroke="#FF5E7A" stroke-width="3"/>
+      <circle cx="540" cy="560" r="17" fill="#FF5E7A"/>
+      <text class="sm" x="540" y="630" text-anchor="middle">emergency button</text>
+      <text class="lb" x="798" y="468">LAB</text><text class="sm" x="798" y="496">Download (Upload part 1)</text>
+      <text class="lb" x="58" y="848">DOCK</text><text class="sm" x="58" y="876">Sort Packets · dead end</text>
+      <text class="lb" x="418" y="818">CORE REACTOR</text><text class="sm" x="418" y="846">Calibrate · meltdown fix</text>
+      <text class="lb" x="798" y="848">LOUNGE</text><text class="sm" x="798" y="876">Quiet alibi spot</text>
+    </svg>
+  </div>
+  <div class="legend"><span><i style="background:var(--cyan)"></i>Hub, where everyone spawns</span><span><i style="background:var(--red)"></i>Core Reactor, the critical sabotage room</span></div>
+  <p>This is the layout used in the current build. The final map art and exact corridor shapes may shift as the game gets its real map, but the nine rooms and their jobs stay the same.</p>
+  <div class="tbl"><table>
+    <tr><th>Room</th><th>What happens there</th><th>Worth knowing</th></tr>
+    <tr><td>Hub</td><td>Spawn point, emergency button, Patch Firewall task</td><td>Busy and central; a good place to be seen</td></tr>
+    <tr><td>Core Reactor</td><td>Calibrate Core task; Core Meltdown fix point</td><td>Meltdown needs <b>two</b> people here at once</td></tr>
+    <tr><td>Signal Tower</td><td>Align Signal task; comms fix</td><td>Corner room; slow to reach from the bottom row</td></tr>
+    <tr><td>Server Vault</td><td>Defrag Blocks; second half of Upload Backup</td><td>Will get security cameras in a later update</td></tr>
+    <tr><td>Power Grid</td><td>Reroute Circuit; blackout fix (five switches)</td><td>Everyone runs here when the lights go out</td></tr>
+    <tr><td>Cooling Bay</td><td>Purge Coolant</td><td>Far corner; go with company if you can</td></tr>
+    <tr><td>Dock</td><td>Sort Packets</td><td>Long dead end: the riskiest room on the map</td></tr>
+    <tr><td>Lab</td><td>First half of Upload Backup</td><td>Next to the Hub, easy to pass through</td></tr>
+    <tr><td>Lounge</td><td>Few tasks</td><td>Quiet, good for alibis, and good for ambushes</td></tr>
+  </table></div>
+</section>
+
+<section id="vision">
+  <h2><span class="n">6</span>Light and vision</h2>
+  <p class="lead">You only see a circle of light around yourself, and walls block it. If someone is behind a wall, your game genuinely does not know where they are.</p>
+  <div class="tbl"><table>
+    <tr><th>Who</th><th>How far they see</th></tr>
+    <tr><td>Crew</td><td>6 tiles</td></tr>
+    <tr><td>Glitch</td><td>8 tiles, so they spot you before you spot them</td></tr>
+    <tr><td>Crew during a blackout</td><td>2 tiles, until the lights are fixed</td></tr>
+  </table></div>
+  <div class="tip"><b>No wallhacks:</b> the server never sends your phone the position of anyone you cannot see, so there is nothing hidden to dig out of the game.</div>
+</section>
+
+<section id="tasks">
+  <h2><span class="n">7</span>Tasks</h2>
+  <p class="lead">Tasks are tiny touch minigames, 3 to 10 seconds each. Every crew member gets two common, three short and one long task. Finishing them fills the shared task bar at the top of the screen.</p>
+  <div class="tbl"><table>
+    <tr><th>Task</th><th>Where</th><th>Type</th><th>How to do it</th></tr>
+    <tr><td>Reroute Circuit</td><td>Power Grid</td><td><span class="pill p-short">Short</span></td><td>Drag each of the four glowing wires to the port of the same colour.</td></tr>
+    <tr><td>Align Signal</td><td>Signal Tower</td><td><span class="pill p-short">Short</span></td><td>Turn the dial until the two waveforms lie on top of each other.</td></tr>
+    <tr><td>Defrag Blocks</td><td>Server Vault</td><td><span class="pill p-short">Short</span></td><td>Slide the coloured blocks so each column holds one colour.</td></tr>
+    <tr><td>Purge Coolant</td><td>Cooling Bay</td><td><span class="pill p-short">Short</span></td><td>Hold the valve and let go when the needle sits in the green band.</td></tr>
+    <tr><td>Calibrate Core</td><td>Core Reactor</td><td><span class="pill p-short">Short</span></td><td>Tap to stop each of the three spinning rings when its gap lines up.</td></tr>
+    <tr><td>Sort Packets</td><td>Dock</td><td><span class="pill p-common">Common</span></td><td>Flick each incoming packet left or right depending on its colour.</td></tr>
+    <tr><td>Patch Firewall</td><td>Hub</td><td><span class="pill p-common">Common</span></td><td>Tap breaches in the grid before they spread to their neighbours.</td></tr>
+    <tr><td>Upload Backup</td><td>Lab, then Server Vault</td><td><span class="pill p-long">Long</span></td><td>Start the download in the Lab (8 seconds), walk to the Server Vault, finish the upload (8 seconds).</td></tr>
+  </table></div>
+  <p>Common tasks are the same for every crew member, which makes them handy for checking stories: if someone says they did Sort Packets, everyone else has it too.</p>
+  <div class="tip"><b>Prove yourself:</b> some tasks light up something on the map when finished, like a panel turning green. If someone watches you complete one of those, you are almost certainly crew, because a Glitch can stand at a task but can never make the bar move.</div>
+  <div class="tip warn"><b>Watch the bar during Jam Comms:</b> when comms are jammed the task list and bar vanish for everyone until the dish is realigned, so nobody can use the bar as evidence.</div>
+</section>
+
+<section id="glitch">
+  <h2><span class="n">8</span>Playing as a Glitch</h2>
+  <p class="lead">You win by patience. Strike when nobody is watching, use sabotage to split the crew up, and have a believable story ready for the meeting.</p>
+  <h3>Your kit</h3>
+  <div class="tbl"><table>
+    <tr><th>Tool</th><th>How it works</th></tr>
+    <tr><td>Fake task list</td><td>You get a list that looks like a crew list. Stand at those spots and look busy; your task bar never moves.</td></tr>
+    <tr><td>Eliminate</td><td>Works within 1.2 tiles, so you have to be right next to someone. After each one you wait 25 seconds (the host can set 15 to 45). The body stays where it fell until a meeting.</td></tr>
+    <tr><td>Conduits</td><td>Six grates linked in three pairs: <b>Power Grid ↔ Cooling Bay</b>, <b>Dock ↔ Server Vault</b>, <b>Lounge ↔ Signal Tower</b>. Only Glitches can use them (they glow violet for you). Going in and coming out flashes a purple ring that any crewmate watching either grate can see, so check the room is empty first.</td></tr>
+    <tr><td>Sabotage</td><td>Four kinds, explained in the next section. Only one can run at a time, with a shared 30 second cooldown.</td></tr>
+  </table></div>
+  <div class="tip"><b>Combo:</b> trigger a blackout, then walk into the Power Grid crowd with your 8 tile vision while they see only 2 tiles. Or call Core Meltdown to pull two people into the Core Reactor and leave the far rooms empty.</div>
+</section>
+
+<section id="sabotage">
+  <h2><span class="n">9</span>Surviving sabotage</h2>
+  <p class="lead">When an alarm goes off, the crew has to react fast. Here is what each one does and exactly how to fix it.</p>
+  <div class="tbl"><table>
+    <tr><th>Sabotage</th><th>Danger</th><th>Effect</th><th>How the crew fixes it</th></tr>
+    <tr><td>Core Meltdown</td><td><span class="pill p-crit">Critical</span></td><td>A 40 second countdown. If it hits zero, Glitches win. Emergency meetings are locked while it runs.</td><td>Two players must hold the two panels in the Core Reactor <b>at the same time</b>.</td></tr>
+    <tr><td>Blackout</td><td><span class="pill p-norm">Normal</span></td><td>Crew vision drops to 2 tiles.</td><td>Flip all five switches in the Power Grid.</td></tr>
+    <tr><td>Jam Comms</td><td><span class="pill p-norm">Normal</span></td><td>Task lists and the task bar disappear.</td><td>Realign the dish in the Signal Tower.</td></tr>
+    <tr><td>Lock Doors</td><td><span class="pill p-norm">Normal</span></td><td>One room's doors close for 10 seconds.</td><td>Nothing to fix; wait it out. Think about who got trapped with whom.</td></tr>
+  </table></div>
+  <div class="tip warn"><b>Meltdown rule of thumb:</b> the two closest people sprint to the Core Reactor and everyone else stays put. If you arrive and the other panel is held by someone, remember who; a Glitch might let go to make you fail.</div>
+</section>
+
+<section id="meetings">
+  <h2><span class="n">10</span>Meetings and voting</h2>
+  <p class="lead">This is where matches are won. A meeting pulls everyone to a table, living players talk, then vote.</p>
+  <h3>Starting a meeting</h3>
+  <p>Either <b>report a body</b> you walk past, or <b>press the emergency button</b> in the Hub. Each player gets one emergency press per match, the button rests for 20 seconds after every meeting, and it cannot be used during a Core Meltdown.</p>
+  <h3>How it runs</h3>
+  <ol class="steps">
+    <li><b>Discussion, 45 seconds.</b> Voting is locked. Share where you were and what you saw.</li>
+    <li><b>Voting, 60 seconds.</b> Tap a player card to vote for them, or tap Skip. Nobody sees votes until the end.</li>
+    <li><b>Result.</b> The player with the most votes is ejected. A tie, or skip winning, ejects nobody. Depending on the host setting, the screen may reveal whether the ejected player was a Glitch.</li>
+  </ol>
+  <h3>Quick chat</h3>
+  <p>You can build messages by tapping instead of typing, which is much faster on a phone:</p>
+  <div class="chat"><span>I was in [room]</span><span>I saw [player] at [room]</span><span>[player] is sus</span><span>I did [task]</span><span>Skip</span></div>
+  <p>In private rooms the host can also allow typed chat: 80 characters per message, with a swear filter. Every player card has mute and report.</p>
+</section>
+
+<section id="ghosts">
+  <h2><span class="n">11</span>After you are eliminated</h2>
+  <p class="lead">Being out does not mean being done. Ghosts float around and still help their team.</p>
+  <p>Crew ghosts keep doing their tasks, and those still fill the bar, so a dead crewmate can help win the match. Glitch ghosts can keep sabotaging. Ghosts chat only with other ghosts, so you cannot tip off the living.</p>
+  <div class="tip warn"><b>House rule worth keeping:</b> if you are on a voice call, ghosts stay muted. The game cannot stop you talking out loud, so this is on your honour.</div>
+</section>
+
+<section id="strategy">
+  <h2><span class="n">12</span>Strategy tips</h2>
+  <div class="cards">
+    <div class="card crew">
+      <h3>For the crew</h3>
+      <p>Move in pairs or threes, especially to the Dock and Cooling Bay. Remember who you saw and where, with rough times. Use the 40 second lap to check stories. Watch for anyone standing at a task without the panel lighting up. Do not burn your emergency press early; a body report is free.</p>
+    </div>
+    <div class="card glitch">
+      <h3>For Glitches</h3>
+      <p>Do your fake tasks where people pass by. Self report rarely, but sometimes. Vote with the crowd, not ahead of it. Never use a conduit with a light circle near you. With two Glitches, avoid being seen together right before a body is found.</p>
+    </div>
+    <div class="card ghost">
+      <h3>At the table</h3>
+      <p>Lead with facts (room, time, who you saw) before accusations. If two stories clash, ask a common task question. When unsure, skip; ejecting a crewmate brings the Glitches one step closer to outnumbering you.</p>
+    </div>
+  </div>
+</section>
+
+<section id="settings">
+  <h2><span class="n">13</span>Host settings</h2>
+  <p class="lead">The host can tune the match in the lobby. If one side keeps winning, adjust these.</p>
+  <div class="tbl"><table>
+    <tr><th>Setting</th><th>Default</th><th>Range</th><th>If the Glitches win too often…</th></tr>
+    <tr><td>Players</td><td>Up to 10</td><td>5 to 10</td><td></td></tr>
+    <tr><td>Glitches</td><td>Auto (1 or 2)</td><td>1 to 3</td><td>Use fewer</td></tr>
+    <tr><td>Elimination cooldown</td><td>25 s</td><td>15 to 45 s</td><td>Make it longer</td></tr>
+    <tr><td>Discussion / voting time</td><td>45 s / 60 s</td><td>15 to 120 s each</td><td>Give more talk time</td></tr>
+    <tr><td>Crew vision</td><td>6 tiles</td><td>3 to 9</td><td>Raise it</td></tr>
+    <tr><td>Tasks per player</td><td>2 common, 3 short, 1 long</td><td>Adjustable</td><td>Fewer tasks</td></tr>
+    <tr><td>Reveal ejected role</td><td>On</td><td>On or off</td><td>Keep on</td></tr>
+    <tr><td>Typed chat</td><td>On</td><td>On or off</td><td></td></tr>
+    <tr><td>Practice mode</td><td>Off</td><td>On or off</td><td>Lets 3 or 4 players start; add bots to fill</td></tr>
+  </table></div>
+  <p>The host can also kick players and add or remove bots in the lobby. If the host leaves, the next player becomes host.</p>
+</section>
+
+<section id="fair">
+  <h2><span class="n">14</span>Fair play and safety</h2>
+  <p class="lead">Glitch Station is for players aged 13 and up and is built so a single leaked secret cannot ruin a match.</p>
+  <p>Your phone only ever learns your own role (Glitches also learn their partner's). The server checks every move and every elimination, so speed tricks or eliminating from across the room simply get refused. The game only asks for a nickname: no email, no direct messages, no chatting with strangers. Use mute and report freely, and hosts can kick anyone from the lobby.</p>
+</section>
+
+<section id="today">
+  <h2><span class="n">15</span>What works today</h2>
+  <p class="lead">The full game loop is built and tested. A few extras from the plan come later.</p>
+  <div class="tbl"><table>
+    <tr><th>Part of the game</th><th>Status</th></tr>
+    <tr><td>Rooms by code or link, lobby, colours, hats, ready, kick, host settings</td><td>Working</td></tr>
+    <tr><td>Rejoin within 60 seconds after losing signal, role intact</td><td>Working</td></tr>
+    <tr><td>Walking together with smooth movement, light and walls blocking sight</td><td>Working</td></tr>
+    <tr><td>Secret roles, all eight tasks, shared task bar, crew task win</td><td>Working</td></tr>
+    <tr><td>Eliminations, bodies, conduits, all four sabotages and their fixes</td><td>Working</td></tr>
+    <tr><td>Reports, emergency button, discussion, voting, quick chat, typed chat, ghosts, mute and report</td><td>Working</td></tr>
+    <tr><td>Results screen, one tap rematch, sounds, colour blind patterns, low effects mode</td><td>Working</td></tr>
+    <tr><td>Practice bots for small groups</td><td>Working (simple; they can be fooled)</td></tr>
+    <tr><td>Feedback button, end of match survey, error tracking</td><td>Later (soft launch phase)</td></tr>
+    <tr><td>Basename and ENS names, cosmetic NFT suits, Lane Siege suit unlock</td><td>Later (identity phase)</td></tr>
+    <tr><td>Special roles (Tracer, Mender, Jammer), public lobbies, a second map</td><td>Later</td></tr>
+  </table></div>
+  <p>To play, open the link the host shares. If you are all on the same WiFi as the host's computer, the local link works too; anywhere else needs the online version.</p>
+</section>
+
+</main>
+</div>
+<footer>Glitch Station is an original game. Social deduction is a shared genre; no names, characters, maps, art or sounds from other games are used.</footer>
+</body>
+</html>

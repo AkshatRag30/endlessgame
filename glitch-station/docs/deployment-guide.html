@@ -1,0 +1,242 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Glitch Station Deployment Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --night:#0B0D1A; --track:#171B36; --lane:#3A4170;
+  --red:#FF5E7A; --cyan:#3DE0FF; --amber:#FFB23D; --mint:#4DFFB0;
+  --paper:#EEF0FA; --surface:#FFFFFF; --ink:#151834; --muted:#4A5078; --rule:#D3D7EE; --tag:#E2E6FA;
+  --accent-ink:#0A6F86; --red-ink:#B4213F; --mint-ink:#0D6B45; --amber-ink:#8A5A00;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --paper:#10132A; --surface:#171B36; --ink:#EEF0FF; --muted:#A9B0DD; --rule:#2C3260; --tag:#232953;
+    --accent-ink:#3DE0FF; --red-ink:#FF7F96; --mint-ink:#4DFFB0; --amber-ink:#FFC56B; color-scheme: dark; }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 Inter,system-ui,sans-serif}
+a{color:var(--accent-ink)}
+h1,h2,h3{font-family:"Space Grotesk",Inter,sans-serif;line-height:1.15;margin:0}
+code,pre{font-family:"JetBrains Mono",ui-monospace,Consolas,monospace}
+p code,td code,li code{font-size:.88em;background:var(--tag);border-radius:5px;padding:1px 6px;white-space:nowrap}
+.hero{background:var(--night);color:#F2F4FF;position:relative;overflow:hidden;padding:56px 16px 48px}
+.hero::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(20% - 1px),rgba(58,65,112,.45) calc(20% - 1px) 20%);mask-image:linear-gradient(to bottom,transparent,#000 60%);pointer-events:none}
+.hero-in{position:relative;max-width:1200px;margin:0 auto;display:grid;gap:18px}
+.kicker{font-family:"Space Grotesk",sans-serif;letter-spacing:.18em;font-size:13px;color:var(--cyan);text-transform:uppercase}
+.hero h1{font-size:clamp(44px,8vw,96px);letter-spacing:-.03em;line-height:.95}
+.hero h1 .row2{display:block;color:var(--red)}
+.hero p{max-width:64ch;margin:0;color:#C9CEF5;font-size:18px}
+.stats{display:flex;flex-wrap:wrap;gap:10px}
+.stats span{background:rgba(23,27,54,.9);border:1px solid var(--lane);border-radius:999px;padding:6px 14px;font-size:14px;color:#C9CEF5}
+.stats b{color:var(--mint)}
+.layout{max-width:1200px;margin:0 auto;padding:48px 16px 96px;display:flex;flex-wrap:wrap;gap:48px}
+nav.toc{flex:1 1 200px;max-width:240px}
+nav.toc ol{list-style:none;margin:0;padding:0;position:sticky;top:24px;display:flex;flex-direction:column;gap:4px;font-size:14px}
+nav.toc a{text-decoration:none;color:var(--muted);display:block;padding:4px 0 4px 12px;border-left:2px solid var(--rule)}
+nav.toc a:hover,nav.toc a:focus-visible{color:var(--ink);border-left-color:var(--cyan);outline:none}
+main{flex:999 1 560px;min-width:0;display:flex;flex-direction:column;gap:56px}
+section{display:flex;flex-direction:column;gap:16px;scroll-margin-top:24px}
+section h2{font-size:30px;letter-spacing:-.01em;display:flex;align-items:baseline;gap:14px}
+section h2 .n{font-size:15px;color:var(--accent-ink);font-weight:700;min-width:24px}
+section h3{font-size:19px;margin-top:6px}
+.lead{font-size:19px;line-height:1.5;margin:0;max-width:62ch}
+p{margin:0;max-width:70ch}
+.tbl{overflow-x:auto;border:1px solid var(--rule);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px}
+th,td{text-align:left;padding:10px 14px;vertical-align:top;border-bottom:1px solid var(--rule)}
+th{font-weight:700;background:var(--tag);white-space:nowrap}
+tr:last-child td{border-bottom:none}
+pre{margin:0;background:var(--night);color:#DDE2FF;border:1px solid var(--lane);border-radius:10px;padding:14px 16px;font-size:13.5px;line-height:1.55;overflow-x:auto;max-width:100%}
+pre .c{color:#7F88C2}pre .k{color:#FF8FA3}pre .s{color:#4DFFB0}pre .f{color:#3DE0FF}
+.timeline{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:0;max-width:760px}
+.timeline li{position:relative;padding:0 0 22px 40px;border-left:2px solid var(--rule);margin-left:12px}
+.timeline li:last-child{border-left-color:transparent}
+.timeline li::before{content:attr(data-n);position:absolute;left:-13px;top:0;width:24px;height:24px;border-radius:50%;background:var(--night);color:var(--cyan);font:700 12px/24px "Space Grotesk",sans-serif;text-align:center;border:1px solid var(--lane)}
+.timeline b{font-family:"Space Grotesk",sans-serif;font-size:16.5px;display:block;margin-bottom:2px}
+.timeline span{color:var(--muted);font-size:15px}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:var(--surface);border:1px solid var(--rule);border-top:4px solid var(--cyan);border-radius:12px;padding:16px 18px;display:flex;flex-direction:column;gap:6px}
+.card h3{margin:0;font-size:18px}
+.card p{font-size:15px;color:var(--muted)}
+.card.r{border-top-color:var(--red)}.card.a{border-top-color:var(--amber)}.card.m{border-top-color:var(--mint)}
+.tip{background:var(--surface);border:1px solid var(--rule);border-left:4px solid var(--mint);border-radius:10px;padding:12px 16px;font-size:15px;max-width:76ch}
+.tip.warn{border-left-color:var(--amber)}
+.tip b{font-family:"Space Grotesk",sans-serif}
+.shots{display:flex;flex-wrap:wrap;gap:16px;align-items:flex-start}
+.shots figure{margin:0;display:flex;flex-direction:column;gap:6px;font-size:13.5px;color:var(--muted)}
+.shots img{display:block;border-radius:12px;border:1px solid var(--lane);max-width:100%;height:auto}
+.diagram{background:var(--night);border-radius:16px;padding:12px;overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:640px;height:auto}
+.pill{display:inline-block;padding:2px 10px;border-radius:999px;font-weight:700;font-size:12.5px;white-space:nowrap}
+.ok{background:#C9F7E3;color:#0D4A31}.todo{background:#FFE7BF;color:#5A3A00}
+footer{max-width:1200px;margin:0 auto;padding:0 16px 48px;color:var(--muted);font-size:14px}
+@media print{.hero,pre,.diagram{-webkit-print-color-adjust:exact;print-color-adjust:exact}nav.toc{display:none}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-in">
+    <div class="kicker">Deployment guide</div>
+    <h1>Put Glitch Station <span class="row2">online, free</span></h1>
+    <p>Everything you need to get the game onto a public link your friends can open from anywhere: what to install, which accounts you need, what goes in the env file (spoiler: nothing), the exact commands, how to check it worked, and what to do when something goes wrong.</p>
+    <div class="stats">
+      <span><b>1</b> free account</span><span><b>2</b> commands</span><span><b>0</b> env variables required</span><span><b>$0</b> on the free plan</span>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+<nav class="toc" aria-label="Contents"><ol>
+  <li><a href="#how">How it is hosted</a></li>
+  <li><a href="#need">What you need</a></li>
+  <li><a href="#env">The env file question</a></li>
+  <li><a href="#deploy">Deploy step by step</a></li>
+  <li><a href="#check">Check it works</a></li>
+  <li><a href="#update">Updating the game</a></li>
+  <li><a href="#logs">Logs and analytics</a></li>
+  <li><a href="#limits">Free plan limits</a></li>
+  <li><a href="#domain">Custom domain (optional)</a></li>
+  <li><a href="#alt">Alternative: client on Pages</a></li>
+  <li><a href="#trouble">Troubleshooting</a></li>
+</ol></nav>
+
+<main>
+
+<section id="how">
+  <h2><span class="n">1</span>How it is hosted</h2>
+  <p class="lead">One Cloudflare Worker does everything. It serves the game page, creates rooms, and runs one small server (a Durable Object) per room.</p>
+  <div class="tbl"><table>
+    <tr><th>Address</th><th>What answers it</th></tr>
+    <tr><td><code>/</code> and every other page path</td><td>The built game client from <code>apps/client/dist</code> (static files served by the Worker)</td></tr>
+    <tr><td><code>/api/rooms</code></td><td>Creates a room and returns its four letter code</td></tr>
+    <tr><td><code>/api/rooms/ABCD</code></td><td>Says whether room ABCD exists</td></tr>
+    <tr><td><code>/ws?room=ABCD</code></td><td>The live game connection, handed to room ABCD's Durable Object</td></tr>
+    <tr><td><code>/health</code></td><td>Returns <code>{"ok":true}</code> so you can check the server is up</td></tr>
+  </table></div>
+  <p>Because the page and the server live at the same address, the game finds its server automatically. That is why no configuration is needed. (The PRD planned Cloudflare Pages for the client; serving it from the Worker is Cloudflare's newer way to do the same thing, also free, and removes a whole deploy step.)</p>
+</section>
+
+<section id="need">
+  <h2><span class="n">2</span>What you need</h2>
+  <div class="tbl"><table>
+    <tr><th>Thing</th><th>How to get it</th><th>Cost</th></tr>
+    <tr><td><b>Node.js 20 or newer</b></td><td>Already installed on your PC (v22). Others get it from <a href="https://nodejs.org">nodejs.org</a>, LTS version.</td><td>Free</td></tr>
+    <tr><td><b>The project's packages</b></td><td>Run <code>npm install</code> once inside the <code>glitch-station</code> folder. This also installs Wrangler, Cloudflare's command line tool, so you do not install it separately.</td><td>Free</td></tr>
+    <tr><td><b>A Cloudflare account</b></td><td>Sign up at <a href="https://dash.cloudflare.com/sign-up">dash.cloudflare.com/sign-up</a> with an email. No card needed for the free Workers plan.</td><td>Free</td></tr>
+    <tr><td><b>A workers.dev subdomain</b></td><td>Cloudflare gives every account one, like <code>yourname.workers.dev</code>. Wrangler asks you to pick it on your first deploy if you have not yet; you can also set it in the dashboard under Workers and Pages.</td><td>Free</td></tr>
+  </table></div>
+  <div class="tip"><b>Not needed:</b> no database, no API keys, no secrets, no paid plan, no separate hosting account, no GitHub. (GitHub is still a good idea for keeping your code safe.)</div>
+</section>
+
+<section id="env">
+  <h2><span class="n">3</span>The env file question</h2>
+  <p class="lead">For the normal deploy, you do not need an env file at all. There are no secrets in this project.</p>
+  <p>There are two optional settings. Leave both alone unless you have a reason:</p>
+  <div class="tbl"><table>
+    <tr><th>Setting</th><th>Where it lives</th><th>When to use it</th><th>Example</th></tr>
+    <tr><td><code>VITE_SERVER_URL</code></td><td>A file you create: <code>apps/client/.env.production</code> (git ignores it)</td><td>Only if you host the game page somewhere other than the Worker, for example on Cloudflare Pages or Netlify. It tells the page where the room server is.</td><td><code>VITE_SERVER_URL=wss://glitch-station.yourname.workers.dev/ws</code></td></tr>
+    <tr><td><code>ALLOWED_ORIGINS</code></td><td><code>apps/server/wrangler.jsonc</code>, in <code>"vars"</code>. Not secret, so it is fine in the file.</td><td>To stop other websites from creating rooms or connecting to your server. Empty means allow any site.</td><td><code>"ALLOWED_ORIGINS": "https://glitch-station.yourname.workers.dev"</code></td></tr>
+  </table></div>
+  <p>A template for the first one is in <code>apps/client/.env.example</code>. If you ever do add real secrets later (for example in Phase 8), use <code>npx wrangler secret put NAME</code>, never a committed file.</p>
+</section>
+
+<section id="deploy">
+  <h2><span class="n">4</span>Deploy step by step</h2>
+  <p class="lead">Run these in a terminal inside the <code>glitch-station</code> folder.</p>
+  <ol class="timeline">
+    <li data-n="1"><b>Install packages (first time only)</b><span><code>npm install</code></span></li>
+    <li data-n="2"><b>Check everything passes</b><span><code>npm run lint</code> and <code>npm test</code>. Both should finish without errors (33 tests).</span></li>
+    <li data-n="3"><b>Log in to Cloudflare (first time only)</b><span><code>npx wrangler login</code> opens your browser. Click <b>Allow</b>. Back in the terminal you will see "Successfully logged in". Check with <code>npx wrangler whoami</code>.</span></li>
+    <li data-n="4"><b>Deploy</b><span><code>npm run deploy</code>. This builds the game page, then uploads the Worker, the page files and the Durable Object setup in one go. The first time, if your account has no workers.dev subdomain, Wrangler asks you to choose one.</span></li>
+    <li data-n="5"><b>Copy your link</b><span>At the end Wrangler prints something like <code>https://glitch-station.yourname.workers.dev</code>. That is your game. Share it with friends.</span></li>
+  </ol>
+<pre><span class="c"># the whole thing, first time</span>
+<span class="f">cd</span> C:\Users\ACER\OneDrive\Desktop\endlessgame\glitch-station
+npm install
+npx wrangler login
+npm run deploy</pre>
+</section>
+
+<section id="check">
+  <h2><span class="n">5</span>Check it works</h2>
+  <ol class="timeline">
+    <li data-n="1"><b>Health</b><span>Open <code>https://glitch-station.yourname.workers.dev/health</code>. You should see <code>{"ok":true,...}</code>.</span></li>
+    <li data-n="2"><b>Automated smoke test</b><span><code>node scripts/smoke.mjs https://glitch-station.yourname.workers.dev</code> creates a room, joins five headless players, starts a match and checks roles stay private. It ends with <b>PASS</b>.</span></li>
+    <li data-n="3"><b>Load test (optional)</b><span>Create a room in your browser, then <code>node scripts/fake-players.mjs CODE 9 https://glitch-station.yourname.workers.dev</code> fills it with nine network players. Note that this uses up free requests quickly (see limits).</span></li>
+    <li data-n="4"><b>Real phones</b><span>Open the link on two phones, ideally one on mobile data. Create a room on one, join with the code on the other. The ping pill should be green (under 150 ms).</span></li>
+  </ol>
+</section>
+
+<section id="update">
+  <h2><span class="n">6</span>Updating the game</h2>
+  <p>Change code, run <code>npm run lint</code> and <code>npm test</code>, then <code>npm run deploy</code> again. The link stays the same.</p>
+  <div class="tip warn"><b>Deploying ends live matches.</b> Room servers restart on deploy, so anyone mid match is disconnected and rooms in progress are lost. Deploy when nobody is playing.</div>
+  <p>To undo a bad deploy: <code>npx wrangler rollback</code> (run it inside <code>apps/server</code>), or pick an older version in the Cloudflare dashboard under your Worker's Deployments tab.</p>
+</section>
+
+<section id="logs">
+  <h2><span class="n">7</span>Logs and analytics</h2>
+  <p>The server writes one JSON line per event: <code>room_created</code>, <code>join</code>, <code>match_started</code>, <code>elimination</code>, <code>meeting</code>, <code>vote_result</code>, <code>match_finished</code>, <code>disconnect</code>, <code>player_flagged</code> and more. That covers the PRD section 14 analytics.</p>
+  <div class="tbl"><table>
+    <tr><th>To see</th><th>Do this</th></tr>
+    <tr><td>Live log stream</td><td><code>npx wrangler tail glitch-station</code> (from <code>apps/server</code>)</td></tr>
+    <tr><td>Past logs and search</td><td>Cloudflare dashboard → Workers and Pages → glitch-station → Logs (observability is turned on in <code>wrangler.jsonc</code>)</td></tr>
+    <tr><td>Usage against free limits</td><td>Dashboard → Workers and Pages → Overview, and the Durable Objects metrics on the Worker</td></tr>
+  </table></div>
+</section>
+
+<section id="limits">
+  <h2><span class="n">8</span>Free plan limits</h2>
+  <p class="lead">On the Workers Free plan you are never charged. If a daily limit is hit, new operations of that kind fail until the reset at 00:00 UTC.</p>
+  <div class="tbl"><table>
+    <tr><th>Limit (Durable Objects, free)</th><th>Amount</th><th>What it means here</th></tr>
+    <tr><td>Requests</td><td>100,000 per day</td><td>Joining, room creation and <b>WebSocket messages</b> count. This is the one to watch.</td></tr>
+    <tr><td>Duration</td><td>13,000 GB seconds per day</td><td>Time rooms are awake in memory. Rooms stay awake while anyone is connected.</td></tr>
+    <tr><td>Storage</td><td>SQLite backed objects only</td><td>Rooms store almost nothing, so this does not matter.</td></tr>
+  </table></div>
+  <div class="tip warn"><b>Watch the message count.</b> A player who is walking sends 20 movement messages a second; a standing player sends almost none. Cloudflare counts WebSocket messages toward requests, and may count them at a discount; check the <a href="https://developers.cloudflare.com/durable-objects/platform/pricing/">pricing page</a> for the current rule. Either way, a few friend groups playing in an evening is the realistic free ceiling. If you hit limits, the planned fix is to batch two movement steps per message (halves the count), and the PRD spend gate says only move to the Workers Paid plan (about 5 USD a month) once real groups prove they keep playing.</div>
+</section>
+
+<section id="domain">
+  <h2><span class="n">9</span>Custom domain (optional)</h2>
+  <p>If you own a domain on Cloudflare, add it to the Worker: Dashboard → glitch-station → Settings → Domains and Routes → Add → Custom domain, for example <code>play.yourdomain.com</code>. If you set <code>ALLOWED_ORIGINS</code>, add the new address there too and redeploy.</p>
+</section>
+
+<section id="alt">
+  <h2><span class="n">10</span>Alternative: client on Pages</h2>
+  <p>Only if you specifically want the page hosted separately:</p>
+  <ol class="timeline">
+    <li data-n="1"><b>Deploy the server as usual</b><span><code>npm run deploy</code> and note the Worker address.</span></li>
+    <li data-n="2"><b>Point the client at it</b><span>Create <code>apps/client/.env.production</code> with <code>VITE_SERVER_URL=wss://glitch-station.yourname.workers.dev/ws</code>.</span></li>
+    <li data-n="3"><b>Build and upload</b><span><code>npm run build</code>, then <code>npx wrangler pages deploy apps/client/dist --project-name glitch-station-client</code>.</span></li>
+    <li data-n="4"><b>Lock it down</b><span>Set <code>ALLOWED_ORIGINS</code> to your pages.dev address and deploy the server again.</span></li>
+  </ol>
+</section>
+
+<section id="trouble">
+  <h2><span class="n">11</span>Troubleshooting</h2>
+  <div class="tbl"><table>
+    <tr><th>What you see</th><th>Likely cause and fix</th></tr>
+    <tr><td><code>You need to register a workers.dev subdomain</code></td><td>Pick one when Wrangler asks, or set it in the dashboard under Workers and Pages, then deploy again.</td></tr>
+    <tr><td><code>Not logged in</code> or authentication errors</td><td>Run <code>npx wrangler login</code> again; check with <code>npx wrangler whoami</code>.</td></tr>
+    <tr><td>Error mentioning Durable Objects and the free plan</td><td>The free plan only allows SQLite backed Durable Objects. The config already uses <code>new_sqlite_classes</code>; do not change that migration.</td></tr>
+    <tr><td>Deploy says the assets directory is missing</td><td>Use <code>npm run deploy</code> from the project root (it builds first), not <code>wrangler deploy</code> on its own.</td></tr>
+    <tr><td>Page loads but "Could not create a room"</td><td>Open <code>/health</code>. If that fails, the Worker did not deploy. If <code>ALLOWED_ORIGINS</code> is set, make sure it exactly matches the address in your browser bar (including https).</td></tr>
+    <tr><td>"That room does not exist"</td><td>Rooms close after 10 minutes with nobody in them, and all rooms reset on every deploy. Create a new one.</td></tr>
+    <tr><td>Everything stopped working late in the day</td><td>Probably a free daily limit. Check usage in the dashboard; it resets at 00:00 UTC (5:30 AM in India).</td></tr>
+    <tr><td>High ping or rubber banding</td><td>Check the ping pill. Over 300 ms usually means a weak mobile signal. Turn on <b>Low effects</b> on the home screen for older phones.</td></tr>
+    <tr><td>Phone on WiFi cannot open the local dev link</td><td>That is the local setup, not deployment: allow Node.js through Windows Firewall on private networks.</td></tr>
+  </table></div>
+</section>
+
+</main>
+</div>
+<footer>Deployment guide for Glitch Station, written 20 November 2026. Free plan limits checked on the Cloudflare docs the same day; providers change their limits, so check the pricing pages before relying on them.</footer>
+</body>
+</html>
